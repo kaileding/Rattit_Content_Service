@@ -1,0 +1,22 @@
+{
+  "name": "rattit_location_service",
+  "version": "1.0.0",
+  "description": "Rattit_Location_Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaileding/Rattit_Location_Service.git"
+  },
+  "author": "Kaile Ding <dingkaile@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaileding/Rattit_Location_Service/issues"
+  },
+  "homepage": "https://github.com/kaileding/Rattit_Location_Service#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
