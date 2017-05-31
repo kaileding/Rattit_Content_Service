@@ -2,8 +2,9 @@
   "name": "rattit_location_service",
   "version": "1.0.0",
   "description": "Rattit_Location_Service",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
+    "dev": "babel-node src/app.js",
     "test": "make test"
   },
   "repository": {
@@ -17,6 +18,18 @@
   },
   "homepage": "https://github.com/kaileding/Rattit_Location_Service#readme",
   "dependencies": {
-    "express": "^4.15.3"
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "express-validator": "^3.2.0",
+    "http-auth": "^3.1.3",
+    "http-status": "^1.0.1",
+    "morgan": "^1.8.2",
+    "path": "^0.12.7",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
   }
 }
