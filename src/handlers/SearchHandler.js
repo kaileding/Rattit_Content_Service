@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-30 17:32:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-05-31 02:02:35
+* @Last Modified time: 2017-06-02 01:00:12
 */
 
 'use strict';
@@ -14,35 +14,66 @@ import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
-let searchUrlGen = function(searchObj) {
-	cLogger.say(cLogger.TESTING_TYPE, 'searchObj is', searchObj);
-
+let nearbySearchUrlGen = function(searchObj) {
 	var reqUrl = consts.NEARBY_SEARCH_BASE_URL + '?key=' + process.env.GOOGLE_API_KEY;
-	reqUrl += '&location='+searchObj.latitude+','+searchObj.longitude;
 	reqUrl += '&language='+(searchObj.languageCode || 'en');
-	if (searchObj.rankByDistance) {
-		reqUrl += '&rankby=distance';
 
-		if (searchObj.keyWord == null && searchObj.typeName == null) {
-			let errorMessage = 'rankby=distance needs to specify keyword or typename as well';
-			throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
-			// throw apiError;
+	if (searchObj.pageToken != null) {
+		reqUrl += '&pagetoken='+searchObj.pageToken;
+	}  else {
+		reqUrl += '&location='+searchObj.latitude+','+searchObj.longitude;
+		if (searchObj.rankByDistance) {
+			reqUrl += '&rankby=distance';
+
+			if (searchObj.keyWord == null && searchObj.typeName == null) {
+				let errorMessage = 'rankby=distance needs to specify keyword or typename as well';
+				throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
+				// throw apiError;
+			}
+		} else {
+			reqUrl += '&radius='+(searchObj.radius || '1000');
 		}
-	} else {
-		reqUrl += '&radius='+(searchObj.radius || '1000');
+		reqUrl += (searchObj.keyWord != null) ? '&keyword='+searchObj.keyWord : '';
+		reqUrl += (searchObj.typeName != null) ? '&type='+searchObj.typeName : '';
 	}
-	reqUrl += (searchObj.keyWord != null) ? '&keyword='+searchObj.keyWord : '';
-	reqUrl += (searchObj.typeName != null) ? '&type='+searchObj.typeName : '';
-	reqUrl += (searchObj.pageToken != null) ? '&pagetoken='+searchObj.pageToken : '';
+
+	return reqUrl;
+}
+
+let textSearchUrlGen = function(searchObj) {
+	var reqUrl = consts.TEXT_SEARCH_BASE_URL + '?key=' + process.env.GOOGLE_API_KEY;
+	reqUrl += '&language='+(searchObj.languageCode || 'en');
+
+	if (searchObj.pageToken != null) {
+		reqUrl += '&pagetoken='+searchObj.pageToken;
+	}  else {
+		reqUrl += '&query='+searchObj.queryString;
+		if (searchObj.latitude && searchObj.longitude) {
+			reqUrl += '&location='+searchObj.latitude+','+searchObj.longitude;
+			reqUrl += '&radius='+(searchObj.radius || '1000');
+		}
+		reqUrl += (searchObj.typeName != null) ? '&type='+searchObj.typeName : '';
+	}
+
 	return reqUrl;
 }
 
 module.exports = function(searchObj) {
+	cLogger.say(cLogger.TESTING_TYPE, 'searchObj is', searchObj);
 
 	return new Promise((resolve, reject)=> {
 
 				try {
-					let searchUrl = searchUrlGen(searchObj);
+					var searchUrl = null;
+					if (searchObj.searchType === consts.NEARBY_SEARCH_TYPE) {
+						searchUrl = nearbySearchUrlGen(searchObj);
+					} else if (searchObj.searchType === consts.TEXT_SEARCH_TYPE) {
+						searchUrl = textSearchUrlGen(searchObj);
+					} else {
+						let errorMessage = 'search type undefined.';
+						throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
+					}
+					
 					let options = {
 				        method: 'GET',
 				        uri: searchUrl,

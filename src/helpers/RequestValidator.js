@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-05-31 01:45:21
+* @Last Modified time: 2017-06-02 00:58:25
 */
 
 'use strict';
@@ -45,10 +45,17 @@ requestValidator.customValidators = {
     }
 };
 
-requestValidator.validateNearbySearchRequest = function(req) {
+requestValidator.validatePlaceSearchRequest = function(req) {
 	// req.checkBody('name', 'Missing name').isArray().notEmpty();
-    req.checkQuery('lon', 'Missing lon value.').notEmpty();
-    req.checkQuery('lat', 'Missing lat value.').notEmpty();
+    if (req.query.pagetoken != null && req.query.pagetoken.length > 100) {
+        cLogger.say(cLogger.TESTING_TYPE, 'request has pagetoken.');
+    } else if (req.query.query != null) {
+        cLogger.say(cLogger.TESTING_TYPE, 'request has text query.');
+    } else {
+        req.checkQuery('lon', 'Missing lon value.').notEmpty();
+        req.checkQuery('lat', 'Missing lat value.').notEmpty();
+    }
+    
  //    req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 	// req.checkParams('id', 'Invalid value of `id` in the brackets of URL').getByIdParamCorrect();
 }
