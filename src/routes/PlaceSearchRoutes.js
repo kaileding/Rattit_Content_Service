@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 12:15:26
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-02 00:56:28
+* @Last Modified time: 2017-06-02 23:32:55
 */
 
 'use strict';
@@ -13,5 +13,7 @@ import placeSearchController from '../controllers/PlaceSearchController'
 router.get('/nearby', placeSearchController.nearbySearch);
 
 router.get('/text', placeSearchController.textSearch);
+
+router.get('/place/:id', placeSearchController.getPlaceDetails)
 
 module.exports = router;

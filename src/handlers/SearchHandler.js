@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-30 17:32:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-02 01:00:12
+* @Last Modified time: 2017-06-03 00:37:57
 */
 
 'use strict';
@@ -58,6 +58,14 @@ let textSearchUrlGen = function(searchObj) {
 	return reqUrl;
 }
 
+let placeDetailUrlGen = function(searchObj) {
+	var reqUrl = consts.PLACE_DETAILS_URL + '?key=' + process.env.GOOGLE_API_KEY;
+	reqUrl += '&language='+(searchObj.languageCode || 'en');
+	reqUrl += '&placeid='+searchObj.placeId;
+
+	return reqUrl;
+}
+
 module.exports = function(searchObj) {
 	cLogger.say(cLogger.TESTING_TYPE, 'searchObj is', searchObj);
 
@@ -69,6 +77,8 @@ module.exports = function(searchObj) {
 						searchUrl = nearbySearchUrlGen(searchObj);
 					} else if (searchObj.searchType === consts.TEXT_SEARCH_TYPE) {
 						searchUrl = textSearchUrlGen(searchObj);
+					} else if (searchObj.searchType === consts.PLACE_DETAILS_TYPE) {
+						searchUrl = placeDetailUrlGen(searchObj);
 					} else {
 						let errorMessage = 'search type undefined.';
 						throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
