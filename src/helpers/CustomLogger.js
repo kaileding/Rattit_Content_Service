@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-31 00:59:12
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-02 00:01:15
+* @Last Modified time: 2017-06-05 10:13:59
 */
 
 'use strict';
@@ -29,6 +29,15 @@ class CustomLogger {
 			console.log('[END-OF-TESTING]');
 		} else if ((logType === this.ESSENTIAL_TYPE) && this.essentialPrintingAllowed) {
 			console.log('----ESSENTIAL----:');
+			logData.forEach(data => {
+				console.log(data);
+			});
+		}
+	}
+
+	logSQL(...logData) {
+		let SQLPrintingAllowed = true;
+		if (SQLPrintingAllowed) {
 			logData.forEach(data => {
 				console.log(data);
 			});

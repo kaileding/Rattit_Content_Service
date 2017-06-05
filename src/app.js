@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-05-31 00:49:08
+* @Last Modified time: 2017-06-05 10:02:52
 */
 
 'use strict';
@@ -19,6 +19,7 @@ import httpStatus from 'http-status'
 import expressValidator from 'express-validator'
 import APIError from './helpers/APIError'
 import requestValidator from './helpers/RequestValidator'
+import dbConnectionPool from './data/DBConnection'
 import indexRoutes from './routes/index'
 
 let app = express();
@@ -82,6 +83,13 @@ app.use(function (req, res, next) {
 });
 
 console.log(app.get('env'));
+
+dbConnectionPool.authenticate().then(function(err) {
+	console.log('Connection has been established successfully.');
+}).catch(function (err) {
+	console.log('Unable to connect to the database:', err);
+});
+
 
 let port = process.env.PORT || '3500';
 app.set('port', port);
