@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 13:21:47
+* @Last Modified time: 2017-06-05 15:28:01
 */
 
 'use strict';
@@ -10,10 +10,11 @@
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("moment", {
 		id: {
-			type: DataTypes.STRING,
+			type: DataTypes.UUID,
 			allowNull: false,
 			unique: true,
-			primaryKey: true
+			primaryKey: true,
+			defaultValue: DataTypes.UUIDV1
 		},
 		title: {
 			type: DataTypes.STRING,
@@ -28,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		location_id: {
-			type: DataTypes.STRING,
+			type: DataTypes.UUID,
 			allowNull: true,
 			references: {
                 model: 'location',

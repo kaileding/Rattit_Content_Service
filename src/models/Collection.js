@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:22:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 13:28:42
+* @Last Modified time: 2017-06-05 15:27:29
 */
 
 'use strict';
@@ -10,10 +10,11 @@
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("collection", {
 		id: {
-			type: DataTypes.STRING,
+			type: DataTypes.UUID,
 			allowNull: false,
 			unique: true,
-			primaryKey: true
+			primaryKey: true,
+			defaultValue: DataTypes.UUIDV1
 		},
 		title: {
 			type: DataTypes.STRING,

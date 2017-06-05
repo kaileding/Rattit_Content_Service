@@ -2,11 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 14:25:43
+* @Last Modified time: 2017-06-05 14:51:17
 */
 
 'use strict';
-import dbConnectionPool from './data/DBConnection'
+import dbConnectionPool from '../data/DBConnection'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 

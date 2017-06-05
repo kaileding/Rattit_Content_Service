@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 09:02:35
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 14:37:35
+* @Last Modified time: 2017-06-05 15:17:45
 */
 
 'use strict';
@@ -22,7 +22,7 @@ var sequelize  = new Sequelize(databaseName, username, password, {
 	logging: cLogger.logSQL,
 	pool: {
 		max: (maxConnection || 10),
-		min: 1
+		min: 0
 	}
 });
 

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:15:25
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 10:57:41
+* @Last Modified time: 2017-06-05 15:26:52
 */
 
 'use strict';
@@ -10,10 +10,11 @@
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("location", {
 		id: {
-			type: DataTypes.STRING,
+			type: DataTypes.UUID,
 			allowNull: false,
 			unique: true,
-			primaryKey: true
+			primaryKey: true,
+			defaultValue: DataTypes.UUIDV1
 		},
 		loc_point: {
 			type: DataTypes.GEOMETRY('POINT', 4326),
@@ -35,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
 		google_place_id: {
 			type: DataTypes.STRING,
 			allowNull: true
-		}
+		},
 		createdBy: {
 			type: DataTypes.STRING,
 			allowNull: false
@@ -45,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: false,
 			defaultValue: sequelize.literal('NOW()')
 		},
-		modifiedBy: {
+		updatedBy: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
