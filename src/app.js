@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 10:02:52
+* @Last Modified time: 2017-06-05 15:32:01
 */
 
 'use strict';
@@ -85,7 +85,7 @@ app.use(function (req, res, next) {
 console.log(app.get('env'));
 
 dbConnectionPool.authenticate().then(function(err) {
-	console.log('Connection has been established successfully.');
+	console.log('Database Connection has been established successfully.');
 }).catch(function (err) {
 	console.log('Unable to connect to the database:', err);
 });

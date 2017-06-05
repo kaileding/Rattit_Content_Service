@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 15:29:53
+* @Last Modified time: 2017-06-05 15:33:24
 */
 
 'use strict';
@@ -35,7 +35,7 @@ router.get('/init', (req, res, next) => {
     });
 });
 
-router.post('/locations', (req, res, next) => {
+router.post('/postdata', (req, res, next) => {
 
 	models.Locations.create({
 					loc_point: {
