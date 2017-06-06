@@ -1,14 +1,14 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-05 13:22:43
+* @Date:   2017-06-05 22:27:23
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 21:11:38
+* @Last Modified time: 2017-06-05 22:34:17
 */
 
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("collection", {
+	return sequelize.define("comment_for_answer", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -16,26 +16,29 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			defaultValue: DataTypes.UUIDV1
 		},
-		title: {
-			type: DataTypes.STRING,
-			allowNull: false
+		for_answer: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: 'answer',
+				key: 'id'
+			}
 		},
-		description: {
+		for_comment: {
+			type: DataTypes.UUID,
+			allowNull: true,
+			references: {
+				model: 'comment_for_answer',
+				key: 'id'
+			}
+		},
+		words: {
 			type: DataTypes.TEXT(),
 			allowNull: true
 		},
-		cover_image: {
-			type: DataTypes.TEXT(), // image URL
+		likedBy: {
+			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
 			allowNull: true
-		},
-		tags: {
-			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
-		},
-		access_level: {
-			type: DataTypes.ENUM('self', 'followers', 'public'),
-			allowNull: false,
-			defaultValue: 'public'
 		},
 		createdBy: {
 			type: DataTypes.STRING,
@@ -52,7 +55,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'collection'
+		tableName: 'comment_for_answer'
 	}, {
         indexes: [{unique: true, fields: ['id']}]
     });

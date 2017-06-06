@@ -2,12 +2,12 @@
 * @Author: KaileDing
 * @Date:   2017-06-02 00:52:53
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-03 00:31:44
+* @Last Modified time: 2017-06-05 23:49:05
 */
 
 'use strict';
 import httpStatus from 'http-status'
-import requestValidator from '../helpers/RequestValidator'
+import placeRequestValidator from '../helpers/PlaceRequestValidator'
 import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 import searchHandler from '../handlers/SearchHandler'
@@ -15,7 +15,7 @@ let cLogger = new CLogger();
 
 module.exports = {
 	nearbySearch: function(req, res, next) {
-		requestValidator.validatePlaceSearchRequest(req);
+		placeRequestValidator.validatePlaceSearchRequest(req);
 		req.getValidationResult().then(result => {
             if (!result.isEmpty()) {
             	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
@@ -46,7 +46,7 @@ module.exports = {
 	},
 
 	textSearch: function(req, res, next) {
-		requestValidator.validatePlaceSearchRequest(req);
+		placeRequestValidator.validatePlaceSearchRequest(req);
 		req.getValidationResult().then(result => {
             if (!result.isEmpty()) {
             	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');

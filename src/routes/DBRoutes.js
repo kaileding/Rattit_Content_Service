@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 15:33:24
+* @Last Modified time: 2017-06-05 22:52:57
 */
 
 'use strict';
@@ -17,14 +17,13 @@ let cLogger = new CLogger();
 router.get('/init', (req, res, next) => {
 	let forceFlag = (req.query.force && 
 		(req.query.force===1 || req.query.force===true || req.query.force==='true'));
-	let dbInitMsg = forceFlag ? 'Database forcely synchronized successfully' : 'Database seeded successfully';
-
+	
 	dbConnectionPool.sync({
-		force: forceFlag
+		force: true
 	}).then(function (r) {
         res.status(httpStatus.OK).send({
             status: "success",
-            message: dbInitMsg
+            message: 'Database forcely synchronized successfully'
         });
     }, function (err) {
     	cLogger.say(cLogger.ESSENTIAL_TYPE, err);

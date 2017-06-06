@@ -1,14 +1,14 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-05 13:11:22
+* @Date:   2017-06-05 21:56:05
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 22:09:44
+* @Last Modified time: 2017-06-05 22:02:47
 */
 
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("moment", {
+	return sequelize.define("question", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -49,15 +49,11 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: false,
 			defaultValue: 'public'
 		},
-		together_with: {
+		invited_users: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
 			allowNull: true
 		},
-		likedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
-			allowNull: true
-		},
-		appreciatedBy: {
+		interests: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
 			allowNull: true
 		},
@@ -76,7 +72,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'moment'
+		tableName: 'question'
 	}, {
         indexes: [{unique: true, fields: ['id']}]
     });

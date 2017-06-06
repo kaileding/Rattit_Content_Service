@@ -1,14 +1,14 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-05 13:11:22
+* @Date:   2017-06-05 21:34:00
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 22:09:44
+* @Last Modified time: 2017-06-05 22:26:29
 */
 
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("moment", {
+	return sequelize.define("comment_for_moment", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -16,9 +16,21 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			defaultValue: DataTypes.UUIDV1
 		},
-		title: {
-			type: DataTypes.STRING,
-			allowNull: false
+		for_moment: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: 'moment',
+				key: 'id'
+			}
+		},
+		for_comment: {
+			type: DataTypes.UUID,
+			allowNull: true,
+			references: {
+				model: 'comment_for_moment',
+				key: 'id'
+			}
 		},
 		words: {
 			type: DataTypes.TEXT(),
@@ -32,32 +44,11 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.ARRAY(DataTypes.STRING),
 			allowNull: true
 		},
-		attachment: {
-			type: DataTypes.TEXT(), // web link
-			allowNull: true
-		},
-		location_id: {
-			type: DataTypes.UUID,
-			allowNull: true,
-			references: {
-                model: 'location',
-                key: 'id'
-            }
-		},
-		access_level: {
-			type: DataTypes.ENUM('self', 'followers', 'public'),
-			allowNull: false,
-			defaultValue: 'public'
-		},
-		together_with: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
-			allowNull: true
-		},
 		likedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
 			allowNull: true
 		},
-		appreciatedBy: {
+		dislikedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
 			allowNull: true
 		},
@@ -76,7 +67,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'moment'
+		tableName: 'comment_for_moment'
 	}, {
         indexes: [{unique: true, fields: ['id']}]
     });

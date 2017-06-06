@@ -1,14 +1,14 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-05 13:22:43
+* @Date:   2017-06-05 21:03:26
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 21:11:38
+* @Last Modified time: 2017-06-05 21:53:39
 */
 
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("collection", {
+	return sequelize.define("user", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -16,30 +16,37 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			defaultValue: DataTypes.UUIDV1
 		},
-		title: {
-			type: DataTypes.STRING,
+		username: {
+			type: DataTypes.STRING(32),
 			allowNull: false
 		},
-		description: {
+		email: {
+			type: DataTypes.STRING(64),
+			allowNull: false
+		},
+		first_name: {
+			type: DataTypes.STRING(32),
+			allowNull: false
+		},
+		last_name: {
+			type: DataTypes.STRING(32),
+			allowNull: false
+		},
+		gender: {
+			type: DataTypes.ENUM('male', 'female', 'untold'),
+			allowNull: false
+		},
+		manifesto: {
 			type: DataTypes.TEXT(),
 			allowNull: true
 		},
-		cover_image: {
-			type: DataTypes.TEXT(), // image URL
-			allowNull: true
-		},
-		tags: {
+		organization: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
 			allowNull: true
 		},
-		access_level: {
-			type: DataTypes.ENUM('self', 'followers', 'public'),
-			allowNull: false,
-			defaultValue: 'public'
-		},
-		createdBy: {
-			type: DataTypes.STRING,
-			allowNull: false
+		avatar: {
+			type: DataTypes.TEXT(), // image URL
+			allowNull: true
 		},
 		createdAt: {
 			type: DataTypes.DATE,
@@ -52,7 +59,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'collection'
+		tableName: 'user'
 	}, {
         indexes: [{unique: true, fields: ['id']}]
     });

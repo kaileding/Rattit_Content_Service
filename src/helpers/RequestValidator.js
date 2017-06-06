@@ -2,10 +2,12 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-02 00:58:25
+* @Last Modified time: 2017-06-06 00:36:58
 */
 
 'use strict';
+import isUUID from 'is-uuid'
+import urlChecker from 'valid-url'
 import CLogger from './CustomLogger'
 let cLogger = new CLogger();
 
@@ -41,24 +43,26 @@ requestValidator.customValidators = {
                 return false;
             }
             return true;
+        },
+        isOneOfStrings: function(value, enums) {
+            if (value == null) {
+                return true;
+            }
+            return enums.includes(value);
+        },
+        isUUIDFormat: function(value) {
+            if (value == null || typeof value != 'string') {
+                return false;
+            }
+            return isUUID.v1(value);
+        },
+        isText: function(value) {
+            return (typeof value === 'string');
+        },
+        isWebURL: function(value) {
+            return (urlChecker.isWebUri(value) != null);
         }
     }
 };
-
-requestValidator.validatePlaceSearchRequest = function(req) {
-	// req.checkBody('name', 'Missing name').isArray().notEmpty();
-    if (req.query.pagetoken != null && req.query.pagetoken.length > 100) {
-        cLogger.say(cLogger.TESTING_TYPE, 'request has pagetoken.');
-    } else if (req.query.query != null) {
-        cLogger.say(cLogger.TESTING_TYPE, 'request has text query.');
-    } else {
-        req.checkQuery('lon', 'Missing lon value.').notEmpty();
-        req.checkQuery('lat', 'Missing lat value.').notEmpty();
-    }
-    
- //    req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
-	// req.checkParams('id', 'Invalid value of `id` in the brackets of URL').getByIdParamCorrect();
-}
-
 
 module.exports = requestValidator;

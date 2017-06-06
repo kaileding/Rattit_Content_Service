@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 14:15:12
+* @Last Modified time: 2017-06-05 23:02:05
 */
 
 'use strict';
@@ -12,8 +12,9 @@ import httpStatus from 'http-status'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
-import placeSearchRoutes from './PlaceSearchRoutes'
 import dbRoutes from './DBRoutes'
+import placeSearchRoutes from './PlaceSearchRoutes'
+import userRoutes from './UserRoutes'
 
 router.use('/', (req, res, next) => {
 	cLogger.say(cLogger.ESSENTIAL_TYPE, 'Called ['+req.method+'] '+req.url);
@@ -27,5 +28,7 @@ router.get('/ping', (req, res) =>
 router.use('/db', dbRoutes);
 
 router.use('/search', placeSearchRoutes);
+
+router.use('/users', userRoutes);
 
 module.exports = router;
