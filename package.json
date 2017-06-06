@@ -1,7 +1,7 @@
 {
-  "name": "rattit_location_service",
+  "name": "rattit_content_service",
   "version": "1.0.0",
-  "description": "Rattit_Location_Service",
+  "description": "Rattit_Content_Service",
   "main": "src/app.js",
   "scripts": {
     "dev": "babel-node src/app.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kaileding/Rattit_Location_Service.git"
+    "url": "git+https://github.com/kaileding/Rattit_Content_Service.git"
   },
   "author": "Kaile Ding <dingkaile@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kaileding/Rattit_Location_Service/issues"
+    "url": "https://github.com/kaileding/Rattit_Content_Service/issues"
   },
-  "homepage": "https://github.com/kaileding/Rattit_Location_Service#readme",
+  "homepage": "https://github.com/kaileding/Rattit_Content_Service#readme",
   "dependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
