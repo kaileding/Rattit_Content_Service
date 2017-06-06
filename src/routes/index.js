@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 23:02:05
+* @Last Modified time: 2017-06-06 01:15:54
 */
 
 'use strict';
@@ -27,7 +27,7 @@ router.get('/ping', (req, res) =>
 
 router.use('/db', dbRoutes);
 
-router.use('/search', placeSearchRoutes);
+router.use('/location_search', placeSearchRoutes);
 
 router.use('/users', userRoutes);
 

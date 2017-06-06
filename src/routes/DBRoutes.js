@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 22:52:57
+* @Last Modified time: 2017-06-06 01:14:37
 */
 
 'use strict';
@@ -33,28 +33,5 @@ router.get('/init', (req, res, next) => {
         });
     });
 });
-
-router.post('/postdata', (req, res, next) => {
-
-	models.Locations.create({
-					loc_point: {
-						type: 'Point',
-						coordinates: [39.807222,-76.984722],
-						crs: { type: 'name', properties: { name: 'EPSG:4326'} }
-					},
-					name: 'point 1',
-					icon: null,
-					types: null,
-					google_place_id: null,
-					createdBy: 'user 1',
-					updatedBy: 'user 1'
-				}).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one location successfully.', result);
-					res.status(httpStatus.OK).send(result.toJSON());
-				}).catch(function(error) {
-			    	throw error;
-			    });
-
-})
 
 module.exports = router;
