@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 00:51:49
+* @Last Modified time: 2017-06-06 02:26:23
 */
 
 'use strict';
@@ -80,6 +80,14 @@ module.exports = {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
 		req.checkBody({
+			'username': {
+				optional: true,
+				isLength: {
+					options: [{ min: 3, max: 32 }],
+					errorMessage: 'Must be between 3 and 32 chars long' // Error message for the validator, takes precedent over parameter message 
+				},
+				errorMessage: 'Invalid username'
+			},
 			'manifesto': {
 				optional: true,
 				notEmpty: false,

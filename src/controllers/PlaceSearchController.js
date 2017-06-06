@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-02 00:52:53
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 23:49:05
+* @Last Modified time: 2017-06-06 02:43:29
 */
 
 'use strict';
@@ -10,7 +10,7 @@ import httpStatus from 'http-status'
 import placeRequestValidator from '../helpers/PlaceRequestValidator'
 import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
-import searchHandler from '../handlers/SearchHandler'
+import googlePlaceSearchHandler from '../handlers/GooglePlaceSearchHandler'
 let cLogger = new CLogger();
 
 module.exports = {
@@ -27,7 +27,7 @@ module.exports = {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
 
-            	searchHandler({
+            	googlePlaceSearchHandler({
             		searchType: consts.NEARBY_SEARCH_TYPE,
             		latitude: req.query.lat,
             		longitude: req.query.lon,
@@ -58,7 +58,7 @@ module.exports = {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
 
-            	searchHandler({
+            	googlePlaceSearchHandler({
             		searchType: consts.TEXT_SEARCH_TYPE,
             		queryString: req.query.query,
             		latitude: req.query.lat,
@@ -87,7 +87,7 @@ module.exports = {
 	            } else {
 	            	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
-	            	searchHandler({
+	            	googlePlaceSearchHandler({
 	            		searchType: consts.PLACE_DETAILS_TYPE,
 	            		placeId: req.params.id
 	            	}).then(function(result) {

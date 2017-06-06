@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:03:26
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 21:53:39
+* @Last Modified time: 2017-06-06 02:20:46
 */
 
 'use strict';
@@ -47,6 +47,16 @@ module.exports = function(sequelize, DataTypes) {
 		avatar: {
 			type: DataTypes.TEXT(), // image URL
 			allowNull: true
+		},
+		follower_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		followee_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
 		createdAt: {
 			type: DataTypes.DATE,

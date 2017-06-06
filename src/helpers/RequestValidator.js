@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 00:36:58
+* @Last Modified time: 2017-06-06 03:06:26
 */
 
 'use strict';
@@ -60,7 +60,7 @@ requestValidator.customValidators = {
             return (typeof value === 'string');
         },
         isWebURL: function(value) {
-            return (urlChecker.isWebUri(value) != null);
+            return (urlChecker.isWebUri(value) != undefined);
         }
     }
 };

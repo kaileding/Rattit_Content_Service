@@ -2,12 +2,14 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 01:09:01
+* @Last Modified time: 2017-06-06 03:06:10
 */
 
 'use strict';
 import httpStatus from 'http-status'
+import Promise from 'bluebird'
 import userRequestValidator from '../helpers/UserRequestValidator'
+import usersHandler from '../handlers/UsersHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
@@ -71,7 +73,30 @@ module.exports = {
 	},
 
 	getUserByQuery: function(req, res, next) {
-		
+        cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
+        if (req.query.text === null || req.query.text === undefined) {
+            cLogger.say(cLogger.TESTING_TYPE, 'get all users.');
+
+            return usersHandler.findAllUsers().then((results) => {
+                    res.status(httpStatus.OK).send(results);
+                }).catch(function(error) {
+                    throw error;
+                });
+        } else if (typeof req.query.text === 'string') {
+            cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
+
+                return usersHandler.findUserByText(req.query.text).then((results) => {
+                    res.status(httpStatus.OK).send(results);
+                }).catch(function(error) {
+                    throw error;
+                });
+        } else {
+            cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
+            res.status(httpStatus.BAD_REQUEST).send({
+                message: 'request validation failed.',
+                error: 'text in query is not string.'
+            });
+        }
 	},
 
 	updateUser: function(req, res, next) {
@@ -87,6 +112,9 @@ module.exports = {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
             	var updateObj = {};
+                if (req.body.username) {
+                    updateObj.username = req.body.username;
+                }
             	if (req.body.manifesto) {
             		updateObj.manifesto = req.body.manifesto;
             	}
