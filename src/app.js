@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 15:32:01
+* @Last Modified time: 2017-06-07 01:41:19
 */
 
 'use strict';
@@ -66,14 +66,9 @@ app.use('/docs', auth.connect(basic));
 app.use((err, req, res, next) => {
 	if (!(err instanceof APIError)) { // if error is not an instanceOf APIError, convert it.
 		var apiError = new APIError(err.message, err.status, err.isPublic);
-		// return next(apiError);
-		res.status(apiError.status).send({
-			code: apiError.status,
-			message: apiError.message,
-			error: {}
-		});
+		res.status(apiError.status).send(apiError.getFormattedJson());
 	} else {
-		return next(err);
+		res.status(err.statusCode).send(err.getFormattedJson());
 	}
 });
 

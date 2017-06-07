@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-30 17:32:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-03 00:37:57
+* @Last Modified time: 2017-06-07 01:37:17
 */
 
 'use strict';
@@ -28,7 +28,6 @@ let nearbySearchUrlGen = function(searchObj) {
 			if (searchObj.keyWord == null && searchObj.typeName == null) {
 				let errorMessage = 'rankby=distance needs to specify keyword or typename as well';
 				throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
-				// throw apiError;
 			}
 		} else {
 			reqUrl += '&radius='+(searchObj.radius || '1000');
@@ -81,7 +80,7 @@ module.exports = function(searchObj) {
 						searchUrl = placeDetailUrlGen(searchObj);
 					} else {
 						let errorMessage = 'search type undefined.';
-						throw new APIError(errorMessage, httpStatus.BAD_REQUEST, true);
+						reject(new APIError(errorMessage, httpStatus.BAD_REQUEST));
 					}
 					
 					let options = {

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 03:06:10
+* @Last Modified time: 2017-06-07 01:39:45
 */
 
 'use strict';
@@ -40,7 +40,7 @@ module.exports = {
 					cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
 					res.status(httpStatus.OK).send(result.toJSON());
 				}).catch(function(error) {
-			    	throw error;
+			    	next(error);
 			    });
             }
         });
@@ -58,16 +58,11 @@ module.exports = {
             } else {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
-            	return models.Users.findAndCountAll({
-            		where: {
-            			id: req.params.id
-            		}
-            	}).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, 'get one user successfully.', result);
-					res.status(httpStatus.OK).send(result);
-				}).catch(function(error) {
-			    	throw error;
-			    });
+            	return usersHandler.findUserById(req.params.id).then(result => {
+                    res.status(httpStatus.OK).send(result);
+                }).catch(err => {
+                    next(err);
+                });
             }
         });
 	},
@@ -80,7 +75,7 @@ module.exports = {
             return usersHandler.findAllUsers().then((results) => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
-                    throw error;
+                    next(error);
                 });
         } else if (typeof req.query.text === 'string') {
             cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
@@ -88,7 +83,7 @@ module.exports = {
                 return usersHandler.findUserByText(req.query.text).then((results) => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
-                    throw error;
+                    next(error);
                 });
         } else {
             cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
@@ -125,36 +120,11 @@ module.exports = {
             		updateObj.avatar = req.body.avatar;
             	}
 
-            	return models.Users.update(updateObj, {
-                    where: {
-                        id: req.params.id
-                    },
-                    validate: true,
-                    limit: 1
-                }).then((results) => {
-                    if (results[0] === 1) {
-                        return models.Users.findById(req.params.id).then(user => {
-                                if (user) {
-                                    user = user.toJSON();
-                                    res.status(httpStatus.OK).send(user);
-                                } else {
-                                    res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-                                        "message": 'Error retrieving user entity'
-                                    });
-                                }
-                            }).catch(err => {
-                            	cLogger.say(cLogger.GENERAL_TYPE, `ERROR updating cart item : SQL ${err.message} ${JSON.stringify(err.errors)}`);
-                                res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
-                            });
-                    } else {
-                        res.status(httpStatus.BAD_REQUEST).send({
-                            "message": 'User not exist for id: '+req.params.id
-                        });
-                    }
+            	return usersHandler.updateUserById(req.params.id, updateObj).then(result => {
+                    res.status(httpStatus.OK).send(result);
                 }).catch(err => {
-					cLogger.say(cLogger.GENERAL_TYPE, `ERROR updating user : SQL ${err.message} ${JSON.stringify(err.errors)}`);
-                    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
-                });
+                    next(err);
+                })
             }
         });
 	},
@@ -171,29 +141,11 @@ module.exports = {
             } else {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
-            	return models.Users.destroy({
-                        where: {
-                            id: req.params.id
-                        },
-                        limit: 1
-                    }).then(response => {
-                        if (response === 1) {
-                        	cLogger.say(cLogger.GENERAL_TYPE, `Deleted user with id '${req.params.id}'`);
-                            res.sendStatus(httpStatus.OK);
-                        } else if (response === 0) {
-                        	cLogger.say(cLogger.GENERAL_TYPE, `Unable to delete nonexistent user with id '${req.params.id}'`);
-                            res.status(httpStatus.NOT_FOUND).send({
-                                "message": "user not exist"
-                            });
-                        } else { // should never happen
-                            res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-                                "message": "Deleted multiple user, which should never happen"
-                            });
-                        }
-                    }).catch(err => {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting user : SQL ${err.message} ${JSON.stringify(err.errors)}`);
-                        res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
-                    });
+            	return usersHandler.deleteUserById(req.params.id).then(result => {
+                    res.status(httpStatus.OK).send(result);
+                }).catch(err => {
+                    next(err);
+                });
             }
         });
 	}

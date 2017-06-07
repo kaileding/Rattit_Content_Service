@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 01:14:37
+* @Last Modified time: 2017-06-07 01:38:32
 */
 
 'use strict';
@@ -27,10 +27,7 @@ router.get('/init', (req, res, next) => {
         });
     }, function (err) {
     	cLogger.say(cLogger.ESSENTIAL_TYPE, err);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-            status: "failure",
-            message: "Database failed to be seeded"
-        });
+        next(err);
     });
 });
 

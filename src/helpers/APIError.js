@@ -2,55 +2,30 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:44:11
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-05-31 00:48:34
+* @Last Modified time: 2017-06-07 01:41:09
 */
 
 'use strict';
 import httpStatus from 'http-status'
+import CLogger from './CustomLogger'
+let cLogger = new CLogger();
 
-/**
- * @extends Error
- */
-class ExtendableError extends Error {
-    constructor(message, status, isPublic) {
-        super(message);
+module.exports = function APIError(message, statusCode = httpStatus.INTERNAL_SERVER_ERROR, errObj = {}) {
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+    this.message = message;
+    this.statusCode = statusCode;
+    this.errObj = errObj;
 
-        this.name = this.constructor.name;
-        this.message = message;
-        this.status = status;
-        this.isPublic = isPublic;
-        this.isOperational = true; // This is required since bluebird 4 doesn't append it anymore.
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, this.constructor);
-        }
-    }
-}
-
-/**
- * Class representing an API error.
- * @extends ExtendableError
- */
-class APIError extends ExtendableError {
-    /**
-    * Creates an API error.
-    * @param {string} message - Error message.
-    * @param {number} status - HTTP status code of error.
-    * @param {boolean} isPublic - Whether the message should be visible to user or not.
-    */
-    constructor(message, status = httpStatus.INTERNAL_SERVER_ERROR, isPublic = false) {
-        super(message, status, isPublic);
-    }
-
-    // don't understand why not a function.
-    getFormattedJson() {
+    this.getFormattedJson = function() {
         let tempInfo = {
-            'code': this.status,
+            'code': this.statusCode,
             'message': this.message,
-            'info': {}
+            'info': this.errObj
         };
-        console.log('xxxx error:\n', tempInfo);
+        
         return tempInfo;
     }
-}
+};
 
-module.exports = APIError;
+require('util').inherits(module.exports, Error);
