@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:44:36
+* @Last Modified time: 2017-06-10 01:08:04
 */
 
 'use strict';
@@ -49,7 +49,7 @@ module.exports = {
 	// 	let queryByType = findLocations({
 	// 		types: {
 	// 			$contains: {
-	// 				'%'+text+'%'
+	// 				'%'+text+'%' // Not sure
 	// 			}
  //            }
 	// 	});

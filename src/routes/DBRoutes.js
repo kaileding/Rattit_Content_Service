@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 22:35:32
+* @Last Modified time: 2017-06-10 01:11:26
 */
 
 'use strict';
@@ -32,6 +32,7 @@ router.get('/init', (req, res, next) => {
                     message: 'Database forcely synchronized successfully with testing data.'
                 });
             }).catch(error => {
+                cLogger.say(cLogger.ESSENTIAL_TYPE, error.errors);
                 next(new APIError('Failed to insert testing data into database.'));
             });
         } else {

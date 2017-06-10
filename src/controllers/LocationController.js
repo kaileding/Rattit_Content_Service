@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:57:47
+* @Last Modified time: 2017-06-10 01:03:26
 */
 
 'use strict';
@@ -64,6 +64,26 @@ module.exports = {
                 // get with query: limit, lon, lat, text
                 // This function should be well implemented
                 // To be finish later!
+
+                /*
+                    if (req.query.text) {
+                        return locationsHandler.findLocationsByText(req.query.limit).then(function(results) {
+                            cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
+                            res.status(httpStatus.OK).send(results);
+                        }).catch(function(error) {
+                            next(error);
+                        });
+                    } else {
+                        return locationsHandler.findAllLocations(req.query.limit).then(function(results) {
+                            cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
+                            res.status(httpStatus.OK).send(results);
+                        }).catch(function(error) {
+                            next(error);
+                        });
+                    }
+                */
+
+
             	return locationsHandler.findAllLocations(req.query.limit).then(function(results) {
 					cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
 					res.status(httpStatus.OK).send(results);

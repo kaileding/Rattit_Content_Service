@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 22:32:05
+* @Last Modified time: 2017-06-10 01:16:37
 */
 
 'use strict';
@@ -18,7 +18,7 @@ let cLogger = new CLogger();
 module.exports = function() {
 	var insertDataTasks = [
 		models.Users.create({
-			id: "2a13d930-4d91-11e7-b893-c108bf29bfb3",
+			id: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
 			username: "leilililili",
 			email: "leili@sample.com",
 			first_name: "Lei",
@@ -29,7 +29,7 @@ module.exports = function() {
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
 		}),
 		models.Users.create({
-			id: "1962c9fc-3723-41c3-88b7-b8e59886e042",
+			id: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66",
 			username: "hanmeimei",
 			email: "meimeih@sample.com",
 			first_name: "Meimei",
@@ -40,6 +40,7 @@ module.exports = function() {
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
 		}),
 		models.Locations.create({
+			id: "101a04cc-4db5-11e7-b114-b2f933d5fe66",
     		loc_point: {
     			type: 'Point',
 				coordinates: [37.5538989, -122.3001194],
@@ -49,10 +50,11 @@ module.exports = function() {
     		icon: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
     		types: ["bank", "machine"],
     		google_place_id: "23bc8338a0d35ea5e129a01ed998b4ec856607b1",
-    		createdBy: "2a13d930-4d91-11e7-b893-c108bf29bfb3",
-    		updatedBy: "2a13d930-4d91-11e7-b893-c108bf29bfb3"
+    		createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
+    		updatedBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
 		}),
 		models.Locations.create({
+			id: "191a4da2-4db5-11e7-b114-b2f933d5fe66",
     		loc_point: {
     			type: 'Point',
 				coordinates: [37.55586, -122.292897],
@@ -62,8 +64,8 @@ module.exports = function() {
     		icon: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
     		types: ["food", "chinese"],
     		google_place_id: "4613a012d26d9adcad933706d6bbc877f5861078",
-    		createdBy: "2a13d930-4d91-11e7-b893-c108bf29bfb3",
-    		updatedBy: "2a13d930-4d91-11e7-b893-c108bf29bfb3"
+    		createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
+    		updatedBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
 		})
 	];
 
