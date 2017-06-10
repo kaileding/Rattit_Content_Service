@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-07 23:41:59
+* @Last Modified time: 2017-06-10 02:18:30
 */
 
 'use strict';
@@ -69,11 +69,15 @@ module.exports = {
 
 		req.checkBody('gender', 'Missing gender').notEmpty();
 		req.checkBody('gender', 'Missing gender').isOneOfStrings(['male', 'female', 'untold']);
+
+	    return customValidations.validationResult(req);
 	},
 
 	validateGetUserByIdRequest: function(req) {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+
+	    return customValidations.validationResult(req);
 	},
 
 	validateUpdateUserRequest: function(req) {
@@ -110,5 +114,7 @@ module.exports = {
 				}
 			}
 		});
+		
+	    return customValidations.validationResult(req);
 	}
 }

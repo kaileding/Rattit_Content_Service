@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 23:44:28
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:55:51
+* @Last Modified time: 2017-06-10 02:17:58
 */
 
 'use strict';
@@ -50,6 +50,8 @@ module.exports = {
 				}
 			}
 		});
+
+	    return customValidations.validationResult(req);
 	},
 
 	validateGetLocationsRequest: function(req) {
@@ -83,11 +85,15 @@ module.exports = {
 				}
 			}
 		});
+
+	    return customValidations.validationResult(req);
 	},
 
 	validateGetLocationByIdRequest: function(req) {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+
+	    return customValidations.validationResult(req);
 	},
 
 	validateUpdateLocationRequest: function(req) {
@@ -129,5 +135,7 @@ module.exports = {
 				}
 			}
 		});
+		
+	    return customValidations.validationResult(req);
 	}
 }

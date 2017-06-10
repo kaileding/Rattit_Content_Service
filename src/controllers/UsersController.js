@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:46:05
+* @Last Modified time: 2017-06-10 02:26:55
 */
 
 'use strict';
@@ -16,54 +16,40 @@ let cLogger = new CLogger();
 
 module.exports = {
 	createUser: function(req, res, next) {
-		userRequestValidator.validateCreateUserRequest(req);
-		req.getValidationResult().then(result => {
-            if (!result.isEmpty()) {
-            	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
-                res.status(httpStatus.BAD_REQUEST).send({
-                	message: 'request validation failed.',
-                	error: result.array()
+		userRequestValidator.validateCreateUserRequest(req).then(result => {
+            
+            return usersHandler.createUser({
+                    username: req.body.username,
+                    email: req.body.email,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                    gender: req.body.gender,
+                    manifesto: req.body.manifesto,
+                    organization: req.body.organization,
+                    avatar: req.body.avatar
+                }).then(function(result) {
+                    cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
+                    res.status(httpStatus.OK).send(result);
+                }).catch(function(error) {
+                    next(error);
                 });
-            } else {
-            	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
-            	return usersHandler.createUser({
-            		username: req.body.username,
-            		email: req.body.email,
-            		first_name: req.body.first_name,
-            		last_name: req.body.last_name,
-            		gender: req.body.gender,
-            		manifesto: req.body.manifesto,
-            		organization: req.body.organization,
-            		avatar: req.body.avatar
-				}).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
-					res.status(httpStatus.OK).send(result);
-				}).catch(function(error) {
-			    	next(error);
-			    });
-            }
+        }).catch(error => {
+            next(error);
         });
 	},
 
 	getUserById: function(req, res, next) {
-		userRequestValidator.validateGetUserByIdRequest(req);
-		req.getValidationResult().then(result => {
-            if (!result.isEmpty()) {
-            	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
-                res.status(httpStatus.BAD_REQUEST).send({
-                	message: 'request validation failed.',
-                	error: result.array()
-                });
-            } else {
-            	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
+		userRequestValidator.validateGetUserByIdRequest(req).then(result => {
 
-            	return usersHandler.findUserById(req.params.id).then(result => {
+            return usersHandler.findUserById(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
                 });
-            }
+
+        }).catch(error => {
+            next(error);
         });
 	},
 
@@ -95,58 +81,44 @@ module.exports = {
 	},
 
 	updateUser: function(req, res, next) {
-		userRequestValidator.validateUpdateUserRequest(req);
-		req.getValidationResult().then(result => {
-            if (!result.isEmpty()) {
-            	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
-                res.status(httpStatus.BAD_REQUEST).send({
-                	message: 'request validation failed.',
-                	error: result.array()
-                });
-            } else {
-            	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
+		userRequestValidator.validateUpdateUserRequest(req).then(result => {
 
-            	var updateObj = {};
-                if (req.body.username) {
-                    updateObj.username = req.body.username;
-                }
-            	if (req.body.manifesto) {
-            		updateObj.manifesto = req.body.manifesto;
-            	}
-            	if (req.body.organization) {
-            		updateObj.organization = req.body.organization;
-            	}
-            	if (req.body.avatar) {
-            		updateObj.avatar = req.body.avatar;
-            	}
+            var updateObj = {};
+            if (req.body.username) {
+                updateObj.username = req.body.username;
+            }
+            if (req.body.manifesto) {
+                updateObj.manifesto = req.body.manifesto;
+            }
+            if (req.body.organization) {
+                updateObj.organization = req.body.organization;
+            }
+            if (req.body.avatar) {
+                updateObj.avatar = req.body.avatar;
+            }
 
-            	return usersHandler.updateUserById(req.params.id, updateObj).then(result => {
+            return usersHandler.updateUserById(req.params.id, updateObj).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
-                })
-            }
+                });
+
+        }).catch(error => {
+            next(error);
         });
 	},
 
 	deleteUser: function(req, res, next) {
-		userRequestValidator.validateGetUserByIdRequest(req);
-		req.getValidationResult().then(result => {
-            if (!result.isEmpty()) {
-            	cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
-                res.status(httpStatus.BAD_REQUEST).send({
-                	message: 'request validation failed.',
-                	error: result.array()
-                });
-            } else {
-            	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
+		userRequestValidator.validateGetUserByIdRequest(req).then(result => {
 
-            	return usersHandler.deleteUserById(req.params.id).then(result => {
+            return usersHandler.deleteUserById(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
                 });
-            }
+
+        }).catch(error => {
+            next(error);
         });
 	}
 }

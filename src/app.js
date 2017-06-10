@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 21:09:45
+* @Last Modified time: 2017-06-10 02:14:42
 */
 
 'use strict';
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(cookieParser());
-app.use(expressValidator(customValidations));
+app.use(expressValidator(customValidations.customValidators));
 
 app.all('/*', function (req, res, next) {
     // CORS headers
