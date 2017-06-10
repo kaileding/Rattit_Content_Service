@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 01:08:04
+* @Last Modified time: 2017-06-10 03:03:35
 */
 
 'use strict';
@@ -14,33 +14,30 @@ import httpStatus from 'http-status'
 import APIError from '../helpers/APIError'
 import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
-let locationDataHandler = new DataModelHandler(models.Locations);
+// let locationDataHandler = new DataModelHandler(models.Locations);
 let cLogger = new CLogger();
 
-let findLocations = function(filterOjb) {
-	return new Promise((resolve, reject) => {
-			models.Locations.findAll({
-                where: filterOjb,
-                order: [['createdAt', 'DESC']]
-            }).then(function(results) {
-                cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
-                resolve(results);
-            }).catch(function(error) {
-                reject(error);
-            });
-		});
-}
+class LocationsHandler extends DataModelHandler {
+	constructor() {
+		super(models.Locations);
+	}
 
-module.exports = {
-	createLocation: function(locationObj) {
-		return locationDataHandler.createEntryForModel(locationObj);
-	},
+	findLocations(filterOjb) {
+		return new Promise((resolve, reject) => {
+			let model = this.model;
+			model.findAll({
+	                where: filterOjb,
+	                order: [['createdAt', 'DESC']]
+	            }).then(function(results) {
+	                cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
+	                resolve(results);
+	            }).catch(function(error) {
+	                reject(error);
+	            });
+			});
+	}
 
-	findAllLocations: function(number = 20) {
-		return locationDataHandler.findEntriesFromModel(number);
-	},
-
-	// findLocationsByText: function(text) {
+		// findLocationsByText: function(text) {
 	// 	let queryByName = findLocations({
 	// 		name: {
 	// 			ilike: '%'+text+'%'
@@ -64,15 +61,8 @@ module.exports = {
  //                });
 	// },
 
-	findLocationById: function(id) {
-		return locationDataHandler.findEntryByIdFromModel(id);
-	},
-
-	updateLocationById: function(id, updateObj) {
-		return locationDataHandler.updateEntryByIdForModel(id, updateObj);
-	},
-
-	deleteLocationById: function(id) {
-		return locationDataHandler.deleteEntryByIdFromModel(id);
-	}
 }
+
+
+
+module.exports = LocationsHandler;

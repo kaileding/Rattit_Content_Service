@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-06 02:42:04
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:40:04
+* @Last Modified time: 2017-06-10 03:00:06
 */
 
 'use strict';
@@ -14,39 +14,34 @@ import httpStatus from 'http-status'
 import APIError from '../helpers/APIError'
 import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
-let userDataHandler = new DataModelHandler(models.Users);
 let cLogger = new CLogger();
 
-let findUsers = function(filterOjb) {
-	return new Promise((resolve, reject) => {
-			models.Users.findAll({
-                where: filterOjb,
-                order: [['follower_number', 'DESC']]
-            }).then(function(results) {
-                cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
-                resolve(results);
-            }).catch(function(error) {
-                reject(error);
-            });
-		});
-}
+class UsersHandler extends DataModelHandler {
+	constructor() {
+		super(models.Users);
+	}
 
-module.exports = {
-    createUser: function(userObj) {
-        return userDataHandler.createEntryForModel(userObj);
-    },
+	findUsers(filterOjb) {
+		return new Promise((resolve, reject) => {
+				models.Users.findAll({
+	                where: filterOjb,
+	                order: [['follower_number', 'DESC']]
+	            }).then(function(results) {
+	                cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
+	                resolve(results);
+	            }).catch(function(error) {
+	                reject(error);
+	            });
+			});
+	}
 
-	findAllUsers: function(number = 20) {
-		return userDataHandler.findEntriesFromModel(number);
-	},
-
-	findUserByText: function(text) {
-		let queryByUsername = findUsers({
+	findUserByText(text) {
+		let queryByUsername = this.findUsers({
 			username: {
 				ilike: '%'+text+'%'
 			}
 		});
-		let queryByManifesto = findUsers({
+		let queryByManifesto = this.findUsers({
 			manifesto: {
                 ilike: '%'+text+'%'
             }
@@ -60,17 +55,8 @@ module.exports = {
                 }).catch(function(error) {
                     throw error;
                 });
-	},
-
-	findUserById: function(id) {
-		return userDataHandler.findEntryByIdFromModel(id);
-	},
-
-	updateUserById: function(id, updateObj) {
-		return userDataHandler.updateEntryByIdForModel(id, updateObj);
-	},
-
-	deleteUserById: function(id) {
-		return userDataHandler.deleteEntryByIdFromModel(id);
 	}
+
 }
+
+module.exports = UsersHandler;

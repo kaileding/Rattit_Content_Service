@@ -2,23 +2,24 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:31:42
+* @Last Modified time: 2017-06-10 03:06:07
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import locationRequestValidator from '../Validators/LocationRequestValidator'
-import locationsHandler from '../handlers/LocationsHandler'
+import LocationsHandler from '../handlers/LocationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
+let locationsHandler = new LocationsHandler();
 
 module.exports = {
 	createLocation: function(req, res, next) {
 		locationRequestValidator.validateCreateLocationRequest(req).then(result => {
 
-            return locationsHandler.createLocation({
+            return locationsHandler.createEntryForModel({
                     loc_point: {
                         type: 'Point',
                         coordinates: [req.body.coordinates.latitude, req.body.coordinates.longitude],
@@ -66,7 +67,7 @@ module.exports = {
                 }
             */
 
-            return locationsHandler.findAllLocations(req.query.limit).then(function(results) {
+            return locationsHandler.findEntriesFromModel(req.query.limit).then(function(results) {
                     cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
@@ -81,7 +82,7 @@ module.exports = {
 	getLocationById: function(req, res, next) {
 		locationRequestValidator.validateGetLocationByIdRequest(req).then(result => {
 
-            return locationsHandler.findLocationById(req.params.id).then(result => {
+            return locationsHandler.findEntryByIdFromModel(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
@@ -116,7 +117,7 @@ module.exports = {
                 updateObj.google_place_id = req.body.google_place_id;
             }
 
-            return locationsHandler.updateLocationById(req.params.id, updateObj).then(result => {
+            return locationsHandler.updateEntryByIdForModel(req.params.id, updateObj).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
@@ -130,7 +131,7 @@ module.exports = {
 	deleteLocation: function(req, res, next) {
 		locationRequestValidator.validateGetLocationByIdRequest(req).then(result => {
             
-            return locationsHandler.deleteLocationById(req.params.id).then(result => {
+            return locationsHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);

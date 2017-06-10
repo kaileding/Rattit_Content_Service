@@ -2,23 +2,24 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:26:55
+* @Last Modified time: 2017-06-10 02:49:57
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import userRequestValidator from '../Validators/UserRequestValidator'
-import usersHandler from '../handlers/UsersHandler'
+import UsersHandler from '../handlers/UsersHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
+let usersHandler = new UsersHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
 		userRequestValidator.validateCreateUserRequest(req).then(result => {
             
-            return usersHandler.createUser({
+            return usersHandler.createEntryForModel({
                     username: req.body.username,
                     email: req.body.email,
                     first_name: req.body.first_name,
@@ -42,7 +43,7 @@ module.exports = {
 	getUserById: function(req, res, next) {
 		userRequestValidator.validateGetUserByIdRequest(req).then(result => {
 
-            return usersHandler.findUserById(req.params.id).then(result => {
+            return usersHandler.findEntryByIdFromModel(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
@@ -58,7 +59,7 @@ module.exports = {
         if (req.query.text === null || req.query.text === undefined) {
             cLogger.say(cLogger.TESTING_TYPE, 'get all users.');
 
-            return usersHandler.findAllUsers().then((results) => {
+            return usersHandler.findEntriesFromModel().then((results) => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
                     next(error);
@@ -97,7 +98,7 @@ module.exports = {
                 updateObj.avatar = req.body.avatar;
             }
 
-            return usersHandler.updateUserById(req.params.id, updateObj).then(result => {
+            return usersHandler.updateEntryByIdForModel(req.params.id, updateObj).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
@@ -111,7 +112,7 @@ module.exports = {
 	deleteUser: function(req, res, next) {
 		userRequestValidator.validateGetUserByIdRequest(req).then(result => {
 
-            return usersHandler.deleteUserById(req.params.id).then(result => {
+            return usersHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:14:42
+* @Last Modified time: 2017-06-10 02:53:25
 */
 
 'use strict';
@@ -70,6 +70,7 @@ app.use(function (req, res, next) {
 
 app.use((err, req, res, next) => {
 	if (!(err instanceof APIError)) { // if error is not an instanceOf APIError, convert it.
+		console.log(err);
 		var apiError = new APIError(err.message);
 		res.status(apiError.statusCode).send(apiError.getFormattedJson());
 	} else {

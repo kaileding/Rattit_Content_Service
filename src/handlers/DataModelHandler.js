@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 23:26:53
+* @Last Modified time: 2017-06-10 03:07:32
 */
 
 'use strict';
@@ -15,14 +15,15 @@ import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
-module.exports = function(model) {
-	this.model = model;
+class DataModelHandler {
+	constructor(model) {
+		this.model = model;
+	}
 
-	this.createEntryForModel = function(newEntryObj) {
-		let model = this.model;
-
+	createEntryForModel(newEntryObj) {
 		return new Promise((resolve, reject) => {
-				this.model.create(newEntryObj).then(function(result) {
+				let model = this.model;
+				model.create(newEntryObj).then(function(result) {
 					cLogger.say(cLogger.TESTING_TYPE, 'save one entry successfully for model '+model.name+'.', result);
 					resolve(result.toJSON());
 				}).catch(function(error) {
@@ -30,13 +31,14 @@ module.exports = function(model) {
 			    });
 
 			});
-	};
+	}
 
-	this.findEntriesFromModel = function(entryQuantity = 20) {
+	findEntriesFromModel(entryQuantity = 20) {
 		return new Promise((resolve, reject) => {
+				let model = this.model;
 				entryQuantity = Number(entryQuantity);
 				if (Number.isInteger(entryQuantity) && entryQuantity > 0) {
-					this.model.findAndCountAll({
+					model.findAndCountAll({
 			            order: [['createdAt', 'DESC']],
 			            limit: entryQuantity
 					}).then(function(results) {
@@ -49,13 +51,12 @@ module.exports = function(model) {
 					reject(new APIError('Number of rows to fetch should be an integer'));
 				}
 			});
-	};
+	}
 
-	this.findEntryByIdFromModel = function(id) {
-		let model = this.model;
-
+	findEntryByIdFromModel(id) {
 		return new Promise((resolve, reject) => {
-				this.model.findAndCountAll({
+				let model = this.model;
+				model.findAndCountAll({
             		where: {
             			id: id
             		}
@@ -70,13 +71,12 @@ module.exports = function(model) {
 			    	reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
 			    })
 			});
-	};
+	}
 
-	this.updateEntryByIdForModel = function(id, updateObj) {
-		let model = this.model;
-
+	updateEntryByIdForModel(id, updateObj) {
 		return new Promise((resolve, reject) => {
-				this.model.update(updateObj, {
+				let model = this.model;
+				model.update(updateObj, {
                     where: {
                         id: id
                     },
@@ -102,13 +102,12 @@ module.exports = function(model) {
 					reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
 	        });
-	};
+	}
 
-	this.deleteEntryByIdFromModel = function(id) {
-		let model = this.model;
-
+	deleteEntryByIdFromModel(id) {
 		return new Promise((resolve, reject) => {
-				this.model.destroy({
+				let model = this.model;
+				model.destroy({
                     where: {
                         id: id
                     },
@@ -128,7 +127,8 @@ module.exports = function(model) {
                     reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
             });
-	};
+	}
 
-	return this;
 }
+
+module.exports = DataModelHandler;
