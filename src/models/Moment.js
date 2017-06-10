@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 22:09:44
+* @Last Modified time: 2017-06-09 20:48:37
 */
 
 'use strict';
@@ -62,8 +62,12 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		createdBy: {
-			type: DataTypes.STRING,
-			allowNull: false
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+                model: 'user',
+                key: 'id'
+            }
 		},
 		createdAt: {
 			type: DataTypes.DATE,

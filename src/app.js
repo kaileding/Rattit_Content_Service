@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-27 16:01:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-07 01:41:19
+* @Last Modified time: 2017-06-09 21:09:45
 */
 
 'use strict';
@@ -18,7 +18,7 @@ import auth from 'http-auth'
 import httpStatus from 'http-status'
 import expressValidator from 'express-validator'
 import APIError from './helpers/APIError'
-import requestValidator from './helpers/RequestValidator'
+import customValidations from './Validators/CustomValidations'
 import dbConnectionPool from './data/DBConnection'
 import indexRoutes from './routes/index'
 
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(cookieParser());
-app.use(expressValidator(requestValidator.customValidators));
+app.use(expressValidator(customValidations));
 
 app.all('/*', function (req, res, next) {
     // CORS headers
@@ -63,18 +63,18 @@ let basic = auth.basic({
 
 app.use('/docs', auth.connect(basic));
 
+app.use(function (req, res, next) {
+	const apiError = new APIError('API Endpoint Not Found', httpStatus.NOT_FOUND);
+	return next(apiError);
+});
+
 app.use((err, req, res, next) => {
 	if (!(err instanceof APIError)) { // if error is not an instanceOf APIError, convert it.
-		var apiError = new APIError(err.message, err.status, err.isPublic);
-		res.status(apiError.status).send(apiError.getFormattedJson());
+		var apiError = new APIError(err.message);
+		res.status(apiError.statusCode).send(apiError.getFormattedJson());
 	} else {
 		res.status(err.statusCode).send(err.getFormattedJson());
 	}
-});
-
-app.use(function (req, res, next) {
-	const apiError = new APIError('API Endpoint Not Found', httpStatus.NOT_FOUND, true);
-	return next(apiError);
 });
 
 console.log(app.get('env'));

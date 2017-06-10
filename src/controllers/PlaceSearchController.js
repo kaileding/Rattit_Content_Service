@@ -2,12 +2,12 @@
 * @Author: KaileDing
 * @Date:   2017-06-02 00:52:53
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 02:43:29
+* @Last Modified time: 2017-06-07 23:42:59
 */
 
 'use strict';
 import httpStatus from 'http-status'
-import placeRequestValidator from '../helpers/PlaceRequestValidator'
+import placeRequestValidator from '../Validators/PlaceRequestValidator'
 import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 import googlePlaceSearchHandler from '../handlers/GooglePlaceSearchHandler'

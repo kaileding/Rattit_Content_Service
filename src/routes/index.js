@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 01:15:54
+* @Last Modified time: 2017-06-09 23:02:12
 */
 
 'use strict';
@@ -13,13 +13,13 @@ import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
 import dbRoutes from './DBRoutes'
-import placeSearchRoutes from './PlaceSearchRoutes'
+import placeRoutes from './PlaceRoutes'
 import userRoutes from './UserRoutes'
 
 router.use('/', (req, res, next) => {
-	cLogger.say(cLogger.ESSENTIAL_TYPE, 'Called ['+req.method+'] '+req.url);
+	cLogger.say(cLogger.NEWLINE_TYPE, 'Called ['+req.method+'] '+req.url);
 	next();
-})
+});
 
 router.get('/ping', (req, res) =>
     res.status(httpStatus.OK).send({success: true})
@@ -27,7 +27,7 @@ router.get('/ping', (req, res) =>
 
 router.use('/db', dbRoutes);
 
-router.use('/location_search', placeSearchRoutes);
+router.use('/locations', placeRoutes);
 
 router.use('/users', userRoutes);
 

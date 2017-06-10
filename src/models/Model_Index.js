@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 22:50:13
+* @Last Modified time: 2017-06-09 22:15:50
 */
 
 'use strict';
@@ -10,8 +10,8 @@ import dbConnectionPool from '../data/DBConnection'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
-let Locations = dbConnectionPool.import(__dirname + "/Location");
 let Users = dbConnectionPool.import(__dirname + "/User");
+let Locations = dbConnectionPool.import(__dirname + "/Location");
 let UserRelationships = dbConnectionPool.import(__dirname + "/UserRelationship");
 let Moments = dbConnectionPool.import(__dirname + "/Moment");
 let Collections = dbConnectionPool.import(__dirname + "/Collection");
@@ -21,8 +21,8 @@ let CommentsForMoment = dbConnectionPool.import(__dirname + "/CommentForMoment")
 let CommentsForAnswer = dbConnectionPool.import(__dirname + "/CommentForAnswer");
 
 module.exports = {
-	Locations,
 	Users,
+	Locations,
 	UserRelationships,
 	Moments,
 	Collections,

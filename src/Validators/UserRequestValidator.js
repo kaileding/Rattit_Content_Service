@@ -2,12 +2,12 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 02:26:23
+* @Last Modified time: 2017-06-07 23:41:59
 */
 
 'use strict';
-import requestValidator from './RequestValidator'
-import CLogger from './CustomLogger'
+import customValidations from './CustomValidations'
+import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
 module.exports = {

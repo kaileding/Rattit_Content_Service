@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:44:11
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-07 01:41:09
+* @Last Modified time: 2017-06-10 00:29:27
 */
 
 'use strict';
@@ -17,7 +17,10 @@ module.exports = function APIError(message, statusCode = httpStatus.INTERNAL_SER
     this.statusCode = statusCode;
     this.errObj = errObj;
 
+    cLogger.say(cLogger.ESSENTIAL_TYPE, this);
+
     this.getFormattedJson = function() {
+
         let tempInfo = {
             'code': this.statusCode,
             'message': this.message,

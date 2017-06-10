@@ -2,18 +2,16 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 03:06:26
+* @Last Modified time: 2017-06-10 00:52:03
 */
 
 'use strict';
 import isUUID from 'is-uuid'
 import urlChecker from 'valid-url'
-import CLogger from './CustomLogger'
+import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
-var requestValidator = {};
-
-requestValidator.customValidators = {
+module.exports = {
 	customValidators: {
         isArray: function(value) {
             return Array.isArray(value);
@@ -61,8 +59,19 @@ requestValidator.customValidators = {
         },
         isWebURL: function(value) {
             return (urlChecker.isWebUri(value) != undefined);
+        },
+        isGeoCoordinates: function(value) {
+            if (value.longitude && value.latitude) {
+                return ((typeof value.longitude === 'number') 
+                    && (typeof value.latitude === 'number'));
+            }
+            return false;
+        },
+        greaterThanOrEqualTo: function(value, number) {
+            return value >= number;
+        },
+        isNumber: function(value) {
+            return typeof value === 'number';
         }
     }
 };
-
-module.exports = requestValidator;

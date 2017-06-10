@@ -2,13 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-07 01:39:45
+* @Last Modified time: 2017-06-10 00:46:05
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
-import userRequestValidator from '../helpers/UserRequestValidator'
+import userRequestValidator from '../Validators/UserRequestValidator'
 import usersHandler from '../handlers/UsersHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
@@ -27,7 +27,7 @@ module.exports = {
             } else {
             	cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
 
-            	return models.Users.create({
+            	return usersHandler.createUser({
             		username: req.body.username,
             		email: req.body.email,
             		first_name: req.body.first_name,
@@ -38,7 +38,7 @@ module.exports = {
             		avatar: req.body.avatar
 				}).then(function(result) {
 					cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
-					res.status(httpStatus.OK).send(result.toJSON());
+					res.status(httpStatus.OK).send(result);
 				}).catch(function(error) {
 			    	next(error);
 			    });
@@ -67,7 +67,7 @@ module.exports = {
         });
 	},
 
-	getUserByQuery: function(req, res, next) {
+	getUsersByQuery: function(req, res, next) {
         cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
         if (req.query.text === null || req.query.text === undefined) {
             cLogger.say(cLogger.TESTING_TYPE, 'get all users.');
