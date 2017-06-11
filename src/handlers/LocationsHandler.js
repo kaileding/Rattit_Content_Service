@@ -2,11 +2,12 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 03:03:35
+* @Last Modified time: 2017-06-10 17:53:56
 */
 
 'use strict';
 import Promise from 'bluebird'
+import Sequelize from 'sequelize'
 import models from '../models/Model_Index'
 import DataModelHandler from './DataModelHandler'
 import rp from 'request-promise'
@@ -22,44 +23,57 @@ class LocationsHandler extends DataModelHandler {
 		super(models.Locations);
 	}
 
-	findLocations(filterOjb) {
-		return new Promise((resolve, reject) => {
-			let model = this.model;
-			model.findAll({
-	                where: filterOjb,
-	                order: [['createdAt', 'DESC']]
-	            }).then(function(results) {
-	                cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
-	                resolve(results);
-	            }).catch(function(error) {
-	                reject(error);
-	            });
-			});
+	findLocationsByQuery(queryObj) {
+
+   		let okToQueryDistance = (queryObj.coordinates.longitude 
+   								&& queryObj.coordinates.latitude 
+   								&& queryObj.distance);
+   		let queryDistance = okToQueryDistance ?  Sequelize.where(
+	   			Sequelize.fn('ST_Distance_Sphere', 
+	        							Sequelize.fn('ST_SetSRID', 
+													Sequelize.fn('ST_MakePoint',  
+														queryObj.coordinates.latitude, 
+														queryObj.coordinates.longitude), 
+													4326), 
+	        							Sequelize.col('loc_point')),
+	   			{$lte: queryObj.distance}
+	   			) : true;
+
+        let queryText = queryObj.text ? Sequelize.or(
+		        	{
+		        		name: {
+		        			ilike: '%'+queryObj.text+'%'
+		        		}
+		        	}, 
+		        	{
+		        		types: {
+		        			$contains: [queryObj.text]
+		        		}
+		        	}
+		        ) : true;
+
+        let selectObj = okToQueryDistance ? {
+        			include: [[Sequelize.fn('ST_Distance_Sphere', 
+        							Sequelize.fn('ST_SetSRID', 
+												Sequelize.fn('ST_MakePoint',  
+													queryObj.coordinates.latitude, 
+													queryObj.coordinates.longitude), 
+												4326), 
+        							Sequelize.col('loc_point')), 'distance']]
+        		} : null;
+
+		let filterObj = Sequelize.and(
+	        	queryDistance,
+	        	queryText
+			);
+
+		let orderObj = [['createdAt', 'DESC']];
+
+		let limit = queryObj.limit;
+
+
+		return this.findEntriesFromModel(selectObj, filterObj, orderObj, limit);
 	}
-
-		// findLocationsByText: function(text) {
-	// 	let queryByName = findLocations({
-	// 		name: {
-	// 			ilike: '%'+text+'%'
-	// 		}
-	// 	});
-	// 	let queryByType = findLocations({
-	// 		types: {
-	// 			$contains: {
-	// 				'%'+text+'%' // Not sure
-	// 			}
- //            }
-	// 	});
-
-	// 	return Promise.all([queryByName, queryByType]).then((results) => {
- //                    var combinedRes = results[0];
- //                    combinedRes = combinedRes.concat(results[1]);
- //                    cLogger.say(cLogger.TESTING_TYPE, 'get '+combinedRes.length+' locations successfully.');
- //                    return combinedRes;
- //                }).catch(function(error) {
- //                    throw error;
- //                });
-	// },
 
 }
 

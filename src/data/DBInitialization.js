@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 01:16:37
+* @Last Modified time: 2017-06-10 16:22:03
 */
 
 'use strict';
@@ -57,7 +57,7 @@ module.exports = function() {
 			id: "191a4da2-4db5-11e7-b114-b2f933d5fe66",
     		loc_point: {
     			type: 'Point',
-				coordinates: [37.55586, -122.292897],
+				coordinates: [37.566901, -122.282897],
 				crs: { type: 'name', properties: { name: 'EPSG:4326'} }
     		},
     		name: "Fish Market Restaurant",

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 03:07:32
+* @Last Modified time: 2017-06-10 16:33:52
 */
 
 'use strict';
@@ -33,16 +33,20 @@ class DataModelHandler {
 			});
 	}
 
-	findEntriesFromModel(entryQuantity = 20) {
+	findEntriesFromModel(selectObj, filterOjb, orderObj, entryQuantity = 20) {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
+				selectObj = selectObj || { exclude: [] };
+				entryQuantity = entryQuantity || 20;
 				entryQuantity = Number(entryQuantity);
 				if (Number.isInteger(entryQuantity) && entryQuantity > 0) {
 					model.findAndCountAll({
-			            order: [['createdAt', 'DESC']],
+						attributes: selectObj,
+						where: filterOjb,
+			            order: (orderObj || [['createdAt', 'DESC']]),
 			            limit: entryQuantity
 					}).then(function(results) {
-				        cLogger.say(cLogger.TESTING_TYPE, 'fetched results are', results);
+				        cLogger.say(cLogger.TESTING_TYPE, 'fetched '+results.count+' results');
 				        resolve(results);
 					}).catch(function(error) {
 						reject(error);

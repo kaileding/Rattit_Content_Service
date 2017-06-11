@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:16:13
+* @Last Modified time: 2017-06-10 16:16:28
 */
 
 'use strict';
@@ -75,7 +75,11 @@ module.exports = {
                 return value >= number;
             },
             isNumber: function(value) {
-                return typeof value === 'number';
+                if (typeof value === 'string' && value.length > 0) {
+                    return !isNaN(value);
+                } else {
+                    return false;
+                }
             }
         }
     },

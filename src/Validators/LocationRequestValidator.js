@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 23:44:28
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:17:58
+* @Last Modified time: 2017-06-10 16:11:03
 */
 
 'use strict';
@@ -76,6 +76,12 @@ module.exports = {
 				optional: true,
 				isNumber: {
 					errorMessage: 'Query lat must be a number'
+				}
+			},
+			'distance': {
+				optional: true,
+				isNumber: {
+					errorMessage: 'Query distance must be a number'
 				}
 			},
 			'text': {

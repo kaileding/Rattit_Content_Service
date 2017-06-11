@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 03:06:07
+* @Last Modified time: 2017-06-10 16:12:22
 */
 
 'use strict';
@@ -45,34 +45,23 @@ module.exports = {
 
 	getLocationsByQuery: function(req, res, next) {
 		locationRequestValidator.validateGetLocationsRequest(req).then(result => {
+            
+            let queryObj = {
+                text: req.query.text,
+                coordinates: {
+                    longitude: Number(req.query.lon),
+                    latitude: Number(req.query.lat)
+                },
+                distance: Number(req.query.distance),
+                limit: req.query.limit
+            };
 
-            // get with query: limit, lon, lat, text
-            // This function should be well implemented
-            // To be finish later!
-            /*
-                if (req.query.text) {
-                    return locationsHandler.findLocationsByText(req.query.limit).then(function(results) {
-                        cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
-                        res.status(httpStatus.OK).send(results);
-                    }).catch(function(error) {
-                        next(error);
-                    });
-                } else {
-                    return locationsHandler.findAllLocations(req.query.limit).then(function(results) {
-                        cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
-                        res.status(httpStatus.OK).send(results);
-                    }).catch(function(error) {
-                        next(error);
-                    });
-                }
-            */
-
-            return locationsHandler.findEntriesFromModel(req.query.limit).then(function(results) {
-                    cLogger.say(cLogger.TESTING_TYPE, 'get locations successfully.', results);
-                    res.status(httpStatus.OK).send(results);
-                }).catch(function(error) {
-                    next(error);
-                });
+            return locationsHandler.findLocationsByQuery(queryObj)
+                        .then(function(results) {
+                            res.status(httpStatus.OK).send(results);
+                        }).catch(function(error) {
+                            next(error);
+                        });
 
         }).catch(error => {
             next(error);

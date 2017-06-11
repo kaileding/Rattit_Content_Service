@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:49:57
+* @Last Modified time: 2017-06-10 16:34:40
 */
 
 'use strict';
@@ -56,29 +56,12 @@ module.exports = {
 
 	getUsersByQuery: function(req, res, next) {
         cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
-        if (req.query.text === null || req.query.text === undefined) {
-            cLogger.say(cLogger.TESTING_TYPE, 'get all users.');
 
-            return usersHandler.findEntriesFromModel().then((results) => {
+            return usersHandler.findUserByText(req.query.text).then((results) => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
                     next(error);
                 });
-        } else if (typeof req.query.text === 'string') {
-            cLogger.say(cLogger.TESTING_TYPE, 'validation passed.');
-
-                return usersHandler.findUserByText(req.query.text).then((results) => {
-                    res.status(httpStatus.OK).send(results);
-                }).catch(function(error) {
-                    next(error);
-                });
-        } else {
-            cLogger.say(cLogger.TESTING_TYPE, 'At least one error.');
-            res.status(httpStatus.BAD_REQUEST).send({
-                message: 'request validation failed.',
-                error: 'text in query is not string.'
-            });
-        }
 	},
 
 	updateUser: function(req, res, next) {
