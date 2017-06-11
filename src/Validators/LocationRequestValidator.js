@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 23:44:28
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:11:03
+* @Last Modified time: 2017-06-10 21:39:58
 */
 
 'use strict';
@@ -64,6 +64,16 @@ module.exports = {
 				greaterThanOrEqualTo: {
 					options: [1],
 					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
 				}
 			},
 			'lon': {

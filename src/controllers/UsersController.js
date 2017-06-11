@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:34:40
+* @Last Modified time: 2017-06-10 21:45:19
 */
 
 'use strict';
@@ -55,13 +55,20 @@ module.exports = {
 	},
 
 	getUsersByQuery: function(req, res, next) {
-        cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
+        userRequestValidator.validateGetUserByTextRequest(req).then(result => {
+            cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
 
-            return usersHandler.findUserByText(req.query.text).then((results) => {
+            return usersHandler.findUserByText(req.query.text, 
+                                                req.query.limit, 
+                                                req.query.offset).then((results) => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
                     next(error);
                 });
+
+        }).catch(error => {
+            next(error);
+        });
 	},
 
 	updateUser: function(req, res, next) {

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-06 02:42:04
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:27:35
+* @Last Modified time: 2017-06-10 21:37:45
 */
 
 'use strict';
@@ -22,7 +22,7 @@ class UsersHandler extends DataModelHandler {
 		super(models.Users);
 	}
 
-	findUserByText(text) {
+	findUserByText(text, limit, offset) {
 		let filterObj = text ? Sequelize.or(
 	        	{
 	        		username: {
@@ -38,7 +38,7 @@ class UsersHandler extends DataModelHandler {
 
 		let orderObj = [['follower_number', 'DESC']];
 
-		return this.findEntriesFromModel(null, filterObj, orderObj);
+		return this.findEntriesFromModel(null, filterObj, orderObj, limit, offset);
 	}
 
 }

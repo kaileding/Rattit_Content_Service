@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:12:22
+* @Last Modified time: 2017-06-10 21:39:24
 */
 
 'use strict';
@@ -53,7 +53,8 @@ module.exports = {
                     latitude: Number(req.query.lat)
                 },
                 distance: Number(req.query.distance),
-                limit: req.query.limit
+                limit: req.query.limit,
+                offset: req.query.offset
             };
 
             return locationsHandler.findLocationsByQuery(queryObj)

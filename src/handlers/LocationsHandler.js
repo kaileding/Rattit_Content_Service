@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 17:53:56
+* @Last Modified time: 2017-06-10 21:39:13
 */
 
 'use strict';
@@ -71,8 +71,10 @@ class LocationsHandler extends DataModelHandler {
 
 		let limit = queryObj.limit;
 
+		let offset = queryObj.offset;
 
-		return this.findEntriesFromModel(selectObj, filterObj, orderObj, limit);
+
+		return this.findEntriesFromModel(selectObj, filterObj, orderObj, limit, offset);
 	}
 
 }

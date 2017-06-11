@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:18:30
+* @Last Modified time: 2017-06-10 21:44:19
 */
 
 'use strict';
@@ -76,6 +76,39 @@ module.exports = {
 	validateGetUserByIdRequest: function(req) {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+
+	    return customValidations.validationResult(req);
+	},
+
+	validateGetUserByTextRequest: function(req) {
+		req.checkQuery({
+			'limit': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query limit must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			},
+			'text': {
+				optional: true,
+				isText: {
+					errorMessage: 'Query text must be a string'
+				}
+			}
+		});
 
 	    return customValidations.validationResult(req);
 	},
