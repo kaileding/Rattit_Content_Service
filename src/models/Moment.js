@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:49:16
+* @Last Modified time: 2017-06-11 01:34:34
 */
 
 'use strict';
@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		words: {
 			type: DataTypes.TEXT(),
-			allowNull: true
+			allowNull: false
 		},
 		photos: {
 			type: DataTypes.JSON,

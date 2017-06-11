@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 02:59:50
+* @Last Modified time: 2017-06-11 01:51:00
 */
 
 'use strict';
@@ -15,6 +15,7 @@ let cLogger = new CLogger();
 import dbRoutes from './DBRoutes'
 import placeRoutes from './PlaceRoutes'
 import userRoutes from './UserRoutes'
+import momentRoutes from './MomentRoutes'
 
 router.use('/', (req, res, next) => {
 	cLogger.say(cLogger.NEWLINE_TYPE, 'Called ['+req.method+'] '+req.url);
@@ -30,5 +31,7 @@ router.use('/db', dbRoutes);
 router.use('/locations', placeRoutes);
 
 router.use('/users', userRoutes);
+
+router.use('/moments', momentRoutes);
 
 module.exports = router;
