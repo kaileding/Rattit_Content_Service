@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 22:03:25
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 20:50:37
+* @Last Modified time: 2017-06-11 16:22:40
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("answer", {
@@ -34,25 +35,29 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		hash_tags: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('hash_tags')
 		},
-		agreedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
-			allowNull: true
+		agree_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
-		disagreedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
-			allowNull: true
+		disagree_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
-		agree_minus_disagree: {
-			type: new DataTypes.VIRTUAL(DataTypes.INTEGER, ['agreedBy', 'disagreedBy']),
+		admirer_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		rank_score: {
+			type: new DataTypes.VIRTUAL(DataTypes.INTEGER, ['agree_number', 'disagree_number', 'admirer_number']),
 		    get: function() {
-		    	return this.get('agreedBy') - this.get('disagreedBy');
+		    	return this.get('agree_number') + this.get('admirer_number') - this.get('disagree_number');
 		    }
-		},
-		appreciatedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
-			allowNull: true
 		},
 		createdBy: {
 			type: DataTypes.UUID,

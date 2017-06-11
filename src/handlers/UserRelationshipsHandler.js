@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 01:12:12
+* @Last Modified time: 2017-06-11 16:49:39
 */
 
 'use strict';
@@ -42,32 +42,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 							+ 'LIMIT ' + limit + ' ' 
 							+ 'OFFSET ' + offset + ';';
 
-		return new Promise((resolve, reject) => {
-				let countQuery = dbConnectionPool.query(countQueryStatement, { type: Sequelize.QueryTypes.SELECT}).then(result => {
-					return result;
-				}).catch(error => {
-					throw error;
-				});
-
-				let realQuery = dbConnectionPool.query(queryStatement, { type: Sequelize.QueryTypes.SELECT}).then(results => {
-					return results;
-				}).catch(error => {
-					throw error;
-				});
-
-				Promise.all([countQuery, realQuery]).then(results => {
-
-					var responseObj = {
-						count: results[0][0].count,
-						rows: results[1]
-					};
-					resolve(responseObj);
-
-				}).catch(error => {
-					reject(error);
-				})
-
-			});
+		return this.findEntriesFromModelWithSQL(countQueryStatement, queryStatement);
 	}
 
 	findFollowersByUserId(id, limit, offset) {

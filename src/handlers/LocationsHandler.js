@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 21:39:13
+* @Last Modified time: 2017-06-11 16:28:31
 */
 
 'use strict';
@@ -47,7 +47,7 @@ class LocationsHandler extends DataModelHandler {
 		        	}, 
 		        	{
 		        		types: {
-		        			$contains: [queryObj.text]
+		        			$contains: [queryObj.text.toLowerCase()]
 		        		}
 		        	}
 		        ) : true;

@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:03:26
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:47:24
+* @Last Modified time: 2017-06-11 16:17:57
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("rattit_user", {
@@ -42,7 +43,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		organization: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('organization')
 		},
 		avatar: {
 			type: DataTypes.TEXT(), // image URL

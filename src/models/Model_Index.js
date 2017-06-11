@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:11:05
+* @Last Modified time: 2017-06-11 14:42:02
 */
 
 'use strict';
@@ -19,6 +19,9 @@ let Questions = dbConnectionPool.import(__dirname + "/Question");
 let Answers = dbConnectionPool.import(__dirname + "/Answer");
 let CommentsForMoment = dbConnectionPool.import(__dirname + "/CommentForMoment");
 let CommentsForAnswer = dbConnectionPool.import(__dirname + "/CommentForAnswer");
+let VotesForAnswers = dbConnectionPool.import(__dirname + "/VotesForAnswer");
+let VotesForMoments = dbConnectionPool.import(__dirname + "/VotesForMoment");
+let VotesForQuestions = dbConnectionPool.import(__dirname + "/VotesForQuestion");
 
 
 module.exports = {
@@ -30,5 +33,8 @@ module.exports = {
 	Questions,
 	Answers,
 	CommentsForMoment,
-	CommentsForAnswer
+	CommentsForAnswer,
+	VotesForAnswers,
+	VotesForMoments,
+	VotesForQuestions
 }

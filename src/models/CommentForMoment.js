@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:34:00
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:50:11
+* @Last Modified time: 2017-06-11 16:21:15
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("comment_for_moment", {
@@ -42,7 +43,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		hash_tags: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('hash_tags')
 		},
 		likedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids

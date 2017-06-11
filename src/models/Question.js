@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:56:05
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:49:29
+* @Last Modified time: 2017-06-11 16:23:23
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("question", {
@@ -30,7 +31,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		hash_tags: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('hash_tags')
 		},
 		attachment: {
 			type: DataTypes.TEXT(), // web link
@@ -49,13 +51,15 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: false,
 			defaultValue: 'public'
 		},
-		invited_users: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
-			allowNull: true
+		interests_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
-		interests: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
-			allowNull: true
+		pitys_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
 		createdBy: {
 			type: DataTypes.UUID,

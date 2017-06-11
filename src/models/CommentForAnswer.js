@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 22:27:23
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:50:24
+* @Last Modified time: 2017-06-11 16:24:50
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("comment_for_answer", {

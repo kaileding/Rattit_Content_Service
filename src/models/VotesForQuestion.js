@@ -1,15 +1,15 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-05 21:22:11
+* @Date:   2017-06-11 12:15:19
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:25:31
+* @Last Modified time: 2017-06-11 16:26:01
 */
 
 'use strict';
 import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("user_relation", {
+	return sequelize.define("votes_for_question", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -17,23 +17,34 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			defaultValue: DataTypes.UUIDV1
 		},
-		follower: {
+		vote_type: {
+			type: DataTypes.ENUM('interest', 'invite', 'pity'),
+			allowNull: false,
+			defaultValue: 'interest'
+		},
+		question_id: {
 			type: DataTypes.UUID,
 			allowNull: false,
-			unique: 'follower_followee_comb',
+			references: {
+                model: 'question',
+                key: 'id'
+            }
+		},
+		subject_id: {
+			type: DataTypes.UUID,
+			allowNull: true,
 			references: {
                 model: 'rattit_user',
                 key: 'id'
             }
 		},
-		followee: {
+		createdBy: {
 			type: DataTypes.UUID,
 			allowNull: false,
-			unique: 'follower_followee_comb',
 			references: {
-				model: 'rattit_user',
-				key: 'id'
-			}
+                model: 'rattit_user',
+                key: 'id'
+            }
 		},
 		createdAt: {
 			type: DataTypes.DATE,
@@ -46,8 +57,8 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'user_relation'
+		tableName: 'votes_for_question'
 	}, {
-        indexes: [{unique: true, fields: ['id']}, {unique: true, fields: ['follower', 'followee']}]
+        indexes: [{unique: true, fields: ['id']}]
     });
 }

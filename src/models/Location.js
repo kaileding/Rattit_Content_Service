@@ -2,10 +2,11 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:15:25
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:49:58
+* @Last Modified time: 2017-06-11 16:21:51
 */
 
 'use strict';
+import SequelizeModelHelpers from '../helpers/SequelizeModelHelpers'
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("location", {
@@ -31,7 +32,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		types: {
 			type: DataTypes.ARRAY(DataTypes.STRING),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('types')
 		},
 		google_place_id: {
 			type: DataTypes.STRING,

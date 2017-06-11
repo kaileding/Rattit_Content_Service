@@ -2,12 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 01:19:19
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 01:20:34
+* @Last Modified time: 2017-06-11 16:52:02
 */
 
 'use strict';
 import Promise from 'bluebird'
 import Sequelize from 'sequelize'
+import dbConnectionPool from '../data/DBConnection'
 import models from '../models/Model_Index'
 import DataModelHandler from './DataModelHandler'
 import rp from 'request-promise'
@@ -22,24 +23,77 @@ class MomentsHandler extends DataModelHandler {
 		super(models.Moments);
 	}
 
-	// findUserByText(text, limit, offset) {
-	// 	let filterObj = text ? Sequelize.or(
-	//         	{
-	//         		username: {
-	//         			ilike: '%'+text+'%'
-	//         		}
-	//         	}, 
-	//         	{
-	//         		manifesto: {
-	// 	                ilike: '%'+text+'%'
-	// 	            }
-	//         	}
-	//         ) : null;
+	findMomentsJoinWithVotes(options, limit, offset) {
+		limit = (limit != null) ? Number(limit) : 20;
+		offset = (offset != null) ? Number(offset) : 0;
 
-	// 	let orderObj = [['follower_number', 'DESC']];
+		let countQueryStatement = 'SELECT count(*) '
+							+ 'FROM "moment" LEFT JOIN "votes_for_moment" '
+							+ 'ON "votes_for_moment"."moment_id = "moment"."id" '
+							+ 'AND "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
+							+ 'AND  "votes_for_moment"."vote_type" = ' + "'" + options.voted_type + "' "
+							+ 'ORDER BY "votes_for_moment"."createdAt" DESC '
+							+ 'LIMIT ' + limit + ' ' 
+							+ 'OFFSET ' + offset + ';';
 
-	// 	return this.findEntriesFromModel(null, filterObj, orderObj, limit, offset);
-	// }
+		let queryStatement = 'SELECT "moment".*, "votes_for_moment"."createdAt" as "vote_createdAt" '
+							+ 'FROM "moment" LEFT JOIN "votes_for_moment" '
+							+ 'ON "votes_for_moment"."moment_id = "moment"."id" '
+							+ 'AND "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
+							+ 'AND  "votes_for_moment"."vote_type" = ' + "'" + options.voted_type + "' "
+							+ 'ORDER BY "votes_for_moment"."createdAt" DESC '
+							+ 'LIMIT ' + limit + ' ' 
+							+ 'OFFSET ' + offset + ';';
+
+		return this.findEntriesFromModelWithSQL(countQueryStatement, queryStatement);
+	}
+
+	findMomentsByQuery(queryObj) {
+		if (queryObj.joinWithVotes) {
+			let options = {
+				voted_type: queryObj.voted_type,
+				voted_by: queryObj.voted_by
+			};
+			
+			return this.findMomentsJoinWithVotes(options, queryObj.limit, queryObj.offset);
+		} else {
+
+        	let queryText = queryObj.text ? Sequelize.or(
+		        	{
+		        		title: {
+		        			ilike: '%'+queryObj.text+'%'
+		        		}
+		        	}, 
+		        	{
+		        		words: {
+		        			ilike: '%'+queryObj.text+'%'
+		        		}
+		        	},
+		        	{
+		        		hash_tags: {
+		        			$contains: [queryObj.text.toLowerCase()]
+		        		}
+		        	}
+		        ) : true;
+
+        	let queryLocationId = queryObj.location_id ? {
+	        		location_id: queryObj.location_id
+	        	} : true;
+
+	        let queryAuthorId = queryObj.author_id ? {
+		        	createdBy: queryObj.author_id
+		        } : true;
+
+			let filterObj = Sequelize.and(
+				queryText,
+				queryLocationId,
+				queryAuthorId
+				);
+
+			return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+		}
+
+	}
 
 }
 

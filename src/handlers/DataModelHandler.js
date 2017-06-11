@@ -2,11 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 00:16:52
+* @Last Modified time: 2017-06-11 16:49:59
 */
 
 'use strict';
 import Promise from 'bluebird'
+import Sequelize from 'sequelize'
+import dbConnectionPool from '../data/DBConnection'
 import models from '../models/Model_Index'
 import rp from 'request-promise'
 import httpStatus from 'http-status'
@@ -24,7 +26,7 @@ class DataModelHandler {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
 				model.create(newEntryObj).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one entry successfully for model '+model.name+'.', result);
+					cLogger.say(cLogger.TESTING_TYPE, 'save one entry successfully for model '+model.name+'.');
 					resolve(result.toJSON());
 				}).catch(function(error) {
 			    	reject(error);
@@ -57,6 +59,35 @@ class DataModelHandler {
 				} else {
 					reject(new APIError('Number of rows to fetch should be an integer'));
 				}
+			});
+	}
+
+	findEntriesFromModelWithSQL(countQueryStatement, queryStatement) {
+		return new Promise((resolve, reject) => {
+				let countQuery = dbConnectionPool.query(countQueryStatement, { type: Sequelize.QueryTypes.SELECT}).then(result => {
+					return result;
+				}).catch(error => {
+					throw error;
+				});
+
+				let realQuery = dbConnectionPool.query(queryStatement, { type: Sequelize.QueryTypes.SELECT}).then(results => {
+					return results;
+				}).catch(error => {
+					throw error;
+				});
+
+				Promise.all([countQuery, realQuery]).then(results => {
+
+					var responseObj = {
+						count: results[0][0].count,
+						rows: results[1]
+					};
+					resolve(responseObj);
+
+				}).catch(error => {
+					reject(error);
+				})
+
 			});
 	}
 

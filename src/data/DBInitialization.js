@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 02:14:07
+* @Last Modified time: 2017-06-11 16:14:19
 */
 
 'use strict';
@@ -48,7 +48,7 @@ module.exports = function() {
 			last_name: "Liu",
 			gender: "male",
 			manifesto: "Good good study!",
-			organization: ["Bicycle club"],
+			organization: ["Bicycle Club"],
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
 		}),
 		models.Users.create({
@@ -59,7 +59,7 @@ module.exports = function() {
 			last_name: "Tang",
 			gender: "female",
 			manifesto: "Day day up from bed",
-			organization: ["SWE", "youngsters", "CMU"],
+			organization: ["SWE", "Youngsters", "CMU"],
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
 		}),
 		// Create Locations
@@ -101,13 +101,30 @@ module.exports = function() {
 				height: 680,
 				width: 1024
 			}],
-			hash_tags: ["Music", "The song that I cannot forget"],
+			hash_tags: ["music", "the song that i cannot forget"],
 			attachment: "https://play.google.com/music/preview/Tottpiypjkymc33yopkzdcynhwi?lyrics=1&utm_source=google&utm_medium=search&utm_campaign=lyrics&pcampaignid=kp-lyrics&u=0#",
 			access_level: "followers",
 			together_with: [
 				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
 			],
 			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		}),
+		models.Moments.create({
+			id: "18fbc402-4ef7-11e7-b114-b2f933d5fe66",
+			title: "Adventure of a Lifetime",
+			words: "Turn your magic on, to me she'd say Everything you want's a dream away We are legends, every day That's what she told him I feel my heart beating I feel my heart beneath my skin I feel my heart beating Oh, you make me feel Like I'm alive again Alive again Oh, you make me feel Like I'm alive again Said I can't go on, not in this way I'm a dream, I die by light of day Gonna hold up half the sky and say Only I own me I feel my heart beating I feel my heart beneath my skin Oh, I can feel my heart beating 'Cause you make me feel Like I'm alive again Alive again Oh, you make me feel Like I'm alive again Turn your magic on, to me she'd say Everything you want's a dream away Under this pressure, under this weight We are diamonds taking shape We are diamonds taking shape (Woo hoo, woo hoo) If we've only got this life This adventure oh then I If we've only got this life You'll get me through, oh If we've only got this life And this adventure, oh then I Wanna share it with you With you, with you Sing it, oh, say yeah! Woo hoo (woo hoo)",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: ["music", "coldplay", "english", "rock"],
+			attachment: "https://play.google.com/music/preview/Tgu5bk5yikgomjis4566552fanu?lyrics=1&utm_source=google&utm_medium=search&utm_campaign=lyrics&pcampaignid=kp-lyrics&u=0#",
+			access_level: "followers",
+			together_with: [
+				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
+			],
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
 	];
 
