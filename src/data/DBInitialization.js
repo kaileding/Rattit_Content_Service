@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:22:03
+* @Last Modified time: 2017-06-10 23:07:12
 */
 
 'use strict';
@@ -36,7 +36,29 @@ module.exports = function() {
 			last_name: "Han",
 			gender: "female",
 			manifesto: "Be happier!",
-			organization: ["Umich"],
+			organization: ["Umich", "California"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+		}),
+		models.Users.create({
+			id: "baddc2ca-4e6b-11e7-b114-b2f933d5fe66",
+			username: "pollyliuu",
+			email: "pplliu@sample.com",
+			first_name: "Polly",
+			last_name: "Liu",
+			gender: "male",
+			manifesto: "Good good study!",
+			organization: ["Bicycle club"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+		}),
+		models.Users.create({
+			id: "d839cf08-4e6b-11e7-b114-b2f933d5fe66",
+			username: "kittytitit",
+			email: "ktttt@sample.com",
+			first_name: "Kitty",
+			last_name: "Tang",
+			gender: "female",
+			manifesto: "Day day up from bed",
+			organization: ["SWE", "youngsters", "CMU"],
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
 		}),
 		models.Locations.create({

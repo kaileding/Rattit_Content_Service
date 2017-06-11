@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 20:48:37
+* @Last Modified time: 2017-06-11 00:49:16
 */
 
 'use strict';
@@ -50,22 +50,22 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: 'public'
 		},
 		together_with: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
+			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
 			allowNull: true
 		},
 		likedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
+			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
 			allowNull: true
 		},
 		appreciatedBy: {
-			type: DataTypes.ARRAY(DataTypes.UUID), // array of user ids
+			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
 			allowNull: true
 		},
 		createdBy: {
 			type: DataTypes.UUID,
 			allowNull: false,
 			references: {
-                model: 'user',
+                model: 'rattit_user',
                 key: 'id'
             }
 		},

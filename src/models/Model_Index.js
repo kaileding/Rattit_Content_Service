@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 22:15:50
+* @Last Modified time: 2017-06-11 00:11:05
 */
 
 'use strict';
@@ -19,6 +19,7 @@ let Questions = dbConnectionPool.import(__dirname + "/Question");
 let Answers = dbConnectionPool.import(__dirname + "/Answer");
 let CommentsForMoment = dbConnectionPool.import(__dirname + "/CommentForMoment");
 let CommentsForAnswer = dbConnectionPool.import(__dirname + "/CommentForAnswer");
+
 
 module.exports = {
 	Users,

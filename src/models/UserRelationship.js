@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:22:11
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-05 21:32:38
+* @Last Modified time: 2017-06-11 00:47:50
 */
 
 'use strict';
@@ -19,16 +19,18 @@ module.exports = function(sequelize, DataTypes) {
 		follower: {
 			type: DataTypes.UUID,
 			allowNull: false,
+			unique: 'follower_followee_comb',
 			references: {
-                model: 'user',
+                model: 'rattit_user',
                 key: 'id'
             }
 		},
 		followee: {
 			type: DataTypes.UUID,
 			allowNull: false,
+			unique: 'follower_followee_comb',
 			references: {
-				model: 'user',
+				model: 'rattit_user',
 				key: 'id'
 			}
 		},

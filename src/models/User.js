@@ -2,13 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:03:26
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-06 02:20:46
+* @Last Modified time: 2017-06-11 00:47:24
 */
 
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define("user", {
+	return sequelize.define("rattit_user", {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -69,7 +69,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: sequelize.literal('NOW()')
 		}
 	}, {
-		tableName: 'user'
+		tableName: 'rattit_user'
 	}, {
         indexes: [{unique: true, fields: ['id']}]
     });

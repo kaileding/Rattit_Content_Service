@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 21:44:19
+* @Last Modified time: 2017-06-10 22:55:47
 */
 
 'use strict';
@@ -80,6 +80,36 @@ module.exports = {
 	    return customValidations.validationResult(req);
 	},
 
+
+	validateGetRelationshipsOfUserRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkQuery({
+			'limit': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query limit must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			}
+		});
+		
+	    return customValidations.validationResult(req);
+	},
+
 	validateGetUserByTextRequest: function(req) {
 		req.checkQuery({
 			'limit': {
@@ -149,5 +179,30 @@ module.exports = {
 		});
 		
 	    return customValidations.validationResult(req);
+	},
+
+	validateFollowUsersRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkBody({
+			'followees': {
+				optional: false,
+				notEmpty: true,
+				isArray: {
+					errorMessage: 'followees should be an array of user_ids'
+				}
+			}
+		});
+
+		return customValidations.validationResult(req);
+	},
+
+	validateUnfollowUserRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkParams('followee_id', 'Invalid value of `followee_id` in the brackets of URL').notEmpty();
+		req.checkParams('followee_id', 'Invalid value of `followee_id` in the brackets of URL').isUUIDFormat();
+
+		return customValidations.validationResult(req);
 	}
 }

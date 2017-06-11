@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 21:45:19
+* @Last Modified time: 2017-06-10 23:14:16
 */
 
 'use strict';
@@ -10,10 +10,12 @@ import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import userRequestValidator from '../Validators/UserRequestValidator'
 import UsersHandler from '../handlers/UsersHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let usersHandler = new UsersHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
@@ -60,7 +62,7 @@ module.exports = {
 
             return usersHandler.findUserByText(req.query.text, 
                                                 req.query.limit, 
-                                                req.query.offset).then((results) => {
+                                                req.query.offset).then(results => {
                     res.status(httpStatus.OK).send(results);
                 }).catch(function(error) {
                     next(error);
@@ -111,5 +113,78 @@ module.exports = {
         }).catch(error => {
             next(error);
         });
-	}
+	}, 
+
+    getFollowersOfAUser: function(req, res, next) {
+        userRequestValidator.validateGetRelationshipsOfUserRequest(req).then(result => {
+
+            return userRelationshipsHandler.findFollowersByUserId(req.params.id, 
+                                                                    req.query.limit, 
+                                                                    req.query.offset).then(results => {
+                    res.status(httpStatus.OK).send(results);
+                }).catch(error => {
+                    next(error);
+                });
+
+        }).catch(error => {
+            next(error);
+        });
+    },
+
+    getFolloweesOfAUser: function(req, res, next) {
+        userRequestValidator.validateGetRelationshipsOfUserRequest(req).then(result => {
+
+            return userRelationshipsHandler.findFolloweesByUserId(req.params.id, 
+                                                                    req.query.limit, 
+                                                                    req.query.offset).then(results => {
+                    res.status(httpStatus.OK).send(results);
+                }).catch(error => {
+                    next(error);
+                });
+
+        }).catch(error => {
+            next(error);
+        });
+    },
+
+    followUsers: function(req, res, next) {
+        userRequestValidator.validateFollowUsersRequest(req).then(result => {
+            // res.status(httpStatus.OK).send('OK');
+
+            var dataReqs = [];
+            req.body.followees.forEach(followeeId => {
+                dataReqs.push(
+                    userRelationshipsHandler.createEntryForModel({
+                        follower: req.params.id,
+                        followee: followeeId
+                    })
+                );
+            });
+
+            return Promise.all(dataReqs).then(results => {
+                res.status(httpStatus.OK).send(results);
+            }).catch(error => {
+                next(error);
+            });
+
+        }).catch(error => {
+            next(error);
+        })
+    },
+
+    unfollowAUser: function(req, res, next) {
+        userRequestValidator.validateUnfollowUserRequest(req).then(result => {
+            // res.status(httpStatus.OK).send('OK');
+
+            return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
+                                                                req.params.followee_id).then(result => {
+                res.status(httpStatus.OK).send(result);
+            }).catch(error => {
+                next(error);
+            });
+
+        }).catch(error => {
+            next(error);
+        })
+    }
 }

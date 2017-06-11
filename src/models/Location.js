@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:15:25
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-09 20:53:30
+* @Last Modified time: 2017-06-11 00:49:58
 */
 
 'use strict';
@@ -41,7 +41,7 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.UUID,
 			allowNull: false,
 			references: {
-                model: 'user',
+                model: 'rattit_user',
                 key: 'id'
             }
 		},
@@ -54,7 +54,7 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.UUID,
 			allowNull: false,
 			references: {
-                model: 'user',
+                model: 'rattit_user',
                 key: 'id'
             }
 		},
