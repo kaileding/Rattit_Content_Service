@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 22:03:25
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:22:40
+* @Last Modified time: 2017-06-12 00:02:07
 */
 
 'use strict';
@@ -37,6 +37,10 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.ARRAY(DataTypes.STRING),
 			allowNull: true,
 			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('hash_tags')
+		},
+		attachment: {
+			type: DataTypes.TEXT(), // web link
+			allowNull: true
 		},
 		agree_number: {
 			type: DataTypes.INTEGER,

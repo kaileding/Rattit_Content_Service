@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 21:47:27
+* @Last Modified time: 2017-06-12 00:29:54
 */
 
 'use strict';
@@ -17,6 +17,7 @@ import placeRoutes from './PlaceRoutes'
 import userRoutes from './UserRoutes'
 import momentRoutes from './MomentRoutes'
 import questionRoutes from './QuestionRoutes'
+import answerRoutes from './AnswerRoutes'
 
 router.use('/', (req, res, next) => {
 	cLogger.say(cLogger.NEWLINE_TYPE, 'Called ['+req.method+'] '+req.url);
@@ -36,5 +37,7 @@ router.use('/users', userRoutes);
 router.use('/moments', momentRoutes);
 
 router.use('/questions', questionRoutes);
+
+router.use('/answers', answerRoutes);
 
 module.exports = router;

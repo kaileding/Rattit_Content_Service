@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 23:25:51
+* @Last Modified time: 2017-06-12 00:52:40
 */
 
 'use strict';
@@ -16,7 +16,7 @@ import consts from '../config/Constants'
 let cLogger = new CLogger();
 
 module.exports = function() {
-	var insertDataTasks = [
+	let insertDataTasks_1 = [
 		// Create Users
 		models.Users.create({
 			id: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
@@ -162,12 +162,52 @@ module.exports = function() {
 			access_level: "followers",
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
-
 	];
 
-	return dbConnectionPool.Promise.all(insertDataTasks).then(function(results) {
-		console.log('Load test data successfully!');
-		return "Success";
+	let insertDataTasks_2 = [
+		// Create Answers
+		models.Answers.create({
+			id: "c3b9862c-4f42-11e7-b114-b2f933d5fe66",
+			for_question: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
+			words: "Google can easily be beaten. It doesn’t take much for someone like Apple, Mozilla, or Microsoft to shut out Google and replace it with Bing. That’s why Google constantly has to throw massive resources at preventing it. That’s (one of the many reasons) why Google had to develop Chrome, to prevent the other browsers from blocking Google. That’s why Google had to go through the trouble of developing a major phone OS, Android, to prevent being shut out of that market. That’s why Google spends a lot of time with open standards committees, to prevent more proprietary solutions from gumming up the market. At any point, the Trump government could do great damage to Google, or any other company that appears ungrateful to him.\n\nSo, yeah, it’s a constant battle just to stay alive.",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"11K likes",
+				"Brief"
+			],
+			attachment: "https://www.quora.com/profile/Bruce-R-Miller",
+			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		}),
+		models.Answers.create({
+			id: "66f53dae-4f43-11e7-b114-b2f933d5fe66",
+			for_question: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
+			words: "Not in coming Two to Three Decades. Because Google keeping up on its momentum of R & D for newer and better products also buying new and innovative ventures. They are heavily investing on startup’s and trying to build a start up ecosystem which will feed them with result in future. But, if we see the quantum of investment they lost in few of their major almost dead products, few still live like Google Plus and few more (Check the Google Graveyard) these affected a lot on income generation strength of many Google Products.\n\nDue to heavy pressure on google to deliver from its platform it need to spend monumental amount running its almost unthinkable infrastructure. Still for years it has delivered quite well and i would say they now rule in 3 segments, they are:\n\n1. Search\n2. Mobile\n3. Browser\n\n",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"Many photos",
+				"20 Votes"
+			],
+			attachment: "https://arstechnica.com/business/2016/05/firefox-overtakes-microsoft-internet-explorer-edge-browsers-first-time-statcounter/",
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		})
+	];
+
+
+	return dbConnectionPool.Promise.all(insertDataTasks_1).then(function(results) {
+		return dbConnectionPool.Promise.all(insertDataTasks_2).then(function(results) {
+			console.log('Load test data successfully!');
+			return "Success";
+		}).catch(function(error) {
+			throw error;
+		});
 	}).catch(function(error) {
     	throw error;
     });
