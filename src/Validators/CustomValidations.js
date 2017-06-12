@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 16:16:28
+* @Last Modified time: 2017-06-12 02:20:22
 */
 
 'use strict';
@@ -54,6 +54,15 @@ module.exports = {
             },
             isUUIDFormat: function(value) {
                 if (value == null || typeof value != 'string') {
+                    return false;
+                }
+                return isUUID.v1(value);
+            },
+            isUUIDFormatOrNull: function(value) {
+                if (value == null) {
+                    return true;
+                }
+                if (typeof value != 'string') {
                     return false;
                 }
                 return isUUID.v1(value);

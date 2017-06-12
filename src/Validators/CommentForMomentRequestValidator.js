@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-11 23:54:39
+* @Date:   2017-06-12 01:55:36
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:05:51
+* @Last Modified time: 2017-06-12 02:21:38
 */
 
 'use strict';
@@ -11,16 +11,24 @@ import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 
 module.exports = {
-	validateCreateAnswerRequest: function(req) {
+	validateCreateCommentRequest: function(req) {
 
 		req.checkBody({
-			'for_question': {
+			'for_moment': {
 				optional: false,
 				notEmpty: true,
 				isUUIDFormat: {
-					errorMessage: 'For_question should be an ID and in UUIDV1 format'
+					errorMessage: 'for_moment should be an ID and in UUIDV1 format'
 				},
-				errorMessage: 'Invalid for_question'
+				errorMessage: 'Invalid for_moment'
+			},
+			'for_comment': {
+				optional: false,
+				notEmpty: true,
+				isUUIDFormatOrNull: {
+					errorMessage: 'for_comment should be either null or an ID and in UUIDV1 format'
+				},
+				errorMessage: 'Invalid for_comment'
 			},
 			'words': {
 				optional: false,
@@ -45,70 +53,20 @@ module.exports = {
 					errorMessage: 'Hash_tags should be an array'
 				},
 				errorMessage: 'Invalid hash_tags'
-			},
-			'attachment': {
-				optional: true,
-				notEmpty: false,
-				isWebURL: {
-					errorMessage: 'Attachment should be a web URL'
-				},
-				errorMessage: 'Invalid attachment'
 			}
 		});
 
 	    return customValidations.validationResult(req);
 	},
 
-	validateUpdateAnswerRequest: function(req) {
-		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
-		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
-
-		req.checkBody({
-			'words': {
-				optional: true,
-				notEmpty: true,
-				isText: {
-					errorMessage: 'Words should be text'
-				},
-				errorMessage: 'Invalid words'
-			},
-			'photos': {
-				optional: true,
-				notEmpty: false,
-				isArray: {
-					errorMessage: 'Photos should be an array'
-				},
-				errorMessage: 'Invalid photos'
-			},
-			'hash_tags': {
-				optional: true,
-				notEmpty: false,
-				isArray: {
-					errorMessage: 'Hash_tags should be an array'
-				},
-				errorMessage: 'Invalid hash_tags'
-			},
-			'attachment': {
-				optional: true,
-				notEmpty: false,
-				isWebURL: {
-					errorMessage: 'Attachment should be a web URL'
-				},
-				errorMessage: 'Invalid attachment'
-			}
-		});
-
-	    return customValidations.validationResult(req);
-	},
-
-	validateGetAnswerByIdRequest: function(req) {
+	validateGetCommentByIdRequest: function(req) {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
 
 	    return customValidations.validationResult(req);
 	},
 
-	validateGetAnswersByQueryRequest: function(req) {
+	validateGetCommentsByQueryRequest: function(req) {
 		req.checkQuery({
 			'limit': {
 				optional: true,
@@ -130,10 +88,16 @@ module.exports = {
 					errorMessage: 'Query offset must be greater than or equal to 1'
 				}
 			},
-			'for_question': {
+			'for_moment': {
 				optional: true,
 				isUUIDFormat: {
-					errorMessage: 'Query for_question should be an ID and in UUIDV1 format'
+					errorMessage: 'Query for_moment should be an ID and in UUIDV1 format'
+				}
+			},
+			'for_comment': {
+				optional: true,
+				isUUIDFormatOrNull: {
+					errorMessage: 'Query for_comment should be either null or an ID and in UUIDV1 format'
 				}
 			},
 			'text': {
@@ -151,8 +115,8 @@ module.exports = {
 			'voted_type': {
 				optional: true,
 				isOneOfStrings: {
-					options: [['agree', 'disagree', 'admire']],
-					errorMessage: 'voted_type should be one of ["agree", "disagree", "admire"]'
+					options: [['like', 'dislike']],
+					errorMessage: 'voted_type should be one of ["like", "dislike"]'
 				}
 			},
 			'voted_by': {
@@ -166,7 +130,7 @@ module.exports = {
 		return customValidations.validationResult(req);
 	},
 
-	validateVoteForAnAnswerRequest: function(req) {
+	validateVoteForACommentRequest: function(req) {
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
 		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
 		req.checkParams('voterId', 'Invalid value of `voterId` in the brackets of URL').notEmpty();
@@ -176,8 +140,8 @@ module.exports = {
 				optional: false,
 				notEmpty: true,
 				isOneOfStrings: {
-					options: [['agree', 'disagree', 'admire']],
-					errorMessage: 'type should be one of ["agree", "disagree", "admire"]'
+					options: [['like', 'dislike']],
+					errorMessage: 'type should be one of ["like", "dislike"]'
 				},
 				errorMessage: 'Invalid type value'
 			},

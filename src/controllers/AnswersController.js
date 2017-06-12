@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 00:57:58
+* @Last Modified time: 2017-06-12 02:07:21
 */
 
 'use strict';
@@ -91,6 +91,7 @@ module.exports = {
 		answerRequestValidator.validateGetAnswersByQueryRequest(req).then(result => {
 
             var queryObj = {
+            	for_question: req.query.for_question,
                 text: req.query.text,
                 author_id: req.query.author_id,
                 limit: req.query.limit,

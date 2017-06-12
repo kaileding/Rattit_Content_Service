@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 00:12:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 00:18:04
+* @Last Modified time: 2017-06-12 02:09:08
 */
 
 'use strict';
@@ -53,6 +53,10 @@ class AnswersHandler extends DataModelHandler {
 
 		} else {
 
+			let queryQuestionId = queryObj.for_question ? {
+					for_question: queryObj.for_question
+				} : true;
+
         	let queryText = queryObj.text ? Sequelize.or(
 		        	{
 		        		words: {
@@ -71,6 +75,7 @@ class AnswersHandler extends DataModelHandler {
 		        } : true;
 
 			let filterObj = Sequelize.and(
+				queryQuestionId,
 				queryText,
 				queryAuthorId
 				);
