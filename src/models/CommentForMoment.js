@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:34:00
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:21:15
+* @Last Modified time: 2017-06-12 15:44:05
 */
 
 'use strict';
@@ -48,11 +48,13 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		likedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
-			allowNull: true
+			allowNull: false,
+			defaultValue: []
 		},
 		dislikedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
-			allowNull: true
+			allowNull: false,
+			defaultValue: []
 		},
 		createdBy: {
 			type: DataTypes.UUID,

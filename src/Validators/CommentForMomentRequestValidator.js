@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 01:55:36
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:21:38
+* @Last Modified time: 2017-06-12 13:53:38
 */
 
 'use strict';
@@ -24,7 +24,6 @@ module.exports = {
 			},
 			'for_comment': {
 				optional: false,
-				notEmpty: true,
 				isUUIDFormatOrNull: {
 					errorMessage: 'for_comment should be either null or an ID and in UUIDV1 format'
 				},

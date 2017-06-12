@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 01:51:30
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:38:35
+* @Last Modified time: 2017-06-12 15:51:19
 */
 
 'use strict';
@@ -97,16 +97,15 @@ module.exports = {
 
 			let voteForComment = {
 				vote_type: req.body.type,
-				comment_id: req.params.id,
-				votedBy: req.params.voterId
+				voted_by: req.params.voterId,
+				commit: req.body.commit
 			};
 
-			if (req.body.commit) {
-				
-			} else {
-				
-			}
-			res.status(httpStatus.OK).send("Not implemented yet.");
+			return commentForMomentsHandler.updateVoteOfCommentForMoment(req.params.id, voteForComment).then(result => {
+				res.status(httpStatus.OK).send(result);
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);

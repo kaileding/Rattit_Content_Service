@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 00:52:40
+* @Last Modified time: 2017-06-12 15:20:42
 */
 
 'use strict';
@@ -15,8 +15,8 @@ import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
-module.exports = function() {
-	let insertDataTasks_1 = [
+let getInsertUsersTask = function() {
+	return [
 		// Create Users
 		models.Users.create({
 			id: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
@@ -61,7 +61,12 @@ module.exports = function() {
 			manifesto: "Day day up from bed",
 			organization: ["SWE", "Youngsters", "CMU"],
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
-		}),
+		})
+	];
+}
+
+let getInsertLocationsTask = function() {
+	return [
 		// Create Locations
 		models.Locations.create({
 			id: "101a04cc-4db5-11e7-b114-b2f933d5fe66",
@@ -91,6 +96,11 @@ module.exports = function() {
     		createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
     		updatedBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
 		}),
+	];
+}
+
+let getInsertMomentsTask = function() {
+	return [
 		// Create Moments
 		models.Moments.create({
 			id: "113ebbde-4e84-11e7-b114-b2f933d5fe66",
@@ -103,6 +113,7 @@ module.exports = function() {
 			}],
 			hash_tags: ["music", "the song that i cannot forget"],
 			attachment: "https://play.google.com/music/preview/Tottpiypjkymc33yopkzdcynhwi?lyrics=1&utm_source=google&utm_medium=search&utm_campaign=lyrics&pcampaignid=kp-lyrics&u=0#",
+			location_id: "101a04cc-4db5-11e7-b114-b2f933d5fe66",
 			access_level: "followers",
 			together_with: [
 				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
@@ -125,7 +136,12 @@ module.exports = function() {
 				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
 			],
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
-		}),
+		})
+	];
+}
+
+let getInsertQuestionsTask = function() {
+	return [
 		// Create Questions
 		models.Questions.create({
 			id: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
@@ -142,6 +158,7 @@ module.exports = function() {
 				"Competition"
 			],
 			attachment: "https://www.quora.com/Can-Google-be-beaten",
+			location_id: "101a04cc-4db5-11e7-b114-b2f933d5fe66",
 			access_level: "followers",
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		}),
@@ -163,8 +180,10 @@ module.exports = function() {
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
 	];
+}
 
-	let insertDataTasks_2 = [
+let getInsertAnswersTask = function() {
+	return [
 		// Create Answers
 		models.Answers.create({
 			id: "c3b9862c-4f42-11e7-b114-b2f933d5fe66",
@@ -199,12 +218,76 @@ module.exports = function() {
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
 	];
+}
+
+let getInsertCommentForMomentTask_1 = function() {
+	return [
+		// Create CommentsForMoment// Create CommentsForMoment
+		models.CommentsForMoment.create({
+			id: "d5afd0b0-4fb1-11e7-b114-b2f933d5fe66",
+			for_moment: "113ebbde-4e84-11e7-b114-b2f933d5fe66",
+			for_comment: null,
+			words: "Wen ru gou.",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"666"
+			],
+			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		})
+	];
+}
+
+let getInsertCommentForMomentTask_2 = function() {
+	return [
+		models.CommentsForMoment.create({
+			id: "2169bb38-4fb2-11e7-86a1-b2f933d5fe66",
+			for_moment: "113ebbde-4e84-11e7-b114-b2f933d5fe66",
+			for_comment: "d5afd0b0-4fb1-11e7-b114-b2f933d5fe66",
+			words: "Are you kidding?",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"666"
+			],
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		})
+	]
+}
+
+module.exports = function() {
 
 
-	return dbConnectionPool.Promise.all(insertDataTasks_1).then(function(results) {
-		return dbConnectionPool.Promise.all(insertDataTasks_2).then(function(results) {
-			console.log('Load test data successfully!');
-			return "Success";
+	return dbConnectionPool.Promise.all(getInsertUsersTask()).then(function(results) {
+		return dbConnectionPool.Promise.all(getInsertLocationsTask()).then(function(results) {
+			return dbConnectionPool.Promise.all(getInsertMomentsTask()).then(function(results) {
+				return dbConnectionPool.Promise.all(getInsertQuestionsTask()).then(function(results) {
+					return dbConnectionPool.Promise.all(getInsertAnswersTask()).then(function(results) {
+						return dbConnectionPool.Promise.all(getInsertCommentForMomentTask_1()).then(function(results) {
+							return dbConnectionPool.Promise.all(getInsertCommentForMomentTask_2()).then(function(results) {
+								console.log('Load test data successfully!');
+								return "Success";
+							}).catch(function(error) {
+								throw error;
+							});
+						}).catch(function(error) {
+							throw error;
+						});
+					}).catch(function(error) {
+						throw error;
+					});
+				}).catch(function(error) {
+					throw error;
+				});
+			}).catch(function(error) {
+				throw error;
+			});
 		}).catch(function(error) {
 			throw error;
 		});

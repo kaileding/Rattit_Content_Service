@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 02:16:21
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:36:07
+* @Last Modified time: 2017-06-12 16:38:57
 */
 
 'use strict';
@@ -50,10 +50,6 @@ class CommentForMomentsHandler extends DataModelHandler {
 	        	createdBy: queryObj.author_id
 	        } : true;
 
-
-        		voted_type: req.query.voted_type,
-        		voted_by: req.query.voted_by
-
     	let queryVote;
        	if (queryObj.voted_type && queryObj.voted_by) {
        		switch(queryObj.voted_type) {
@@ -89,6 +85,71 @@ class CommentForMomentsHandler extends DataModelHandler {
 
 		return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
 
+	}
+
+
+	updateVoteOfCommentForMoment(id, updateObj) {
+
+			return new Promise((resolve, reject) => {
+				return this.model.findById(id).then(comment => {
+					if (comment) { // Successfully get the instance.
+
+						var index = null;
+						var change_happen = false;
+						switch(updateObj.vote_type) {
+							case 'like':
+								if (updateObj.commit) {
+									if (!(comment.likedBy.includes(updateObj.voted_by))) {
+										comment.likedBy.push(updateObj.voted_by);
+										change_happen = true;
+									}
+								} else {
+									index = comment.likedBy.indexOf(updateObj.voted_by);
+									if (index > -1) {
+										comment.likedBy.splice(index, 1);
+										change_happen = true;
+									}
+								}
+								break;
+							case 'dislike':
+								if (updateObj.commit) {
+									if (!(comment.dislikedBy.includes(updateObj.voted_by))) {
+										comment.dislikedBy.push(updateObj.voted_by);
+										change_happen = true;
+									}
+								} else {
+									index = comment.dislikedBy.indexOf(updateObj.voted_by);
+									if (index > -1) {
+										comment.dislikedBy.splice(index, 1);
+										change_happen = true;
+									}
+								}
+								break;
+							default:
+								break;
+						}
+
+						if (change_happen) {
+							return this.updateEntryByIdForModel(id, {
+								likedBy: comment.likedBy,
+								dislikedBy: comment.dislikedBy
+							}).then(result => {
+								resolve(result);
+							}).catch(error => {
+								reject(error);
+							});
+						} else {
+							resolve(comment);
+						}
+
+					} else { // Failed to find the instance.
+						reject(new APIError(`Comment with id '${id}' not found in database.`));
+					}
+				}).catch(error => {
+					reject(error);
+				});
+			});
+			
 	}
 
 }

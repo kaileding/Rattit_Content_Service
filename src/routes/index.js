@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 00:29:54
+* @Last Modified time: 2017-06-12 10:15:19
 */
 
 'use strict';
@@ -16,6 +16,7 @@ import dbRoutes from './DBRoutes'
 import placeRoutes from './PlaceRoutes'
 import userRoutes from './UserRoutes'
 import momentRoutes from './MomentRoutes'
+import commentForMomentRoutes from './CommentForMomentRoutes'
 import questionRoutes from './QuestionRoutes'
 import answerRoutes from './AnswerRoutes'
 
@@ -35,6 +36,8 @@ router.use('/locations', placeRoutes);
 router.use('/users', userRoutes);
 
 router.use('/moments', momentRoutes);
+
+router.use('/comments_for_moment', commentForMomentRoutes);
 
 router.use('/questions', questionRoutes);
 
