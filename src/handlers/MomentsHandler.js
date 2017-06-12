@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 01:19:19
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:52:02
+* @Last Modified time: 2017-06-11 19:57:11
 */
 
 'use strict';
@@ -28,18 +28,17 @@ class MomentsHandler extends DataModelHandler {
 		offset = (offset != null) ? Number(offset) : 0;
 
 		let countQueryStatement = 'SELECT count(*) '
-							+ 'FROM "moment" LEFT JOIN "votes_for_moment" '
-							+ 'ON "votes_for_moment"."moment_id = "moment"."id" '
-							+ 'AND "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
+							+ 'FROM "votes_for_moment" LEFT JOIN "moment" '
+							+ 'ON "votes_for_moment"."moment_id" = "moment"."id" '
+							+ 'WHERE "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
 							+ 'AND  "votes_for_moment"."vote_type" = ' + "'" + options.voted_type + "' "
-							+ 'ORDER BY "votes_for_moment"."createdAt" DESC '
 							+ 'LIMIT ' + limit + ' ' 
 							+ 'OFFSET ' + offset + ';';
 
 		let queryStatement = 'SELECT "moment".*, "votes_for_moment"."createdAt" as "vote_createdAt" '
-							+ 'FROM "moment" LEFT JOIN "votes_for_moment" '
-							+ 'ON "votes_for_moment"."moment_id = "moment"."id" '
-							+ 'AND "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
+							+ 'FROM "votes_for_moment" LEFT JOIN "moment" '
+							+ 'ON "votes_for_moment"."moment_id" = "moment"."id" '
+							+ 'WHERE "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
 							+ 'AND  "votes_for_moment"."vote_type" = ' + "'" + options.voted_type + "' "
 							+ 'ORDER BY "votes_for_moment"."createdAt" DESC '
 							+ 'LIMIT ' + limit + ' ' 
@@ -54,7 +53,7 @@ class MomentsHandler extends DataModelHandler {
 				voted_type: queryObj.voted_type,
 				voted_by: queryObj.voted_by
 			};
-			
+
 			return this.findMomentsJoinWithVotes(options, queryObj.limit, queryObj.offset);
 		} else {
 

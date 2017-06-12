@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:49:59
+* @Last Modified time: 2017-06-11 21:15:31
 */
 
 'use strict';
@@ -91,6 +91,20 @@ class DataModelHandler {
 			});
 	}
 
+	countEntriesFromModelForFilter(filterObj) {
+		return new Promise((resolve, reject) => {
+				let model = this.model;
+				model.count({
+					where: filterObj
+				}).then(function(result) {
+					cLogger.say(cLogger.TESTING_TYPE, `get count of entries successfully from ${model.name}.`, result);
+					resolve(result);
+				}).catch(function(error) {
+					reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
+				});
+			});
+	}
+
 	findEntryByIdFromModel(id) {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
@@ -119,6 +133,7 @@ class DataModelHandler {
                         id: id
                     },
                     validate: true,
+                    fields: Object.keys(updateObj),
                     limit: 1
                 }).then((results) => {
                     if (results[0] === 1) {

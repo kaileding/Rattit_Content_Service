@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:52:42
+* @Last Modified time: 2017-06-11 21:40:11
 */
 
 'use strict';
@@ -10,10 +10,45 @@ import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import momentRequestValidator from '../Validators/MomentRequestValidator'
 import MomentsHandler from '../handlers/MomentsHandler'
+import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let momentsHandler = new MomentsHandler();
+let votesForMomentsHandler = new VotesForMomentsHandler();
+
+let updateVotesNumberOfMoment = function(vote_type, moment_id) {
+	return new Promise((resolve, reject) => {
+			votesForMomentsHandler.countEntriesFromModelForFilter({
+					vote_type: vote_type,
+					moment_id: moment_id
+				}).then(result => {
+
+					var updateField = {};
+					switch(vote_type) {
+						case 'like':
+						updateField = {likers_number: result};
+						break;
+						case 'admire':
+						updateField = {admirers_number: result};
+						break;
+						case 'pity':
+						updateField = {pitys_number: result};
+						break;
+						default:
+						break;
+					}
+
+					return momentsHandler.updateEntryByIdForModel(moment_id, updateField).then(result => {
+						resolve(result);
+					}).catch(error => {
+						reject(error);
+					});
+				}).catch(error => {
+					reject(error);
+				});
+		});
+};
 
 module.exports = {
 	postMoment: function(req, res, next) {
@@ -141,8 +176,37 @@ module.exports = {
 	castOrChangeVoteForMoment: function(req, res, next) {
 		momentRequestValidator.validateVoteForAMomentRequest(req).then(result => {
 
-			return momentsHandler.
-			// res.status(httpStatus.OK).send("OK");
+			let voteForMoment = {
+				vote_type: req.body.type,
+				moment_id: req.params.id,
+				createdBy: req.params.voterId
+			};
+
+			if (req.body.commit) {
+				return votesForMomentsHandler.createEntryForModel(voteForMoment).then(result => {
+	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for moment successfully.', result);
+	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
+	                	res.status(httpStatus.OK).send(result);
+	                }).catch(error => {
+	                	next(error);
+	                });
+
+				}).catch(error => {
+					next(error);
+				});
+			} else {
+				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(result => {
+	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for moment successfully.', result);
+	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
+	                	res.status(httpStatus.OK).send(result);
+	                }).catch(error => {
+	                	next(error);
+	                });
+
+				}).catch(error => {
+					next(error);
+				});
+			}
 
 		}).catch(error => {
 			next(error);

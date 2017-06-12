@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:24:10
+* @Last Modified time: 2017-06-11 21:27:13
 */
 
 'use strict';
@@ -61,6 +61,11 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: 0
 		},
 		admirers_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		pitys_number: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 0

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 14:23:14
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:25:46
+* @Last Modified time: 2017-06-11 19:13:41
 */
 
 'use strict';
@@ -20,7 +20,8 @@ module.exports = function(sequelize, DataTypes) {
 		vote_type: {
 			type: DataTypes.ENUM('agree', 'disagree', 'admire'),
 			allowNull: false,
-			defaultValue: 'agree'
+			defaultValue: 'agree',
+			unique: 'who_vote_for_which_answer'
 		},
 		answer_id: {
 			type: DataTypes.UUID,
@@ -28,7 +29,8 @@ module.exports = function(sequelize, DataTypes) {
 			references: {
                 model: 'answer',
                 key: 'id'
-            }
+            },
+			unique: 'who_vote_for_which_answer'
 		},
 		createdBy: {
 			type: DataTypes.UUID,
@@ -36,7 +38,8 @@ module.exports = function(sequelize, DataTypes) {
 			references: {
                 model: 'rattit_user',
                 key: 'id'
-            }
+            },
+			unique: 'who_vote_for_which_answer'
 		},
 		createdAt: {
 			type: DataTypes.DATE,
@@ -51,6 +54,6 @@ module.exports = function(sequelize, DataTypes) {
 	}, {
 		tableName: 'votes_for_answer'
 	}, {
-        indexes: [{unique: true, fields: ['id']}]
+        indexes: [{unique: true, fields: ['id']}, {unique: true, fields: ['vote_type', 'answer_id', 'createdBy']}]
     });
 }

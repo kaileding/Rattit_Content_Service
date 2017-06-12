@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 12:15:19
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:26:01
+* @Last Modified time: 2017-06-11 19:14:43
 */
 
 'use strict';
@@ -20,7 +20,8 @@ module.exports = function(sequelize, DataTypes) {
 		vote_type: {
 			type: DataTypes.ENUM('interest', 'invite', 'pity'),
 			allowNull: false,
-			defaultValue: 'interest'
+			defaultValue: 'interest',
+			unique: 'who_vote_for_which_question'
 		},
 		question_id: {
 			type: DataTypes.UUID,
@@ -28,7 +29,8 @@ module.exports = function(sequelize, DataTypes) {
 			references: {
                 model: 'question',
                 key: 'id'
-            }
+            },
+			unique: 'who_vote_for_which_question'
 		},
 		subject_id: {
 			type: DataTypes.UUID,
@@ -36,7 +38,8 @@ module.exports = function(sequelize, DataTypes) {
 			references: {
                 model: 'rattit_user',
                 key: 'id'
-            }
+            },
+			unique: 'who_vote_for_which_question'
 		},
 		createdBy: {
 			type: DataTypes.UUID,
@@ -44,7 +47,8 @@ module.exports = function(sequelize, DataTypes) {
 			references: {
                 model: 'rattit_user',
                 key: 'id'
-            }
+            },
+			unique: 'who_vote_for_which_question'
 		},
 		createdAt: {
 			type: DataTypes.DATE,
@@ -59,6 +63,6 @@ module.exports = function(sequelize, DataTypes) {
 	}, {
 		tableName: 'votes_for_question'
 	}, {
-        indexes: [{unique: true, fields: ['id']}]
+        indexes: [{unique: true, fields: ['id']}, {unique: true, fields: ['vote_type', 'question_id', 'subject_id', 'createdBy']}]
     });
 }
