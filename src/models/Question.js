@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:56:05
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:23:23
+* @Last Modified time: 2017-06-11 22:35:18
 */
 
 'use strict';
@@ -52,6 +52,11 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: 'public'
 		},
 		interests_number: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		invites_number: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 0

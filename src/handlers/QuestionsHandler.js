@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-11 01:19:19
+* @Date:   2017-06-11 21:50:40
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 23:06:32
+* @Last Modified time: 2017-06-11 23:05:44
 */
 
 'use strict';
@@ -18,38 +18,43 @@ import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
-class MomentsHandler extends DataModelHandler {
+class QuestionsHandler extends DataModelHandler {
 	constructor() {
-		super(models.Moments);
+		super(models.Questions);
 	}
 
-	findMomentsJoinWithVotes(options, limit, offset) {
+	findQuestionsJoinWithVotes(options, limit, offset) {
 		limit = (limit != null) ? Number(limit) : 20;
 		offset = (offset != null) ? Number(offset) : 0;
 
-		let statementMainPart = 'FROM "votes_for_moment" LEFT JOIN "moment" '
-							+ 'ON "votes_for_moment"."moment_id" = "moment"."id" '
-							+ 'WHERE "votes_for_moment"."createdBy" = ' + "'" + options.voted_by + "' "
-							+ 'AND  "votes_for_moment"."vote_type" = ' + "'" + options.voted_type + "' ";
-							
+		let statementMainPart = 'FROM "votes_for_question" LEFT JOIN "question" '
+							+ 'ON "votes_for_question"."question_id" = "question"."id" '
+							+ 'WHERE "votes_for_question"."vote_type" = ' + "'" + options.voted_type + "' "
+							+ (options.voted_by ? 
+								'AND "votes_for_question"."createdBy" = ' + "'" + options.voted_by + "' "
+								: '')
+							+ (options.subject_id ? 
+								'AND "votes_for_question"."subject_id" = ' + "'" + options.subject_id + "' "
+								: '');
+
 		let countQueryStatement = 'SELECT count(*) '
 							+ statementMainPart
 							+ 'LIMIT ' + limit + ' ' 
 							+ 'OFFSET ' + offset + ';';
 
-		let queryStatement = 'SELECT "moment".*, "votes_for_moment"."createdAt" as "vote_createdAt" '
+		let queryStatement = 'SELECT "question".*, "votes_for_question"."createdAt" as "vote_createdAt" '
 							+ statementMainPart
-							+ 'ORDER BY "votes_for_moment"."createdAt" DESC '
+							+ 'ORDER BY "votes_for_question"."createdAt" DESC '
 							+ 'LIMIT ' + limit + ' ' 
 							+ 'OFFSET ' + offset + ';';
 
 		return this.findEntriesFromModelWithSQL(countQueryStatement, queryStatement);
 	}
 
-	findMomentsByQuery(queryObj) {
+	findQuestionsByQuery(queryObj) {
 		if (queryObj.joinWithVotes) {
 
-			return this.findMomentsJoinWithVotes(queryObj.joinOptions, queryObj.limit, queryObj.offset);
+			return this.findQuestionsJoinWithVotes(queryObj.joinOptions, queryObj.limit, queryObj.offset);
 
 		} else {
 
@@ -92,4 +97,4 @@ class MomentsHandler extends DataModelHandler {
 
 }
 
-module.exports = MomentsHandler;
+module.exports = QuestionsHandler;

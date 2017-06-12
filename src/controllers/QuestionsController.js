@@ -1,36 +1,36 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-10 23:03:06
+* @Date:   2017-06-11 21:48:57
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 22:54:55
+* @Last Modified time: 2017-06-11 22:55:31
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
-import momentRequestValidator from '../Validators/MomentRequestValidator'
-import MomentsHandler from '../handlers/MomentsHandler'
-import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
+import questionRequestValidator from '../Validators/QuestionRequestValidator'
+import QuestionsHandler from '../handlers/QuestionsHandler'
+import VotesForQuestionsHandler from '../handlers/VotesForQuestionsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
-let momentsHandler = new MomentsHandler();
-let votesForMomentsHandler = new VotesForMomentsHandler();
+let questionsHandler = new QuestionsHandler();
+let votesForQuestionsHandler = new VotesForQuestionsHandler();
 
-let updateVotesNumberOfMoment = function(vote_type, moment_id) {
+let updateVotesNumberOfQuestion = function(vote_type, question_id) {
 	return new Promise((resolve, reject) => {
-			votesForMomentsHandler.countEntriesFromModelForFilter({
+			votesForQuestionsHandler.countEntriesFromModelForFilter({
 					vote_type: vote_type,
-					moment_id: moment_id
+					question_id: question_id
 				}).then(result => {
 
 					var updateField = {};
 					switch(vote_type) {
-						case 'like':
-						updateField = {likers_number: result};
+						case 'interest':
+						updateField = {interests_number: result};
 						break;
-						case 'admire':
-						updateField = {admirers_number: result};
+						case 'invite':
+						updateField = {invites_number: result};
 						break;
 						case 'pity':
 						updateField = {pitys_number: result};
@@ -39,7 +39,7 @@ let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 						break;
 					}
 
-					return momentsHandler.updateEntryByIdForModel(moment_id, updateField).then(result => {
+					return questionsHandler.updateEntryByIdForModel(question_id, updateField).then(result => {
 						resolve(result);
 					}).catch(error => {
 						reject(error);
@@ -51,10 +51,10 @@ let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 };
 
 module.exports = {
-	postMoment: function(req, res, next) {
-		momentRequestValidator.validateCreateMomentRequest(req).then(result => {
+	postQuestion: function(req, res, next) {
+		questionRequestValidator.validateCreateQuestionRequest(req).then(result => {
 
-			return momentsHandler.createEntryForModel({
+			return questionsHandler.createEntryForModel({
 					title: req.body.title,
 					words: req.body.words,
 					photos: req.body.photos,
@@ -62,10 +62,9 @@ module.exports = {
 					attachment: req.body.attachment,
 					location_id: req.body.location_id,
 					access_level: req.body.access_level,
-					together_with: (req.body.together_with || []),
 					createdBy: req.user_id
 				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+	                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
 	                res.status(httpStatus.OK).send(result);
 				}).catch(error => {
 					next(error);
@@ -76,10 +75,10 @@ module.exports = {
 		})
 	},
 
-	getMomentById: function(req, res, next) {
-		momentRequestValidator.validateGetMomentByIdRequest(req).then(result => {
+	getQuestionById: function(req, res, next) {
+		questionRequestValidator.validateGetQuestionByIdRequest(req).then(result => {
 
-			return momentsHandler.findEntryByIdFromModel(req.params.id).then(result => {
+			return questionsHandler.findEntryByIdFromModel(req.params.id).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);
@@ -90,8 +89,8 @@ module.exports = {
 		});
 	},
 
-	getMomentsByQuery: function(req, res, next) {
-		momentRequestValidator.validateGetMomentsByQueryRequest(req).then(result => {
+	getQuestionsByQuery: function(req, res, next) {
+		questionRequestValidator.validateGetQuestionsByQueryRequest(req).then(result => {
 
             var queryObj = {
                 text: req.query.text,
@@ -101,15 +100,16 @@ module.exports = {
                 offset: req.query.offset,
                 joinWithVotes: false
             };
-            if (req.query.voted_type && req.query.voted_by) {
+            if (req.query.voted_type && (req.query.voted_by || req.query.subject_id)) {
             	queryObj.joinWithVotes = true;
             	queryObj.joinOptions = {
             		voted_type: req.query.voted_type,
-            		voted_by: req.query.voted_by
+            		voted_by: req.query.voted_by,
+            		subject_id: req.query.subject_id
             	};
             }
 
-            return momentsHandler.findMomentsByQuery(queryObj)
+            return questionsHandler.findQuestionsByQuery(queryObj)
                         .then(function(results) {
                             res.status(httpStatus.OK).send(results);
                         }).catch(function(error) {
@@ -121,8 +121,8 @@ module.exports = {
 		})
 	},
 
-	updateMoment: function(req, res, next) {
-		momentRequestValidator.validateUpdateMomentRequest(req).then(result => {
+	updateQuestion: function(req, res, next) {
+		questionRequestValidator.validateUpdateQuestionRequest(req).then(result => {
 
             var updateObj = {};
             if (req.body.title) {
@@ -146,11 +146,8 @@ module.exports = {
             if (req.body.access_level) {
                 updateObj.access_level = req.body.access_level;
             }
-            if (req.body.together_with) {
-                updateObj.together_with = req.body.together_with;
-            }
 
-            return momentsHandler.updateEntryByIdForModel(req.params.id, updateObj).then(result => {
+            return questionsHandler.updateEntryByIdForModel(req.params.id, updateObj).then(result => {
             	res.status(httpStatus.OK).send(result);
             }).catch(error => {
             	next(error);
@@ -161,10 +158,10 @@ module.exports = {
 		});
 	},
 
-	deleteMoment: function(req, res, next) {
-		momentRequestValidator.validateGetMomentByIdRequest(req).then(result => {
+	deleteQuestion: function(req, res, next) {
+		questionRequestValidator.validateGetQuestionByIdRequest(req).then(result => {
 
-			return momentsHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
+			return questionsHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
 				res.status(httpStatus.OK).send(result);
 			}).catch(error => {
 				next(error);
@@ -175,19 +172,20 @@ module.exports = {
 		});
 	},
 
-	castOrChangeVoteForMoment: function(req, res, next) {
-		momentRequestValidator.validateVoteForAMomentRequest(req).then(result => {
+	castOrChangeVoteForQuestion: function(req, res, next) {
+		questionRequestValidator.validateVoteForAQuestionRequest(req).then(result => {
 
-			let voteForMoment = {
+			let voteForQuestion = {
 				vote_type: req.body.type,
-				moment_id: req.params.id,
+				subject_id: req.body.subject_id,
+				question_id: req.params.id,
 				createdBy: req.params.voterId
 			};
 
 			if (req.body.commit) {
-				return votesForMomentsHandler.createEntryForModel(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for moment successfully.', result);
-	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
+				return votesForQuestionsHandler.createEntryForModel(voteForQuestion).then(result => {
+	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for question successfully.', result);
+	                return updateVotesNumberOfQuestion(voteForQuestion.vote_type, voteForQuestion.question_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
 	                	next(error);
@@ -197,9 +195,9 @@ module.exports = {
 					next(error);
 				});
 			} else {
-				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for moment successfully.', result);
-	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
+				return votesForQuestionsHandler.deleteVoteForQuestionByContent(voteForQuestion).then(result => {
+	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for question successfully.', result);
+	                return updateVotesNumberOfQuestion(voteForQuestion.vote_type, voteForQuestion.question_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
 	                	next(error);

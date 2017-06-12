@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:14:19
+* @Last Modified time: 2017-06-11 23:25:51
 */
 
 'use strict';
@@ -125,7 +125,44 @@ module.exports = function() {
 				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
 			],
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		}),
+		// Create Questions
+		models.Questions.create({
+			id: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
+			title: "Can Google be beaten?",
+			words: "\nLike the title states.\n\n",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"Google",
+				"Technology",
+				"Competition"
+			],
+			attachment: "https://www.quora.com/Can-Google-be-beaten",
+			access_level: "followers",
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		}),
+		models.Questions.create({
+			id: "9e1ea1be-4f37-11e7-b114-b2f933d5fe66",
+			title: "How do they make actors/actresses look so good?",
+			words: "Often times I see actors or actresses before they were famous and they don’t look at all like they do when they’re on screen or out in public. What kind of techniques do they use to make them look so good?\n\n",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}],
+			hash_tags: [
+				"Performance",
+				"Appearance"
+			],
+			attachment: "https://www.quora.com/How-do-they-make-actors-actresses-look-so-good",
+			access_level: "followers",
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
+
 	];
 
 	return dbConnectionPool.Promise.all(insertDataTasks).then(function(results) {
