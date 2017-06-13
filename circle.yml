@@ -1,14 +1,15 @@
-# machine:
-# 	node:
-# 		version: 6.1.0
-# 	# npm:
-# 	#   version: 3.10.10
-# 	# babel-cli:
-# 	# 	version: 6.24.1
-# 	# postgres:
-# 	#   version: 9.6.3
-# 	# services:
-# 	# 	- postgresql
+
+machine:
+	node:
+		version: 6.1.0
+	# npm:
+	#   version: 3.10.10
+	# babel-cli:
+	# 	version: 6.24.1
+	# postgres:
+	#   version: 9.6.3
+	# services:
+	# 	- postgresql
 
 # dependencies:
 # 	cache_directories:
@@ -18,11 +19,10 @@
 # 	# override:
 # 	# 	- createdb rattit_content
 
-
-# test:
-# 	override:
-# 		- echo "I do not have test for this yet."
-# 		- npm run start
+test:
+	override:
+		- npm run start
+		- echo "I do not have test for this yet."
 
 # deployment:
 #   master:
