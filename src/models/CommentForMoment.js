@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:34:00
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 15:44:05
+* @Last Modified time: 2017-06-12 18:14:40
 */
 
 'use strict';
@@ -73,6 +73,11 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.DATE,
 			allowNull: false,
 			defaultValue: sequelize.literal('NOW()')
+		},
+		deletedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
+			defaultValue: null
 		}
 	}, {
 		tableName: 'comment_for_moment'

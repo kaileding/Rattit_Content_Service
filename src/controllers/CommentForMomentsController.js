@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 01:51:30
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 15:51:19
+* @Last Modified time: 2017-06-12 20:26:45
 */
 
 'use strict';
@@ -81,7 +81,9 @@ module.exports = {
 	deleteCommentForMoment: function(req, res, next) {
 		commentForMomentRequestValidator.validateGetCommentByIdRequest(req).then(result => {
 
-			return commentForMomentsHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
+			return commentForMomentsHandler.updateEntryByIdForModel(req.params.id, {
+				deletedAt: new Date()
+			}).then(result => {
 				res.status(httpStatus.OK).send(result);
 			}).catch(error => {
 				next(error);

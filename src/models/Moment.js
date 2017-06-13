@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:11:22
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 21:27:13
+* @Last Modified time: 2017-06-12 18:15:58
 */
 
 'use strict';
@@ -87,6 +87,11 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.DATE,
 			allowNull: false,
 			defaultValue: sequelize.literal('NOW()')
+		},
+		deletedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
+			defaultValue: null
 		}
 	}, {
 		tableName: 'moment'

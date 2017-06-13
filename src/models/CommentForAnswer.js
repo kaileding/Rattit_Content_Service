@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 22:27:23
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 15:44:29
+* @Last Modified time: 2017-06-12 18:14:55
 */
 
 'use strict';
@@ -59,6 +59,11 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.DATE,
 			allowNull: false,
 			defaultValue: sequelize.literal('NOW()')
+		},
+		deletedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
+			defaultValue: null
 		}
 	}, {
 		tableName: 'comment_for_answer'

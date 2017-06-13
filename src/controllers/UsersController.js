@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:26:40
+* @Last Modified time: 2017-06-12 23:28:27
 */
 
 'use strict';
@@ -104,7 +104,9 @@ module.exports = {
 	deleteUser: function(req, res, next) {
 		userRequestValidator.validateGetUserByIdRequest(req).then(result => {
 
-            return usersHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
+            return usersHandler.updateEntryByIdForModel(req.params.id, {
+                deletedAt: new Date()
+            }).then(result => {
                     res.status(httpStatus.OK).send(result);
                 }).catch(err => {
                     next(err);

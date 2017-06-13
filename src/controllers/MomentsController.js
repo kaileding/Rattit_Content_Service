@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 22:54:55
+* @Last Modified time: 2017-06-12 23:27:46
 */
 
 'use strict';
@@ -164,7 +164,9 @@ module.exports = {
 	deleteMoment: function(req, res, next) {
 		momentRequestValidator.validateGetMomentByIdRequest(req).then(result => {
 
-			return momentsHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
+			return momentsHandler.updateEntryByIdForModel(req.params.id, {
+				deletedAt: new Date()
+			}).then(result => {
 				res.status(httpStatus.OK).send(result);
 			}).catch(error => {
 				next(error);

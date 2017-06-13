@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:07:21
+* @Last Modified time: 2017-06-12 20:25:45
 */
 
 'use strict';
@@ -149,7 +149,9 @@ module.exports = {
 	deleteAnswer: function(req, res, next) {
 		answerRequestValidator.validateGetAnswerByIdRequest(req).then(result => {
 
-			return answersHandler.deleteEntryByIdFromModel(req.params.id).then(result => {
+			return answersHandler.updateEntryByIdForModel(req.params.id, {
+				deletedAt: new Date()
+			}).then(result => {
 				res.status(httpStatus.OK).send(result);
 			}).catch(error => {
 				next(error);
