@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-12 01:55:36
+* @Date:   2017-06-12 16:51:50
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:29:40
+* @Last Modified time: 2017-06-12 17:32:42
 */
 
 'use strict';
@@ -14,13 +14,13 @@ module.exports = {
 	validateCreateCommentRequest: function(req) {
 
 		req.checkBody({
-			'for_moment': {
+			'for_answer': {
 				optional: false,
 				notEmpty: true,
 				isUUIDFormat: {
-					errorMessage: 'for_moment should be an ID and in UUIDV1 format'
+					errorMessage: 'for_answer should be an ID and in UUIDV1 format'
 				},
-				errorMessage: 'Invalid for_moment'
+				errorMessage: 'Invalid for_answer'
 			},
 			'for_comment': {
 				optional: false,
@@ -36,22 +36,6 @@ module.exports = {
 					errorMessage: 'Words should be text'
 				},
 				errorMessage: 'Invalid words'
-			},
-			'photos': {
-				optional: true,
-				notEmpty: false,
-				isArray: {
-					errorMessage: 'Photos should be an array'
-				},
-				errorMessage: 'Invalid photos'
-			},
-			'hash_tags': {
-				optional: true,
-				notEmpty: false,
-				isArray: {
-					errorMessage: 'Hash_tags should be an array'
-				},
-				errorMessage: 'Invalid hash_tags'
 			}
 		});
 
@@ -87,10 +71,10 @@ module.exports = {
 					errorMessage: 'Query offset must be greater than or equal to 1'
 				}
 			},
-			'for_moment': {
+			'for_answer': {
 				optional: true,
 				isUUIDFormat: {
-					errorMessage: 'Query for_moment should be an ID and in UUIDV1 format'
+					errorMessage: 'Query for_answer should be an ID and in UUIDV1 format'
 				}
 			},
 			'for_comment': {
@@ -114,8 +98,8 @@ module.exports = {
 			'voted_type': {
 				optional: true,
 				isOneOfStrings: {
-					options: [['like', 'dislike']],
-					errorMessage: 'voted_type should be one of ["like", "dislike"]'
+					options: [['like']],
+					errorMessage: 'voted_type should be one of ["like"]'
 				}
 			},
 			'voted_by': {
@@ -139,8 +123,8 @@ module.exports = {
 				optional: false,
 				notEmpty: true,
 				isOneOfStrings: {
-					options: [['like', 'dislike']],
-					errorMessage: 'type should be one of ["like", "dislike"]'
+					options: [['like']],
+					errorMessage: 'type should be one of ["like"]'
 				},
 				errorMessage: 'Invalid type value'
 			},

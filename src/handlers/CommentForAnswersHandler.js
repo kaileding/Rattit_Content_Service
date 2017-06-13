@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
-* @Date:   2017-06-12 02:16:21
+* @Date:   2017-06-12 16:53:32
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:40:11
+* @Last Modified time: 2017-06-12 17:39:57
 */
 
 'use strict';
@@ -18,33 +18,26 @@ import CLogger from '../helpers/CustomLogger'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
-class CommentForMomentsHandler extends DataModelHandler {
+class CommentForAnswersHandler extends DataModelHandler {
 	constructor() {
-		super(models.CommentsForMoment);
+		super(models.CommentsForAnswer);
 	}
 
 	findCommentsByQuery(queryObj) {
 
-		let queryMomentId = queryObj.for_moment ? {
-				for_moment: queryObj.for_moment
+		let queryAnswerId = queryObj.for_answer ? {
+				for_answer: queryObj.for_answer
 			} : true;
 
 		let queryCommentId = queryObj.for_comment ? {
 				for_comment: queryObj.for_comment
 			} : true;
 
-    	let queryText = queryObj.text ? Sequelize.or(
-	        	{
-	        		words: {
-	        			ilike: '%'+queryObj.text+'%'
-	        		}
-	        	},
-	        	{
-	        		hash_tags: {
-	        			$contains: [queryObj.text.toLowerCase()]
-	        		}
-	        	}
-	        ) : true;
+    	let queryText = queryObj.text ? {
+        		words: {
+        			ilike: '%'+queryObj.text+'%'
+        		}
+        	} : true;
 
         let queryAuthorId = queryObj.author_id ? {
 	        	createdBy: queryObj.author_id
@@ -60,13 +53,6 @@ class CommentForMomentsHandler extends DataModelHandler {
 	       				}
 	       			};
 	       			break;
-       			case 'dislike':
-	       			queryVote = {
-	       				dislikedBy: {
-	       					$contains: [queryObj.voted_by]
-	       				}
-	       			};
-	       			break;
        			default:
 	       			queryVote = true;
 	       			break;
@@ -76,7 +62,7 @@ class CommentForMomentsHandler extends DataModelHandler {
        	}
 
 		let filterObj = Sequelize.and(
-			queryMomentId,
+			queryAnswerId,
 			queryCommentId,
 			queryText,
 			queryAuthorId,
@@ -111,28 +97,13 @@ class CommentForMomentsHandler extends DataModelHandler {
 								}
 							}
 							break;
-						case 'dislike':
-							if (updateObj.commit) {
-								if (!(comment.dislikedBy.includes(updateObj.voted_by))) {
-									comment.dislikedBy.push(updateObj.voted_by);
-									change_happen = true;
-								}
-							} else {
-								index = comment.dislikedBy.indexOf(updateObj.voted_by);
-								if (index > -1) {
-									comment.dislikedBy.splice(index, 1);
-									change_happen = true;
-								}
-							}
-							break;
 						default:
 							break;
 					}
 
 					if (change_happen) {
 						return this.updateEntryByIdForModel(id, {
-							likedBy: comment.likedBy,
-							dislikedBy: comment.dislikedBy
+							likedBy: comment.likedBy
 						}).then(result => {
 							resolve(result);
 						}).catch(error => {
@@ -154,4 +125,4 @@ class CommentForMomentsHandler extends DataModelHandler {
 
 }
 
-module.exports = CommentForMomentsHandler;
+module.exports = CommentForAnswersHandler;

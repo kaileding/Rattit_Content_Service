@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 15:20:42
+* @Last Modified time: 2017-06-12 17:51:53
 */
 
 'use strict';
@@ -220,9 +220,9 @@ let getInsertAnswersTask = function() {
 	];
 }
 
-let getInsertCommentForMomentTask_1 = function() {
+let getInsertCommentsTask_1 = function() {
 	return [
-		// Create CommentsForMoment// Create CommentsForMoment
+		// Create CommentsForMoment
 		models.CommentsForMoment.create({
 			id: "d5afd0b0-4fb1-11e7-b114-b2f933d5fe66",
 			for_moment: "113ebbde-4e84-11e7-b114-b2f933d5fe66",
@@ -237,12 +237,21 @@ let getInsertCommentForMomentTask_1 = function() {
 				"666"
 			],
 			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		}),
+		// Create CommentsForAnswer
+		models.CommentsForAnswer.create({
+			id: "d02e5204-4fd1-11e7-b114-b2f933d5fe66",
+			for_answer: "c3b9862c-4f42-11e7-b114-b2f933d5fe66",
+			for_comment: null,
+			words: "Saying words without paying money.",
+			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
 		})
 	];
 }
 
-let getInsertCommentForMomentTask_2 = function() {
+let getInsertCommentsTask_2 = function() {
 	return [
+		// Create CommentsForMoment
 		models.CommentsForMoment.create({
 			id: "2169bb38-4fb2-11e7-86a1-b2f933d5fe66",
 			for_moment: "113ebbde-4e84-11e7-b114-b2f933d5fe66",
@@ -257,6 +266,14 @@ let getInsertCommentForMomentTask_2 = function() {
 				"666"
 			],
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		}),
+		// Create CommentsForAnswer
+		models.CommentsForAnswer.create({
+			id: "478d942c-4fd2-11e7-b114-b2f933d5fe66",
+			for_answer: "c3b9862c-4f42-11e7-b114-b2f933d5fe66",
+			for_comment: "d02e5204-4fd1-11e7-b114-b2f933d5fe66",
+			words: "Good idea plus hard work and a little bit of fortune will make it.",
+			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
 		})
 	]
 }
@@ -269,8 +286,8 @@ module.exports = function() {
 			return dbConnectionPool.Promise.all(getInsertMomentsTask()).then(function(results) {
 				return dbConnectionPool.Promise.all(getInsertQuestionsTask()).then(function(results) {
 					return dbConnectionPool.Promise.all(getInsertAnswersTask()).then(function(results) {
-						return dbConnectionPool.Promise.all(getInsertCommentForMomentTask_1()).then(function(results) {
-							return dbConnectionPool.Promise.all(getInsertCommentForMomentTask_2()).then(function(results) {
+						return dbConnectionPool.Promise.all(getInsertCommentsTask_1()).then(function(results) {
+							return dbConnectionPool.Promise.all(getInsertCommentsTask_2()).then(function(results) {
 								console.log('Load test data successfully!');
 								return "Success";
 							}).catch(function(error) {
