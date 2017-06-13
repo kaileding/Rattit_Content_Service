@@ -1,18 +1,18 @@
 machine:
-  node:
-    version: 6.1.0
-  # npm:
-  #   version: 3.10.10
+	node:
+		version: 6.1.0
+	# npm:
+	#   version: 3.10.10
 	# babel-cli:
 	# 	version: 6.24.1
-  # postgres:
-  #   version: 9.6.3
+	# postgres:
+	#   version: 9.6.3
 	# services:
 	# 	- postgresql
 
 dependencies:
-  cache_directories:
-    - 'node_modules'
+	cache_directories:
+		- 'node_modules'
 
 # database:
 	# override:
@@ -20,9 +20,9 @@ dependencies:
 
 
 test:
-  override:
-    - echo "I do not have test for this yet."
-    - npm run start
+	override:
+		- echo "I do not have test for this yet."
+		- npm run start
 
 # deployment:
 #   master:
