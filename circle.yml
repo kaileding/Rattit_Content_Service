@@ -5,8 +5,8 @@ machine:
     version: 3.10.10
 	# babel-cli:
 	# 	version: 6.24.1
-  postgres:
-    version: 9.6.3
+  # postgres:
+  #   version: 9.6.3
 	# services:
 	# 	- postgresql
 
