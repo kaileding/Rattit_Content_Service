@@ -24,10 +24,10 @@ test:
     - echo "I do not have test for this yet."
     - npm run start
 
-deployment:
-  master:
-    branch: [master, staging]
-    commands:
-      - echo "Deployment not available yet."
+# deployment:
+#   master:
+#     branch: [master, staging]
+#     commands:
+#       - echo "Deployment not available yet."
 
 
