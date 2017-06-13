@@ -21,8 +21,8 @@
 
 test:
 	override:
-		- npm run start
 		- echo "I do not have test for this yet."
+		# - npm run start
 
 # deployment:
 #   master:
