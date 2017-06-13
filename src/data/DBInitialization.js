@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:51:53
+* @Last Modified time: 2017-06-13 09:08:24
 */
 
 'use strict';
@@ -96,6 +96,30 @@ let getInsertLocationsTask = function() {
     		createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66",
     		updatedBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
 		}),
+	];
+}
+
+let getInsertCollectionsTask = function() {
+	return [
+		// Create Collections
+		models.Collections.create({
+			id: "2a3f193e-5051-11e7-b114-b2f933d5fe66",
+			title: "Food fest",
+			description: "Get your stomach prepared, start an amazing trip.",
+			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
+			tags: ["food", "warming"],
+			access_level: "self",
+			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		}),
+		models.Collections.create({
+			id: "a4b1462e-5051-11e7-b114-b2f933d5fe66",
+			title: "5-star fitness",
+			description: "Keep updating. The few fitness centers that were received as clean, professional and well located choices by a group of captious people.",
+			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
+			tags: ["gym", "rating"],
+			access_level: "public",
+			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
+		})
 	];
 }
 
@@ -283,13 +307,17 @@ module.exports = function() {
 
 	return dbConnectionPool.Promise.all(getInsertUsersTask()).then(function(results) {
 		return dbConnectionPool.Promise.all(getInsertLocationsTask()).then(function(results) {
-			return dbConnectionPool.Promise.all(getInsertMomentsTask()).then(function(results) {
-				return dbConnectionPool.Promise.all(getInsertQuestionsTask()).then(function(results) {
-					return dbConnectionPool.Promise.all(getInsertAnswersTask()).then(function(results) {
-						return dbConnectionPool.Promise.all(getInsertCommentsTask_1()).then(function(results) {
-							return dbConnectionPool.Promise.all(getInsertCommentsTask_2()).then(function(results) {
-								console.log('Load test data successfully!');
-								return "Success";
+			return dbConnectionPool.Promise.all(getInsertCollectionsTask()).then(function(results) {
+				return dbConnectionPool.Promise.all(getInsertMomentsTask()).then(function(results) {
+					return dbConnectionPool.Promise.all(getInsertQuestionsTask()).then(function(results) {
+						return dbConnectionPool.Promise.all(getInsertAnswersTask()).then(function(results) {
+							return dbConnectionPool.Promise.all(getInsertCommentsTask_1()).then(function(results) {
+								return dbConnectionPool.Promise.all(getInsertCommentsTask_2()).then(function(results) {
+									console.log('Load test data successfully!');
+									return "Success";
+								}).catch(function(error) {
+									throw error;
+								});
 							}).catch(function(error) {
 								throw error;
 							});

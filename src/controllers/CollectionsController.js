@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 00:57:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 02:26:13
+* @Last Modified time: 2017-06-13 09:41:25
 */
 
 'use strict';
@@ -60,21 +60,39 @@ module.exports = {
         collectionRequestValidator.validateGetCollectionsByQueryRequest(req).then(result => {
             cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
 
-            let queryObj = {
-                text: req.query.text,
-                owner_id: req.query.owner_id
-            };
+            if (req.query.question_id) {
+            	return collectQuestionsHandler.findCollectionsByContentId(req.query.question_id, req.query.limit, req.query.offset).then(results => {
+            		res.status(httpStatus.OK).send(results);
+	            }).catch(error => {
+	            	next(error);
+	            });
+            } else if (req.query.answer_id) {
+            	return collectAnswersHandler.findCollectionsByContentId(req.query.answer_id, req.query.limit, req.query.offset).then(results => {
+            		res.status(httpStatus.OK).send(results);
+	            }).catch(error => {
+	            	next(error);
+	            });
+            } else if (req.query.moment_id) {
+            	return collectMomentsHandler.findCollectionsByContentId(req.query.moment_id, req.query.limit, req.query.offset).then(results => {
+            		res.status(httpStatus.OK).send(results);
+	            }).catch(error => {
+	            	next(error);
+	            });
+            } else {
+            	let queryObj = {
+	            	limit: req.query.limit,
+	            	offset: req.query.offset,
+	                text: req.query.text,
+	                owner_id: req.query.owner_id
+	            };
 
-            // ?????????????????   ? ? ?? ? ? ? 
-            // Add query by question_id, answer_id, moment_id
-
-
-            return collectionsHandler.findCollectionsByQuery(queryObj).then(results => {
-                    res.status(httpStatus.OK).send(results);
-                }).catch(function(error) {
-                    next(error);
-                });
-
+	            return collectionsHandler.findCollectionsByQuery(queryObj).then(results => {
+	                    res.status(httpStatus.OK).send(results);
+	                }).catch(function(error) {
+	                    next(error);
+	                });
+            }
+            
         }).catch(error => {
             next(error);
         });
