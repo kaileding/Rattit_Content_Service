@@ -3,12 +3,12 @@ machine:
 		version: 6.11.0
 	npm:
 		version: 3.10.10
-	babel-cli:
-		version: 6.24.1
+	# babel-cli:
+	# 	version: 6.24.1
 	postgres:
 		version: 9.6.3
-	services:
-		- postgresql
+	# services:
+	# 	- postgresql
 
 dependencies:
 	cache_directories:
