@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "babel-node src/app.js",
-    "test": "make test"
+    "start": "babel-node src/app.js"
   },
   "repository": {
     "type": "git",
