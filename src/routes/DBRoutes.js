@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-14 00:48:38
+* @Last Modified time: 2017-06-14 00:54:29
 */
 
 'use strict';
@@ -22,9 +22,9 @@ router.get('/init', (req, res, next) => {
 	
     cLogger.say(cLogger.TESTING_TYPE, 'start');
 
-    models.Users.sync({
-        force: true
-    }).then(r => {
+    // models.Users.sync({
+    //     force: true
+    // }).then(r => {
         dbConnectionPool.sync({
             force: true
         }).then(function (r) {
@@ -48,10 +48,10 @@ router.get('/init', (req, res, next) => {
             cLogger.say(cLogger.ESSENTIAL_TYPE, err);
             next(err);
         });
-    }).catch(err => {
-        cLogger.say(cLogger.ESSENTIAL_TYPE, err);
-        next(err);
-    });
+    // }).catch(err => {
+    //     cLogger.say(cLogger.ESSENTIAL_TYPE, err);
+    //     next(err);
+    // });
 	
 });
 
