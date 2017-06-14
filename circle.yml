@@ -1,14 +1,24 @@
 machine:
+  environment:
+    NODE_ENV: test
   node:
     version: 6.1.0
   npm:
     version: 3.10.10
   postgres:
     version: 9.6.3
+  services:
+    - postgresql
+    - postgis
 
 dependencies:
   cache_directories:
     - 'node_modules'
+
+database:
+  post:
+    - chmod +x ./config/configDB.sh
+    - ./config/configDB.sh
 
 test:
   override:
