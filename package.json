@@ -40,6 +40,7 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
+    "babel-core": "^6.25.0",
     "chai": "^4.0.2",
     "chai-http": "^3.0.0",
     "mocha": "^3.4.2"
