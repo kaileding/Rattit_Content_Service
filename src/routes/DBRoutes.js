@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 02:11:18
+* @Last Modified time: 2017-06-14 00:59:04
 */
 
 'use strict';
@@ -22,9 +22,9 @@ router.get('/init', (req, res, next) => {
 	
     cLogger.say(cLogger.TESTING_TYPE, 'start');
 
-	dbConnectionPool.sync({
-		force: true
-	}).then(function (r) {
+    dbConnectionPool.sync({
+        force: true
+    }).then(function (r) {
         if (forceFlag) {
             dbInitialization().then(result => {
                 res.status(httpStatus.OK).send({
@@ -42,9 +42,10 @@ router.get('/init', (req, res, next) => {
             });
         }
     }, function (err) {
-    	cLogger.say(cLogger.ESSENTIAL_TYPE, err);
+        cLogger.say(cLogger.ESSENTIAL_TYPE, err);
         next(err);
     });
+	
 });
 
 module.exports = router;

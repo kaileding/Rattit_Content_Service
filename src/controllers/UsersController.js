@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 23:28:27
+* @Last Modified time: 2017-06-13 22:48:48
 */
 
 'use strict';
@@ -32,7 +32,7 @@ module.exports = {
                     avatar: req.body.avatar
                 }).then(function(result) {
                     cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
-                    res.status(httpStatus.OK).send(result);
+                    res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
                 });
@@ -164,7 +164,7 @@ module.exports = {
             });
 
             return Promise.all(dataReqs).then(results => {
-                res.status(httpStatus.OK).send(results);
+                res.status(httpStatus.CREATED).send(results);
             }).catch(error => {
                 next(error);
             });

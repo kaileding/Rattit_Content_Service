@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 23:27:46
+* @Last Modified time: 2017-06-13 22:21:16
 */
 
 'use strict';
@@ -66,7 +66,7 @@ module.exports = {
 					createdBy: req.user_id
 				}).then(result => {
 	                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-	                res.status(httpStatus.OK).send(result);
+	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);
 				});

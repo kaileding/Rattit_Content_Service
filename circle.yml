@@ -1,19 +1,30 @@
 machine:
+  environment:
+    NODE_ENV: test
   node:
     version: 6.1.0
   npm:
     version: 3.10.10
   postgres:
     version: 9.6.3
+  services:
+    - postgresql
 
 dependencies:
   cache_directories:
     - 'node_modules'
 
+database:
+  post:
+    # - chmod +x ./config/configDB.sh
+    # - ./config/configDB.sh
+    - psql -c "CREATE EXTENSION postgis;" -d circle_test
+    - psql -c "CREATE EXTENSION postgis_topology;" -d circle_test
+
 test:
   override:
-    - echo "I do not have test for this yet."
-    # - npm run start
+    - echo "I have 16 tests for this app."
+    - npm run test
 
 deployment:
   master:
