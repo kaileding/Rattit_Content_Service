@@ -9,7 +9,6 @@ machine:
     version: 9.6.3
   services:
     - postgresql
-    - postgis
 
 dependencies:
   cache_directories:
@@ -17,8 +16,9 @@ dependencies:
 
 database:
   post:
-    - chmod +x ./config/configDB.sh
-    - ./config/configDB.sh
+    # - chmod +x ./config/configDB.sh
+    # - ./config/configDB.sh
+    - psql -c "CREATE EXTENSION postgis;" -d circle_test
 
 test:
   override:
