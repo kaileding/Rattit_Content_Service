@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 16:47:56
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 20:26:27
+* @Last Modified time: 2017-06-13 22:20:50
 */
 
 'use strict';
@@ -26,7 +26,7 @@ module.exports = {
 					createdBy: req.user_id
 				}).then(result => {
 	                cLogger.say(cLogger.TESTING_TYPE, 'save one comment for moment successfully.', result);
-	                res.status(httpStatus.OK).send(result);
+	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);
 				});

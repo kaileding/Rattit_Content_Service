@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 23:28:11
+* @Last Modified time: 2017-06-13 22:21:28
 */
 
 'use strict';
@@ -65,7 +65,7 @@ module.exports = {
 					createdBy: req.user_id
 				}).then(result => {
 	                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
-	                res.status(httpStatus.OK).send(result);
+	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);
 				});

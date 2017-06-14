@@ -12,8 +12,8 @@ dependencies:
 
 test:
   override:
-    - echo "I do not have test for this yet."
-    # - npm run start
+    - echo "I have 16 tests for this app."
+    - npm run test
 
 deployment:
   master:
