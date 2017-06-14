@@ -19,6 +19,7 @@ database:
     # - chmod +x ./config/configDB.sh
     # - ./config/configDB.sh
     - psql -c "CREATE EXTENSION postgis;" -d circle_test
+    - psql -c "CREATE EXTENSION postgis_topology;" -d circle_test
 
 test:
   override:
