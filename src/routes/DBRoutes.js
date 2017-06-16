@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-14 00:59:04
+* @Last Modified time: 2017-06-15 22:03:55
 */
 
 'use strict';
@@ -22,29 +22,40 @@ router.get('/init', (req, res, next) => {
 	
     cLogger.say(cLogger.TESTING_TYPE, 'start');
 
-    dbConnectionPool.sync({
-        force: true
-    }).then(function (r) {
-        if (forceFlag) {
-            dbInitialization().then(result => {
-                res.status(httpStatus.OK).send({
-                    status: "success",
-                    message: 'Database forcely synchronized successfully with testing data.'
-                });
-            }).catch(error => {
-                cLogger.say(cLogger.ESSENTIAL_TYPE, error);
-                next(new APIError('Failed to insert testing data into database.'));
+    let createExtensionStr = 'CREATE EXTENSION IF NOT EXISTS postgis;'
+                            + 'CREATE EXTENSION IF NOT EXISTS postgis_topology;';
+    dbConnectionPool.query(createExtensionStr).then(result => {
+
+        return dbConnectionPool.sync({
+                force: true
+            }).then(function (r) {
+                if (forceFlag) {
+                    return dbInitialization().then(result => {
+                            res.status(httpStatus.OK).send({
+                                status: "success",
+                                message: 'Database forcely synchronized successfully with testing data.'
+                            });
+                        }).catch(error => {
+                            cLogger.say(cLogger.ESSENTIAL_TYPE, error);
+                            next(new APIError('Failed to insert testing data into database.'));
+                        });
+                    } else {
+                        res.status(httpStatus.OK).send({
+                            status: "success",
+                            message: 'Database synchronized successfully'
+                        });
+                    }
+                    
+            }, function (err) {
+                cLogger.say(cLogger.ESSENTIAL_TYPE, err);
+                next(err);
             });
-        } else {
-            res.status(httpStatus.OK).send({
-                status: "success",
-                message: 'Database synchronized successfully'
-            });
-        }
-    }, function (err) {
-        cLogger.say(cLogger.ESSENTIAL_TYPE, err);
-        next(err);
+
+    }).catch(error => {
+        cLogger.say(cLogger.ESSENTIAL_TYPE, error);
+        next(error);
     });
+
 	
 });
 
