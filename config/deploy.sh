@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-16 01:53:38
+# @Last Modified time: 2017-06-16 01:59:31
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -37,7 +37,7 @@ make_task_def(){
 				},
 				{
 					"name": "DB_MAX_CONNECTIONS",
-					"value": %s
+					"value": "%s"
 				},
 				{
 					"name": "DB_NAME",
