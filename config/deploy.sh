@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-16 01:46:04
+# @Last Modified time: 2017-06-16 01:53:38
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -61,7 +61,7 @@ make_task_def(){
 	
 	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1 $NODE_ENV $GOOGLE_API_KEY $DB_MAX_CONNECTIONS $AWS_DB_NAME $AWS_DB_HOST $AWS_DB_USER $AWS_DB_PSWD)
 
-	echo "$task_def"
+	# echo "$task_def"
 }
 
 register_definition() {
