@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-16 01:30:09
+# @Last Modified time: 2017-06-16 01:36:26
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -54,7 +54,7 @@ make_task_def(){
 				{
 					"name": "DB_PSWD",
 					"value": "%s"
-				},
+				}
 			]
 		}
 	]'
