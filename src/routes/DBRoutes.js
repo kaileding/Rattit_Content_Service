@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-15 22:03:55
+* @Last Modified time: 2017-06-16 10:38:57
 */
 
 'use strict';
@@ -19,8 +19,6 @@ let cLogger = new CLogger();
 router.get('/init', (req, res, next) => {
 	let forceFlag = (req.query.force && 
 		(req.query.force===1 || req.query.force===true || req.query.force==='true'));
-	
-    cLogger.say(cLogger.TESTING_TYPE, 'start');
 
     let createExtensionStr = 'CREATE EXTENSION IF NOT EXISTS postgis;'
                             + 'CREATE EXTENSION IF NOT EXISTS postgis_topology;';
