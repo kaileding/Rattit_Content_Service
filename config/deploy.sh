@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-16 01:10:33
+# @Last Modified time: 2017-06-16 01:30:09
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -25,11 +25,48 @@ make_task_def(){
 					"containerPort": 3500,
 					"hostPort": 80
 				}
+			],
+			"environment": [
+				{
+					"name": "NODE_ENV",
+					"value": "%s"
+				},
+				{
+					"name": "GOOGLE_API_KEY",
+					"value": "%s"
+				},
+				{
+					"name": "DB_MAX_CONNECTIONS",
+					"value": %s
+				},
+				{
+					"name": "DB_NAME",
+					"value": "%s"
+				},
+				{
+					"name": "DB_HOST",
+					"value": "%s"
+				},
+				{
+					"name": "DB_USER",
+					"value": "%s"
+				},
+				{
+					"name": "DB_PSWD",
+					"value": "%s"
+				},
 			]
 		}
 	]'
 	
-	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1)
+	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1 \
+		$NODE_ENV \
+		$GOOGLE_API_KEY \
+		$DB_MAX_CONNECTIONS \
+		$AWS_DB_NAME \
+		$AWS_DB_HOST \
+		$AWS_DB_USER \
+		$AWS_DB_PSWD)
 }
 
 register_definition() {
@@ -48,7 +85,7 @@ deploy_cluster() {
 
     make_task_def
     register_definition
-    if [[ $(aws ecs update-service --cluster rattit-content-service-dev --service rattit-content-service-devservice --task-definition $revision | \
+    if [[ $(aws ecs update-service --cluster rattit-content-service-dev --service rattit_content_service_dev --task-definition $revision | \
                    $JQ '.service.taskDefinition') != $revision ]]; then
         echo "Error updating service."
         return 1
@@ -57,7 +94,7 @@ deploy_cluster() {
     # wait for older revisions to disappear
     # not really necessary, but nice for demos
     for attempt in {1..30}; do
-        if stale=$(aws ecs describe-services --cluster rattit-content-service-dev --services rattit-content-service-devservice | \
+        if stale=$(aws ecs describe-services --cluster rattit-content-service-dev --services rattit_content_service_dev | \
                        $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
             echo "Waiting for stale deployments:"
             echo "$stale"
