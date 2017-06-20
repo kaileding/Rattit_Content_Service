@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-18 15:57:34
+# @Last Modified time: 2017-06-19 20:28:06
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -21,6 +21,10 @@ make_task_def(){
 			"memory": 300,
 			"cpu": 10,
 			"portMappings": [
+				{
+					"containerPort": 3500,
+					"hostPort": 80
+				},
 				{
 					"containerPort": 3500,
 					"hostPort": 443
