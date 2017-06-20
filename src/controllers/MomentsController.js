@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 22:21:16
+* @Last Modified time: 2017-06-20 00:40:23
 */
 
 'use strict';
@@ -216,6 +216,28 @@ module.exports = {
 			next(error);
 		});
 
+	},
+
+	getVotersForMomentId: function(req, res, next) {
+		momentRequestValidator.validateGetVotesForMomentIdRequest(req).then(result => {
+
+			let queryObj = {
+				voter_id: req.query.voter_id,
+				vote_type: req.query.vote_type,
+				moment_id: req.params.id,
+				limit: req.query.limit,
+				offset: req.query.offset
+			};
+
+			return votesForMomentsHandler.findVotesByMomentIdAndQuery(queryObj).then(results => {
+				res.status(httpStatus.OK).send(results);
+			}).catch(error => {
+				next(error);
+			});
+
+		}).catch(error => {
+			next(error);
+		});
 	}
 
 }

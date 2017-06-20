@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-16 02:15:25
+# @Last Modified time: 2017-06-19 22:30:48
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -24,6 +24,10 @@ make_task_def(){
 				{
 					"containerPort": 3500,
 					"hostPort": 80
+				},
+				{
+					"containerPort": 3500,
+					"hostPort": 443
 				}
 			],
 			"environment": [
@@ -54,12 +58,41 @@ make_task_def(){
 				{
 					"name": "DB_PSWD",
 					"value": "%s"
+				},
+				{
+					"name": "S3_REGION",
+					"value": "%s"
+				},
+				{
+					"name": "S3_BUCKET",
+					"value": "%s"
+				},
+				{
+					"name": "AWS_ACCESS_KEY_ID",
+					"value": "%s"
+				},
+				{
+					"name": "AWS_SECRET_ACCESS_KEY",
+					"value": "%s"
 				}
 			]
 		}
 	]'
 	
-	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1 $NODE_ENV $GOOGLE_API_KEY $DB_MAX_CONNECTIONS $AWS_DB_NAME $AWS_DB_HOST $AWS_DB_USER $AWS_DB_PSWD)
+	task_def=$(printf "$task_template" \
+		$AWS_ACCOUNT_ID \
+		$CIRCLE_SHA1 \
+		$NODE_ENV \
+		$GOOGLE_API_KEY \
+		$DB_MAX_CONNECTIONS \
+		$AWS_DB_NAME \
+		$AWS_DB_HOST \
+		$AWS_DB_USER \
+		$AWS_DB_PSWD \
+		$S3_REGION \
+		$S3_BUCKET \
+		$AWS_ACCESS_KEY_ID \
+		$AWS_SECRET_ACCESS_KEY)
 
 	# echo "$task_def"
 }

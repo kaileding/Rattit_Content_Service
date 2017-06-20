@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 22:20:18
+* @Last Modified time: 2017-06-20 00:41:39
 */
 
 'use strict';
@@ -201,6 +201,28 @@ module.exports = {
 			next(error);
 		});
 
+	},
+
+	getVotersForAnswerId: function(req, res, next) {
+		answerRequestValidator.validateGetVotesForAnswerIdRequest(req).then(result => {
+
+			let queryObj = {
+				voter_id: req.query.voter_id,
+				vote_type: req.query.vote_type,
+				answer_id: req.params.id,
+				limit: req.query.limit,
+				offset: req.query.offset
+			};
+
+			return votesForAnswersHandler.findVotesByAnswerIdAndQuery(queryObj).then(results => {
+				res.status(httpStatus.OK).send(results);
+			}).catch(error => {
+				next(error);
+			});
+
+		}).catch(error => {
+			next(error);
+		});
 	}
 
 }

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:50:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 23:40:30
+* @Last Modified time: 2017-06-20 00:42:38
 */
 
 'use strict';
@@ -247,6 +247,48 @@ module.exports = {
 		});
 
 	    return customValidations.validationResult(req);
+	},
+
+	validateGetVotesForQuestionIdRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkQuery({
+			'limit': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query limit must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			},
+			'vote_type': {
+				optional: true,
+				isOneOfStrings: {
+					options: [['interest', 'invite', 'pity']],
+					errorMessage: 'vote_type should be one of ["interest", "invite", "pity"]'
+				}
+			},
+			'voter_id': {
+				optional: true,
+				isUUIDFormat: {
+					errorMessage: 'Query voter_id should be an ID and in UUIDV1 format'
+				}
+			}
+		});
+
+		return customValidations.validationResult(req);
 	}
 
 }

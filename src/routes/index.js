@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 02:27:11
+* @Last Modified time: 2017-06-19 20:35:44
 */
 
 'use strict';
@@ -21,6 +21,7 @@ import questionRoutes from './QuestionRoutes'
 import answerRoutes from './AnswerRoutes'
 import commentForAnswerRoutes from './CommentForAnswerRoutes'
 import collectionRoutes from './CollectionRoutes'
+import utilityRoutes from './UtilityRoutes'
 
 router.use('/', (req, res, next) => {
 	cLogger.say(cLogger.NEWLINE_TYPE, 'Called ['+req.method+'] '+req.url);
@@ -48,5 +49,7 @@ router.use('/answers', answerRoutes);
 router.use('/comments_for_answer', commentForAnswerRoutes);
 
 router.use('/collections', collectionRoutes);
+
+router.use('/utilities', utilityRoutes);
 
 module.exports = router;

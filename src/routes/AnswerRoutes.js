@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:46:40
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 23:50:02
+* @Last Modified time: 2017-06-20 00:46:34
 */
 
 'use strict';
@@ -18,6 +18,8 @@ router.post('/', answersController.postAnswer);
 router.get('/', answersController.getAnswersByQuery);
 
 router.get('/:id', answersController.getAnswerById);
+
+router.get('/:id/votes', answersController.getVotersForAnswerId);
 
 router.patch('/:id', answersController.updateAnswer);
 

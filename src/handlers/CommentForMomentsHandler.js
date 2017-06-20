@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 02:16:21
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:40:11
+* @Last Modified time: 2017-06-19 23:44:50
 */
 
 'use strict';
@@ -24,6 +24,10 @@ class CommentForMomentsHandler extends DataModelHandler {
 	}
 
 	findCommentsByQuery(queryObj) {
+
+		let includeObj = [{
+			model: models.Users
+		}];
 
 		let queryMomentId = queryObj.for_moment ? {
 				for_moment: queryObj.for_moment
@@ -83,7 +87,7 @@ class CommentForMomentsHandler extends DataModelHandler {
 			queryVote
 			);
 
-		return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 
 	}
 

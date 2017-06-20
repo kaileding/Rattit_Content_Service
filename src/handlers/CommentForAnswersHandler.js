@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 16:53:32
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:39:57
+* @Last Modified time: 2017-06-19 23:43:57
 */
 
 'use strict';
@@ -24,6 +24,10 @@ class CommentForAnswersHandler extends DataModelHandler {
 	}
 
 	findCommentsByQuery(queryObj) {
+
+		let includeObj = [{
+			model: models.Users
+		}];
 
 		let queryAnswerId = queryObj.for_answer ? {
 				for_answer: queryObj.for_answer
@@ -69,7 +73,7 @@ class CommentForAnswersHandler extends DataModelHandler {
 			queryVote
 			);
 
-		return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 
 	}
 

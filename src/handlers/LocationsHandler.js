@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:28:31
+* @Last Modified time: 2017-06-19 23:45:42
 */
 
 'use strict';
@@ -24,6 +24,10 @@ class LocationsHandler extends DataModelHandler {
 	}
 
 	findLocationsByQuery(queryObj) {
+
+		let includeObj = [{
+			model: models.Users
+		}];
 
    		let okToQueryDistance = (queryObj.coordinates.longitude 
    								&& queryObj.coordinates.latitude 
@@ -74,7 +78,7 @@ class LocationsHandler extends DataModelHandler {
 		let offset = queryObj.offset;
 
 
-		return this.findEntriesFromModel(selectObj, filterObj, orderObj, limit, offset);
+		return this.findEntriesFromModel(selectObj, includeObj, filterObj, orderObj, limit, offset);
 	}
 
 }
