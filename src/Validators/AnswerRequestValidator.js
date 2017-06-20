@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:54:39
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:05:51
+* @Last Modified time: 2017-06-20 00:44:37
 */
 
 'use strict';
@@ -192,6 +192,48 @@ module.exports = {
 		});
 
 	    return customValidations.validationResult(req);
+	},
+
+	validateGetVotesForAnswerIdRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkQuery({
+			'limit': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query limit must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			},
+			'vote_type': {
+				optional: true,
+				isOneOfStrings: {
+					options: [['agree', 'disagree', 'admire']],
+					errorMessage: 'vote_type should be one of ["agree", "disagree", "admire"]'
+				}
+			},
+			'voter_id': {
+				optional: true,
+				isUUIDFormat: {
+					errorMessage: 'Query voter_id should be an ID and in UUIDV1 format'
+				}
+			}
+		});
+
+		return customValidations.validationResult(req);
 	}
 
 }

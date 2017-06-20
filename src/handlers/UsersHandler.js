@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-06 02:42:04
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 21:37:45
+* @Last Modified time: 2017-06-19 23:48:10
 */
 
 'use strict';
@@ -38,7 +38,7 @@ class UsersHandler extends DataModelHandler {
 
 		let orderObj = [['follower_number', 'DESC']];
 
-		return this.findEntriesFromModel(null, filterObj, orderObj, limit, offset);
+		return this.findEntriesFromModel(null, null, filterObj, orderObj, limit, offset);
 	}
 
 }

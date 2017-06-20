@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 01:00:49
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 01:15:58
+* @Last Modified time: 2017-06-19 23:43:13
 */
 
 'use strict';
@@ -24,6 +24,10 @@ class CollectionsHandler extends DataModelHandler {
 	}
 
 	findCollectionsByQuery(queryObj) {
+
+		let includeObj = [{
+			model: models.Users
+		}];
 
     	let queryText = queryObj.text ? Sequelize.or(
 	        	{
@@ -52,7 +56,7 @@ class CollectionsHandler extends DataModelHandler {
 			queryOwnerId
 			);
 
-		return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 
 	}
 
