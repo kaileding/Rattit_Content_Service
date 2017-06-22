@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-19 23:45:42
+* @Last Modified time: 2017-06-21 19:35:16
 */
 
 'use strict';
@@ -56,6 +56,23 @@ class LocationsHandler extends DataModelHandler {
 		        	}
 		        ) : true;
 
+	    let queryDate;
+	    if (queryObj.queryDateType === 'nolater_than') {
+	    	queryDate = {
+	    		createdAt: {
+	    			$lte: queryObj.dateLine
+	    		}
+	    	};
+    	} else if (queryObj.queryDateType === 'noearlier_than') {
+    		queryDate = {
+    			createdAt: {
+    				$gte: queryObj.dateLine
+    			}
+    		};
+    	} else {
+    		queryDate = true;
+    	}
+
         let selectObj = okToQueryDistance ? {
         			include: [[Sequelize.fn('ST_Distance_Sphere', 
         							Sequelize.fn('ST_SetSRID', 
@@ -68,7 +85,8 @@ class LocationsHandler extends DataModelHandler {
 
 		let filterObj = Sequelize.and(
 	        	queryDistance,
-	        	queryText
+	        	queryText,
+	        	queryDate
 			);
 
 		let orderObj = [['createdAt', 'DESC']];

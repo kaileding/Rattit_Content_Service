@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-20 00:40:23
+* @Last Modified time: 2017-06-21 19:19:37
 */
 
 'use strict';
@@ -97,6 +97,8 @@ module.exports = {
                 text: req.query.text,
                 location_id: req.query.location_id,
                 author_id: req.query.author_id,
+                queryDateType: req.query.date_query_type,
+                dateLine: req.query.date_query_line,
                 limit: req.query.limit,
                 offset: req.query.offset,
                 joinWithVotes: false
