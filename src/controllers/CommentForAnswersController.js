@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 16:47:56
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 22:20:50
+* @Last Modified time: 2017-06-21 19:37:17
 */
 
 'use strict';
@@ -58,6 +58,8 @@ module.exports = {
             	for_comment: req.query.for_comment,
                 text: req.query.text,
                 author_id: req.query.author_id,
+                queryDateType: req.query.date_query_type,
+                dateLine: req.query.date_query_line,
                 limit: req.query.limit,
                 offset: req.query.offset,
         		voted_type: req.query.voted_type,

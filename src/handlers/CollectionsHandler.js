@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 01:00:49
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-19 23:43:13
+* @Last Modified time: 2017-06-21 19:31:06
 */
 
 'use strict';
@@ -51,9 +51,27 @@ class CollectionsHandler extends DataModelHandler {
 	        	createdBy: queryObj.owner_id
 	        } : true;
 
+	    let queryDate;
+	    if (queryObj.queryDateType === 'nolater_than') {
+	    	queryDate = {
+	    		createdAt: {
+	    			$lte: queryObj.dateLine
+	    		}
+	    	};
+    	} else if (queryObj.queryDateType === 'noearlier_than') {
+    		queryDate = {
+    			createdAt: {
+    				$gte: queryObj.dateLine
+    			}
+    		};
+    	} else {
+    		queryDate = true;
+    	}
+
 		let filterObj = Sequelize.and(
 			queryText,
-			queryOwnerId
+			queryOwnerId,
+			queryDate
 			);
 
 		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:54:39
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-20 00:44:37
+* @Last Modified time: 2017-06-21 19:48:46
 */
 
 'use strict';
@@ -128,6 +128,19 @@ module.exports = {
 				greaterThanOrEqualTo: {
 					options: [1],
 					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			},
+			'date_query_type': {
+				optional: true,
+				isOneOfStrings: {
+					options:[['noearlier_than', 'nolater_than']],
+					errorMessage: 'Query date_query_type should be one of ["noearlier_than", "nolater_than"]'
+				}
+			},
+			'date_query_line': {
+				optional: true,
+				isUTCTimeStamp: {
+					errorMessage: 'Query date_query_line should be in UTC Timestamp format.'
 				}
 			},
 			'for_question': {

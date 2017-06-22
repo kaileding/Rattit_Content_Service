@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 22:27:23
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 18:14:55
+* @Last Modified time: 2017-06-21 17:54:54
 */
 
 'use strict';
@@ -35,7 +35,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		words: {
 			type: DataTypes.TEXT(),
-			allowNull: true
+			allowNull: false
 		},
 		likedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids
