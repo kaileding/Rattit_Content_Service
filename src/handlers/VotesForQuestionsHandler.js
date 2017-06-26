@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 22:14:18
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 22:38:09
+* @Last Modified time: 2017-06-20 00:21:06
 */
 
 'use strict';
@@ -21,6 +21,33 @@ let cLogger = new CLogger();
 class VotesForQuestionsHandler extends DataModelHandler {
 	constructor() {
 		super(models.VotesForQuestions);
+	}
+
+	findVotesByQuestionIdAndQuery(queryObj) {
+
+		let includeObj = queryObj.voter_id ? null : [{
+			model: models.Users
+		}];
+
+	    let queryVoteType = queryObj.vote_type ? {
+		    	vote_type: queryObj.vote_type
+		    } : true;
+
+		let queryQuestionId = queryObj.question_id ? {
+				question_id: queryObj.question_id
+			} : true;
+
+        let queryVoterId = queryObj.voter_id ? {
+	        	createdBy: queryObj.voter_id
+	        } : true;
+
+		let filterObj = Sequelize.and(
+			queryVoteType,
+			queryQuestionId,
+			queryVoterId
+			);
+
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 	}
 
 	deleteVoteForQuestionByContent(voteObj) {

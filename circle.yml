@@ -1,0 +1,43 @@
+machine:
+  environment:
+    NODE_ENV: test
+  node:
+    version: 6.1.0
+  npm:
+    version: 3.10.10
+  postgres:
+    version: 9.6.3
+  services:
+    - postgresql
+    - docker
+
+dependencies:
+  post:
+    - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/rattit_content_service:$CIRCLE_SHA1 .
+  cache_directories:
+    - 'node_modules'
+
+database:
+  post:
+    # - chmod +x ./config/configDB.sh
+    # - ./config/configDB.sh
+    - psql -c "CREATE EXTENSION IF NOT EXISTS postgis;" -d circle_test
+    - psql -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;" -d circle_test
+
+test:
+  override:
+    - echo "I have 16 tests for this app."
+    - npm run test
+  post:
+    - docker run -d -p 8080:3500 --name rattit_content_service $AWS_ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/rattit_content_service:$CIRCLE_SHA1; sleep 10
+    - curl --retry 10 --retry-delay 5 localhost:8080/api/v1/ping
+
+deployment:
+  master:
+    branch: [master, staging, dev-deploy]
+    commands:
+      - echo "Now I have one deployment script."
+      - chmod +x ./config/deploy.sh
+      - ./config/deploy.sh
+
+

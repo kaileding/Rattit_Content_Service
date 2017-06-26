@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 16:05:34
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:16:37
+* @Last Modified time: 2017-06-13 22:36:33
 */
 
 'use strict';
@@ -12,8 +12,6 @@ module.exports = {
 		var setterFunc = function(val) {};
 		if (typeof fieldName === 'string') {
 			setterFunc = function(vals) {
-
-				console.log('---- setter function called.');
 	            var newVals = [];
                 vals.forEach(val => {
                     newVals.push(val.toLowerCase());

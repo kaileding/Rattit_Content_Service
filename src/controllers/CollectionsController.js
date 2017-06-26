@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 00:57:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 09:41:25
+* @Last Modified time: 2017-06-21 19:32:32
 */
 
 'use strict';
@@ -32,7 +32,7 @@ module.exports = {
 					createdBy: req.user_id
                 }).then(function(result) {
                     cLogger.say(cLogger.TESTING_TYPE, 'save one collection successfully.', result);
-                    res.status(httpStatus.OK).send(result);
+                    res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
                 });
@@ -82,6 +82,8 @@ module.exports = {
             	let queryObj = {
 	            	limit: req.query.limit,
 	            	offset: req.query.offset,
+	                queryDateType: req.query.date_query_type,
+	                dateLine: req.query.date_query_line,
 	                text: req.query.text,
 	                owner_id: req.query.owner_id
 	            };

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 00:12:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:09:08
+* @Last Modified time: 2017-06-21 23:33:44
 */
 
 'use strict';
@@ -53,6 +53,10 @@ class AnswersHandler extends DataModelHandler {
 
 		} else {
 
+			let includeObj = [{
+				model: models.Users
+			}];
+
 			let queryQuestionId = queryObj.for_question ? {
 					for_question: queryObj.for_question
 				} : true;
@@ -74,13 +78,31 @@ class AnswersHandler extends DataModelHandler {
 		        	createdBy: queryObj.author_id
 		        } : true;
 
+		    let queryDate;
+		    if (queryObj.queryDateType === 'nolater_than' && queryObj.dateLine) {
+		    	queryDate = {
+		    		createdAt: {
+		    			$lte: queryObj.dateLine
+		    		}
+		    	};
+	    	} else if (queryObj.queryDateType === 'noearlier_than' && queryObj.dateLine) {
+	    		queryDate = {
+	    			createdAt: {
+	    				$gte: queryObj.dateLine
+	    			}
+	    		};
+	    	} else {
+	    		queryDate = true;
+	    	}
+
 			let filterObj = Sequelize.and(
 				queryQuestionId,
 				queryText,
-				queryAuthorId
+				queryAuthorId,
+				queryDate
 				);
 
-			return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+			return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 		}
 
 	}

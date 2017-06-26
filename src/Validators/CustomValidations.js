@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 02:20:22
+* @Last Modified time: 2017-06-21 19:45:32
 */
 
 'use strict';
@@ -89,6 +89,9 @@ module.exports = {
                 } else {
                     return false;
                 }
+            },
+            isUTCTimeStamp: function(value) {
+                return (Date.parse(value) != NaN);
             }
         }
     },

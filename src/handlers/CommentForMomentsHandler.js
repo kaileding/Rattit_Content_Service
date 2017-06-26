@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 02:16:21
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 17:40:11
+* @Last Modified time: 2017-06-21 23:34:24
 */
 
 'use strict';
@@ -24,6 +24,10 @@ class CommentForMomentsHandler extends DataModelHandler {
 	}
 
 	findCommentsByQuery(queryObj) {
+
+		let includeObj = [{
+			model: models.Users
+		}];
 
 		let queryMomentId = queryObj.for_moment ? {
 				for_moment: queryObj.for_moment
@@ -75,15 +79,33 @@ class CommentForMomentsHandler extends DataModelHandler {
        		queryVote = true;
        	}
 
+	    let queryDate;
+	    if (queryObj.queryDateType === 'nolater_than' && queryObj.dateLine) {
+	    	queryDate = {
+	    		createdAt: {
+	    			$lte: queryObj.dateLine
+	    		}
+	    	};
+    	} else if (queryObj.queryDateType === 'noearlier_than' && queryObj.dateLine) {
+    		queryDate = {
+    			createdAt: {
+    				$gte: queryObj.dateLine
+    			}
+    		};
+    	} else {
+    		queryDate = true;
+    	}
+
 		let filterObj = Sequelize.and(
 			queryMomentId,
 			queryCommentId,
 			queryText,
 			queryAuthorId,
-			queryVote
+			queryVote,
+			queryDate
 			);
 
-		return this.findEntriesFromModel(null, filterObj, null, queryObj.limit, queryObj.offset);
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
 
 	}
 

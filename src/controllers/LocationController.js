@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 21:39:24
+* @Last Modified time: 2017-06-21 19:35:36
 */
 
 'use strict';
@@ -33,7 +33,7 @@ module.exports = {
                     updatedBy: req.user_id
                 }).then(function(result) {
                     cLogger.say(cLogger.TESTING_TYPE, 'save one location successfully.', result);
-                    res.status(httpStatus.OK).send(result);
+                    res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
                 });
@@ -53,6 +53,8 @@ module.exports = {
                     latitude: Number(req.query.lat)
                 },
                 distance: Number(req.query.distance),
+                queryDateType: req.query.date_query_type,
+                dateLine: req.query.date_query_line,
                 limit: req.query.limit,
                 offset: req.query.offset
             };

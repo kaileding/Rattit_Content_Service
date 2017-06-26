@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 23:28:11
+* @Last Modified time: 2017-06-21 19:28:24
 */
 
 'use strict';
@@ -65,7 +65,7 @@ module.exports = {
 					createdBy: req.user_id
 				}).then(result => {
 	                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
-	                res.status(httpStatus.OK).send(result);
+	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);
 				});
@@ -96,6 +96,8 @@ module.exports = {
                 text: req.query.text,
                 location_id: req.query.location_id,
                 author_id: req.query.author_id,
+                queryDateType: req.query.date_query_type,
+                dateLine: req.query.date_query_line,
                 limit: req.query.limit,
                 offset: req.query.offset,
                 joinWithVotes: false
@@ -214,6 +216,28 @@ module.exports = {
 			next(error);
 		});
 
+	},
+
+	getVotersForQuestionId: function(req, res, next) {
+		questionRequestValidator.validateGetVotesForQuestionIdRequest(req).then(result => {
+
+			let queryObj = {
+				voter_id: req.query.voter_id,
+				vote_type: req.query.vote_type,
+				question_id: req.params.id,
+				limit: req.query.limit,
+				offset: req.query.offset
+			};
+
+			return votesForQuestionsHandler.findVotesByQuestionIdAndQuery(queryObj).then(results => {
+				res.status(httpStatus.OK).send(results);
+			}).catch(error => {
+				next(error);
+			});
+
+		}).catch(error => {
+			next(error);
+		});
 	}
 
 }

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 01:18:33
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 15:19:35
+* @Last Modified time: 2017-06-21 19:49:59
 */
 
 'use strict';
@@ -188,6 +188,19 @@ module.exports = {
 					errorMessage: 'Query offset must be greater than or equal to 1'
 				}
 			},
+			'date_query_type': {
+				optional: true,
+				isOneOfStrings: {
+					options:[['noearlier_than', 'nolater_than']],
+					errorMessage: 'Query date_query_type should be one of ["noearlier_than", "nolater_than"]'
+				}
+			},
+			'date_query_line': {
+				optional: true,
+				isUTCTimeStamp: {
+					errorMessage: 'Query date_query_line should be in UTC Timestamp format.'
+				}
+			},
 			'text': {
 				optional: true,
 				isText: {
@@ -250,6 +263,49 @@ module.exports = {
 		});
 
 	    return customValidations.validationResult(req);
+	},
+
+	validateGetVotesForMomentIdRequest: function(req) {
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').notEmpty();
+		req.checkParams('id', 'Invalid value of `id` in the brackets of URL').isUUIDFormat();
+		req.checkQuery({
+			'limit': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query limit must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query limit must be greater than or equal to 1'
+				}
+			},
+			'offset': {
+				optional: true,
+				isInt: {
+					errorMessage: 'Query offset must be an integer'
+				},
+				greaterThanOrEqualTo: {
+					options: [1],
+					errorMessage: 'Query offset must be greater than or equal to 1'
+				}
+			},
+			'vote_type': {
+				optional: true,
+				isOneOfStrings: {
+					options: [['like', 'admire', 'pity']],
+					errorMessage: 'vote_type should be one of ["like", "admire", "pity"]'
+				}
+			},
+			'voter_id': {
+				optional: true,
+				isUUIDFormat: {
+					errorMessage: 'Query voter_id should be an ID and in UUIDV1 format'
+				}
+			}
+		});
+
+		return customValidations.validationResult(req);
 	}
+
 
 }
