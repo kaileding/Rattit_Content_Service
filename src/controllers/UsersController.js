@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 22:48:48
+* @Last Modified time: 2017-06-22 00:22:47
 */
 
 'use strict';
@@ -151,7 +151,6 @@ module.exports = {
 
     followUsers: function(req, res, next) {
         userRequestValidator.validateFollowUsersRequest(req).then(result => {
-            // res.status(httpStatus.OK).send('OK');
 
             var dataReqs = [];
             req.body.followees.forEach(followeeId => {
@@ -176,7 +175,6 @@ module.exports = {
 
     unfollowAUser: function(req, res, next) {
         userRequestValidator.validateUnfollowUserRequest(req).then(result => {
-            // res.status(httpStatus.OK).send('OK');
 
             return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
                                                                 req.params.followee_id).then(result => {

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:35:16
+* @Last Modified time: 2017-06-21 23:34:37
 */
 
 'use strict';
@@ -57,13 +57,13 @@ class LocationsHandler extends DataModelHandler {
 		        ) : true;
 
 	    let queryDate;
-	    if (queryObj.queryDateType === 'nolater_than') {
+	    if (queryObj.queryDateType === 'nolater_than' && queryObj.dateLine) {
 	    	queryDate = {
 	    		createdAt: {
 	    			$lte: queryObj.dateLine
 	    		}
 	    	};
-    	} else if (queryObj.queryDateType === 'noearlier_than') {
+    	} else if (queryObj.queryDateType === 'noearlier_than' && queryObj.dateLine) {
     		queryDate = {
     			createdAt: {
     				$gte: queryObj.dateLine

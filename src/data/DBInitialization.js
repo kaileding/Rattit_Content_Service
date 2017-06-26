@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 09:08:24
+* @Last Modified time: 2017-06-25 19:59:20
 */
 
 'use strict';
@@ -27,7 +27,7 @@ let getInsertUsersTask = function() {
 			gender: "male",
 			manifesto: "Be happy!",
 			organization: ["Umich"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/steveJobs.jpeg"
 		}),
 		models.Users.create({
 			id: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66",
@@ -38,7 +38,7 @@ let getInsertUsersTask = function() {
 			gender: "female",
 			manifesto: "Be happier!",
 			organization: ["Umich", "California"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/gaki.jpeg"
 		}),
 		models.Users.create({
 			id: "baddc2ca-4e6b-11e7-b114-b2f933d5fe66",
@@ -49,7 +49,7 @@ let getInsertUsersTask = function() {
 			gender: "male",
 			manifesto: "Good good study!",
 			organization: ["Bicycle Club"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/chaowei.jpeg"
 		}),
 		models.Users.create({
 			id: "d839cf08-4e6b-11e7-b114-b2f933d5fe66",
@@ -131,7 +131,7 @@ let getInsertMomentsTask = function() {
 			title: "Viva la vida",
 			words: "I used to rule the world\nSeas would rise when I gave the word\nNow in the morning I sleep alone\nSweep the streets I used to own\n\nI used to roll the dice\nFeel the fear in my enemy's eyes\nListened as the crowd would sing\nNow the old king is dead long live the king\nOne minute I held the key\nNext the walls were closed on me\nAnd I discovered that my castles stand\nUpon pillars of salt and pillars of sand\n\nI hear Jerusalem bells a-ringing\nRoman cavalry choirs are singing\nBe my mirror, my sword and shield\nMy missionaries in a foreign field\nFor some reason I can't explain\nOnce you'd gone there was never\nNever an honest word\nAnd that was when I ruled the world\n\n\n",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/standford_old_union.jpg",
 				height: 680,
 				width: 1024
 			}],
