@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 23:44:28
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:49:48
+* @Last Modified time: 2017-07-04 00:03:30
 */
 
 'use strict';
@@ -44,7 +44,6 @@ module.exports = {
 			}, 
 			'google_place_id': {
 				optional: true,
-				notEmpty: false,
 				isText: {
 					errorMessage: 'Invalid google_place_id'
 				}
@@ -158,7 +157,6 @@ module.exports = {
 			},
 			'google_place_id': {
 				optional: true,
-				notEmpty: false,
 				isText: {
 					errorMessage: 'Invalid google_place_id'
 				}

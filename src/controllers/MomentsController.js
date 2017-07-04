@@ -2,20 +2,23 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:19:37
+* @Last Modified time: 2017-07-03 23:51:15
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import momentRequestValidator from '../Validators/MomentRequestValidator'
+import consts from '../config/Constants'
 import MomentsHandler from '../handlers/MomentsHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
+import LocationsHandler from '../handlers/LocationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let momentsHandler = new MomentsHandler();
 let votesForMomentsHandler = new VotesForMomentsHandler();
+let locationsHandler = new LocationsHandler();
 
 let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 	return new Promise((resolve, reject) => {
@@ -54,22 +57,70 @@ module.exports = {
 	postMoment: function(req, res, next) {
 		momentRequestValidator.validateCreateMomentRequest(req).then(result => {
 
-			return momentsHandler.createEntryForModel({
+			var newMomentObj = {
 					title: req.body.title,
 					words: req.body.words,
 					photos: req.body.photos,
-					hash_tags: req.body.hash_tags,
+					hash_tags: (req.body.hash_tags || []),
 					attachment: req.body.attachment,
 					location_id: req.body.location_id,
 					access_level: req.body.access_level,
 					together_with: (req.body.together_with || []),
 					createdBy: req.user_id
-				}).then(result => {
+				};
+
+			if (req.body.location_id == null && req.body.google_place) {
+				return locationsHandler.findEntriesFromModel(null, null, {
+					google_place_id: req.body.google_place.google_place_id
+				}, null).then(results => {
+					if (results.count == 0) {
+						return locationsHandler.createEntryForModel({
+		                    loc_point: {
+		                        type: 'Point',
+		                        coordinates: [req.body.google_place.coordinates.latitude, req.body.google_place.coordinates.longitude],
+		                        crs: { type: 'name', properties: { name: 'EPSG:4326'} }
+		                    },
+		                    name: req.body.google_place.name,
+		                    icon: req.body.google_place.icon_url,
+		                    types: req.body.google_place.types,
+		                    google_place_id: req.body.google_place.google_place_id,
+		                    createdBy: req.user_id,
+		                    updatedBy: req.user_id
+		                }).then(result => {
+							newMomentObj.location_id = result.id;
+							return momentsHandler.createEntryForModel(newMomentObj).then(result => {
+				                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+				                res.status(httpStatus.CREATED).send(result);
+							}).catch(error => {
+								next(error);
+							});
+
+		                }).catch(error => {
+		                	next(error);
+		                });
+					} else {
+						let locationId = results.rows[0].id
+						newMomentObj.location_id = locationId;
+						return momentsHandler.createEntryForModel(newMomentObj).then(result => {
+			                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+			                res.status(httpStatus.CREATED).send(result);
+						}).catch(error => {
+							next(error);
+						});
+					}
+
+				}).catch(error => {
+					next(error);
+				});
+
+			} else {
+				return momentsHandler.createEntryForModel(newMomentObj).then(result => {
 	                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
 	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);
 				});
+			}
 
 		}).catch(error => {
 			next(error);

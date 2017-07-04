@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 02:03:41
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:49:15
+* @Last Modified time: 2017-07-03 23:58:15
 */
 
 'use strict';
@@ -32,7 +32,6 @@ module.exports = {
 			},
 			'cover_image': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'cover_image should be a web URL'
 				},
@@ -40,7 +39,6 @@ module.exports = {
 			},
 			'tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'tags should be an array'
 				},
@@ -48,10 +46,10 @@ module.exports = {
 			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			}
@@ -83,7 +81,6 @@ module.exports = {
 			},
 			'cover_image': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'cover_image should be a web URL'
 				},
@@ -91,7 +88,6 @@ module.exports = {
 			},
 			'tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'tags should be an array'
 				},
@@ -99,10 +95,10 @@ module.exports = {
 			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			}

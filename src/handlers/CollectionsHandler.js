@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 01:00:49
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:31:06
+* @Last Modified time: 2017-06-21 23:34:02
 */
 
 'use strict';
@@ -52,13 +52,13 @@ class CollectionsHandler extends DataModelHandler {
 	        } : true;
 
 	    let queryDate;
-	    if (queryObj.queryDateType === 'nolater_than') {
+	    if (queryObj.queryDateType === 'nolater_than' && queryObj.dateLine) {
 	    	queryDate = {
 	    		createdAt: {
 	    			$lte: queryObj.dateLine
 	    		}
 	    	};
-    	} else if (queryObj.queryDateType === 'noearlier_than') {
+    	} else if (queryObj.queryDateType === 'noearlier_than' && queryObj.dateLine) {
     		queryDate = {
     			createdAt: {
     				$gte: queryObj.dateLine

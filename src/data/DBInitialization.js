@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 09:08:24
+* @Last Modified time: 2017-07-04 00:55:47
 */
 
 'use strict';
@@ -27,7 +27,7 @@ let getInsertUsersTask = function() {
 			gender: "male",
 			manifesto: "Be happy!",
 			organization: ["Umich"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/steveJobs.jpeg"
 		}),
 		models.Users.create({
 			id: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66",
@@ -38,7 +38,7 @@ let getInsertUsersTask = function() {
 			gender: "female",
 			manifesto: "Be happier!",
 			organization: ["Umich", "California"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/gaki.jpeg"
 		}),
 		models.Users.create({
 			id: "baddc2ca-4e6b-11e7-b114-b2f933d5fe66",
@@ -49,7 +49,7 @@ let getInsertUsersTask = function() {
 			gender: "male",
 			manifesto: "Good good study!",
 			organization: ["Bicycle Club"],
-			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/chaowei.jpeg"
 		}),
 		models.Users.create({
 			id: "d839cf08-4e6b-11e7-b114-b2f933d5fe66",
@@ -61,6 +61,50 @@ let getInsertUsersTask = function() {
 			manifesto: "Day day up from bed",
 			organization: ["SWE", "Youngsters", "CMU"],
 			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png"
+		}),
+		models.Users.create({
+			id: "058467c8-6089-11e7-907b-a6006ad3dba0",
+			username: "tiezhuZhao",
+			email: "tzzhao@sample.com",
+			first_name: "Tiezhu",
+			last_name: "Zhao",
+			gender: "male",
+			manifesto: "Baozou Dashijian king of beauty | Chief examiner of assembly line no. 3 at Futukang Inc. | The last boy friend of Xiaohua Li.",
+			organization: ["Baozou", "iPhone", "Futukang"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/tiezhuzhao.jpg"
+		}),
+		models.Users.create({
+			id: "77811456-608a-11e7-907b-a6006ad3dba0",
+			username: "yuanyuangao",
+			email: "yyy@sample.com",
+			first_name: "Yuanyuan",
+			last_name: "Gao",
+			gender: "female",
+			manifesto: "Being your goddess is my pleasure.",
+			organization: ["Actrees", "High"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/gaoyuanyuan.png"
+		}),
+		models.Users.create({
+			id: "ffcdd894-608a-11e7-907b-a6006ad3dba0",
+			username: "niqiange",
+			email: "qianyu@sample.com",
+			first_name: "Qian",
+			last_name: "Yu",
+			gender: "untold",
+			manifesto: "Yuuuuuuu | DEYUNSHE | crazy on keeping animals, especially rare horse | Three biggest hobbies: cigaratte, wine, perm.",
+			organization: ["Association of comic dialogue", "Deyunshe"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/qianyu.jpg"
+		}),
+		models.Users.create({
+			id: "ad33823e-608d-11e7-907b-a6006ad3dba0",
+			username: "frankUnderwood",
+			email: "frankudw@sample.com",
+			first_name: "Frank",
+			last_name: "Underwood",
+			gender: "male",
+			manifesto: null,
+			organization: ["White House"],
+			avatar: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/kevinSpacey.png"
 		})
 	];
 }
@@ -131,7 +175,7 @@ let getInsertMomentsTask = function() {
 			title: "Viva la vida",
 			words: "I used to rule the world\nSeas would rise when I gave the word\nNow in the morning I sleep alone\nSweep the streets I used to own\n\nI used to roll the dice\nFeel the fear in my enemy's eyes\nListened as the crowd would sing\nNow the old king is dead long live the king\nOne minute I held the key\nNext the walls were closed on me\nAnd I discovered that my castles stand\nUpon pillars of salt and pillars of sand\n\nI hear Jerusalem bells a-ringing\nRoman cavalry choirs are singing\nBe my mirror, my sword and shield\nMy missionaries in a foreign field\nFor some reason I can't explain\nOnce you'd gone there was never\nNever an honest word\nAnd that was when I ruled the world\n\n\n",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/standford_old_union.jpg",
 				height: 680,
 				width: 1024
 			}],
@@ -148,11 +192,7 @@ let getInsertMomentsTask = function() {
 			id: "18fbc402-4ef7-11e7-b114-b2f933d5fe66",
 			title: "Adventure of a Lifetime",
 			words: "Turn your magic on, to me she'd say Everything you want's a dream away We are legends, every day That's what she told him I feel my heart beating I feel my heart beneath my skin I feel my heart beating Oh, you make me feel Like I'm alive again Alive again Oh, you make me feel Like I'm alive again Said I can't go on, not in this way I'm a dream, I die by light of day Gonna hold up half the sky and say Only I own me I feel my heart beating I feel my heart beneath my skin Oh, I can feel my heart beating 'Cause you make me feel Like I'm alive again Alive again Oh, you make me feel Like I'm alive again Turn your magic on, to me she'd say Everything you want's a dream away Under this pressure, under this weight We are diamonds taking shape We are diamonds taking shape (Woo hoo, woo hoo) If we've only got this life This adventure oh then I If we've only got this life You'll get me through, oh If we've only got this life And this adventure, oh then I Wanna share it with you With you, with you Sing it, oh, say yeah! Woo hoo (woo hoo)",
-			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
-				height: 680,
-				width: 1024
-			}],
+			photos: [],
 			hash_tags: ["music", "coldplay", "english", "rock"],
 			attachment: "https://play.google.com/music/preview/Tgu5bk5yikgomjis4566552fanu?lyrics=1&utm_source=google&utm_medium=search&utm_campaign=lyrics&pcampaignid=kp-lyrics&u=0#",
 			access_level: "followers",
@@ -160,6 +200,31 @@ let getInsertMomentsTask = function() {
 				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
 			],
 			createdBy: "04a9e6b6-4db5-11e7-b114-b2f933d5fe66"
+		}),
+		models.Moments.create({
+			id: "22a1e3aa-608c-11e7-907b-a6006ad3dba0",
+			title: "The Ultimate Guide to the Fourth of July: Britain's Driverless Grocery",
+			words: "No content",
+			photos: [{
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				height: 680,
+				width: 1024
+			}, {
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/xiangguo1.jpeg",
+				height: 720,
+				width: 960
+			}, {
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/britainGrocery.jpeg",
+				height: 440,
+				width: 660
+			}],
+			hash_tags: ["music", "coldplay", "english", "rock"],
+			attachment: "https://play.google.com/music/preview/Tgu5bk5yikgomjis4566552fanu?lyrics=1&utm_source=google&utm_medium=search&utm_campaign=lyrics&pcampaignid=kp-lyrics&u=0#",
+			access_level: "followers",
+			together_with: [
+				"d839cf08-4e6b-11e7-b114-b2f933d5fe66"
+			],
+			createdBy: "77811456-608a-11e7-907b-a6006ad3dba0"
 		})
 	];
 }

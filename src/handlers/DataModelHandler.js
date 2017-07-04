@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-19 22:52:00
+* @Last Modified time: 2017-07-03 18:08:18
 */
 
 'use strict';
@@ -25,6 +25,7 @@ class DataModelHandler {
 	createEntryForModel(newEntryObj) {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
+				cLogger.say(cLogger.TESTING_TYPE, 'the object to be created in database is ', newEntryObj)
 				model.create(newEntryObj).then(function(result) {
 					cLogger.say(cLogger.TESTING_TYPE, 'save one entry successfully for model '+model.name+'.');
 					resolve(result.toJSON());

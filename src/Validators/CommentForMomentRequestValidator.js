@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 01:55:36
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:49:38
+* @Last Modified time: 2017-07-04 00:01:08
 */
 
 'use strict';
@@ -39,7 +39,6 @@ module.exports = {
 			},
 			'photos': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Photos should be an array'
 				},
@@ -47,7 +46,6 @@ module.exports = {
 			},
 			'hash_tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Hash_tags should be an array'
 				},
