@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-13 15:56:46
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 22:50:25
+* @Last Modified time: 2017-07-04 01:03:00
 */
 
 'use strict';
@@ -24,11 +24,11 @@ describe('Users Tests', function() {
 		});
 	});
 
-	it('[GET] /api/v1/users - should get all 4 users', function(done) {
+	it('[GET] /api/v1/users - should get all 8 users', function(done) {
 		chai.request(server).get('/api/v1/users').end(function(err, res) {
 			res.should.have.status(httpStatus.OK);
-			res.body.count.should.be.eq(4);
-			res.body.rows.length.should.be.eq(4);
+			res.body.count.should.be.eq(8);
+			res.body.rows.length.should.be.eq(8);
 			done();
 		});
 	});
@@ -36,7 +36,7 @@ describe('Users Tests', function() {
 	it('[GET] /api/v1/users?limit=1&offset=1 - should get 1 user', function(done) {
 		chai.request(server).get('/api/v1/users?limit=1&offset=1').end(function(err, res) {
 			res.should.have.status(httpStatus.OK);
-			res.body.count.should.be.eq(4);
+			res.body.count.should.be.eq(8);
 			res.body.rows.length.should.be.eq(1);
 			done();
 		});
