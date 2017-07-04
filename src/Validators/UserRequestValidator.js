@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 22:55:47
+* @Last Modified time: 2017-07-04 00:15:36
 */
 
 'use strict';
@@ -46,21 +46,18 @@ module.exports = {
 			}, 
 			'manifesto': {
 				optional: true,
-				notEmpty: false,
 				isText: {
 					errorMessage: 'Invalid manifesto'
 				}
 			},
 			'organization': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'organization should be array'
 				}
 			},
 			'avatar': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Invalid avatar image url'
 				}
@@ -157,21 +154,18 @@ module.exports = {
 			},
 			'manifesto': {
 				optional: true,
-				notEmpty: false,
 				isText: {
 					errorMessage: 'Invalid manifesto'
 				}
 			},
 			'organization': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'organization should be array'
 				}
 			},
 			'avatar': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Invalid avatar image url'
 				}

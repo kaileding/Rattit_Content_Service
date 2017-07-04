@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:50:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:50:14
+* @Last Modified time: 2017-07-04 00:13:30
 */
 
 'use strict';
@@ -32,7 +32,6 @@ module.exports = {
 			},
 			'photos': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Photos should be an array'
 				},
@@ -40,7 +39,6 @@ module.exports = {
 			},
 			'hash_tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Hash_tags should be an array'
 				},
@@ -48,7 +46,6 @@ module.exports = {
 			},
 			'attachment': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Attachment should be a web URL'
 				},
@@ -64,10 +61,10 @@ module.exports = {
 			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			}
@@ -99,7 +96,6 @@ module.exports = {
 			},
 			'photos': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Photos should be an array'
 				},
@@ -107,7 +103,6 @@ module.exports = {
 			},
 			'hash_tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Hash_tags should be an array'
 				},
@@ -115,7 +110,6 @@ module.exports = {
 			},
 			'attachment': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Attachment should be a web URL'
 				},
@@ -131,10 +125,10 @@ module.exports = {
 			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			}

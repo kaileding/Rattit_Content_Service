@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 01:18:33
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:49:59
+* @Last Modified time: 2017-07-04 00:07:06
 */
 
 'use strict';
@@ -32,7 +32,6 @@ module.exports = {
 			},
 			'photos': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Photos should be an array'
 				},
@@ -40,7 +39,6 @@ module.exports = {
 			},
 			'hash_tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Hash_tags should be an array'
 				},
@@ -48,7 +46,6 @@ module.exports = {
 			},
 			'attachment': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Attachment should be a web URL'
 				},
@@ -56,24 +53,26 @@ module.exports = {
 			},
 			'location_id': {
 				optional: true,
-				notEmpty: false,
 				isUUIDFormat: {
 					errorMessage: 'Attachment should be an ID and in UUIDV1 format'
 				},
 				errorMessage: 'Invalid location_id'
 			},
+			'google_place': {
+				optional: true,
+				errorMessage: 'Invalid google_place'
+			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			},
 			'together_with': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Together_with should be an array'
 				},
@@ -107,7 +106,6 @@ module.exports = {
 			},
 			'photos': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Photos should be an array'
 				},
@@ -115,7 +113,6 @@ module.exports = {
 			},
 			'hash_tags': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Hash_tags should be an array'
 				},
@@ -123,7 +120,6 @@ module.exports = {
 			},
 			'attachment': {
 				optional: true,
-				notEmpty: false,
 				isWebURL: {
 					errorMessage: 'Attachment should be a web URL'
 				},
@@ -131,7 +127,6 @@ module.exports = {
 			},
 			'location_id': {
 				optional: true,
-				notEmpty: false,
 				isUUIDFormat: {
 					errorMessage: 'location_id should be an ID and in UUIDV1 format'
 				},
@@ -139,16 +134,15 @@ module.exports = {
 			},
 			'access_level': {
 				optional: true,
-				notEmpty: false,
+				notEmpty: true,
 				isOneOfStrings: {
-					options: [['self', 'followers', 'public']],
-					errorMessage: 'Access_level should be one of ["self", "followers", "public"]'
+					options: [['self', 'friends', 'followers', 'public']],
+					errorMessage: 'Access_level should be one of ["self", "friends", "followers", "public"]'
 				},
 				errorMessage: 'Invalid access_level'
 			},
 			'together_with': {
 				optional: true,
-				notEmpty: false,
 				isArray: {
 					errorMessage: 'Together_with should be an array'
 				},

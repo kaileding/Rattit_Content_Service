@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:45:32
+* @Last Modified time: 2017-07-04 00:02:29
 */
 
 'use strict';
@@ -68,9 +68,15 @@ module.exports = {
                 return isUUID.v1(value);
             },
             isText: function(value) {
+                if (value == null) {
+                    return true
+                }
                 return (typeof value === 'string');
             },
             isWebURL: function(value) {
+                if (value == null) {
+                    return true
+                }
                 return (urlChecker.isWebUri(value) != undefined);
             },
             isGeoCoordinates: function(value) {

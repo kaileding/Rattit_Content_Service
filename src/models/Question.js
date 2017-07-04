@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 21:56:05
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-12 18:16:20
+* @Last Modified time: 2017-07-04 00:17:39
 */
 
 'use strict';
@@ -47,7 +47,7 @@ module.exports = function(sequelize, DataTypes) {
             }
 		},
 		access_level: {
-			type: DataTypes.ENUM('self', 'followers', 'public'),
+			type: DataTypes.ENUM('self', 'friends', 'followers', 'public'),
 			allowNull: false,
 			defaultValue: 'public'
 		},

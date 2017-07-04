@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 13:22:43
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 01:30:35
+* @Last Modified time: 2017-07-04 00:16:31
 */
 
 'use strict';
@@ -35,7 +35,7 @@ module.exports = function(sequelize, DataTypes) {
 			set: SequelizeModelHelpers.makeStringsInArrayToLowerCase('tags')
 		},
 		access_level: {
-			type: DataTypes.ENUM('self', 'followers', 'public'),
+			type: DataTypes.ENUM('self', 'friends', 'followers', 'public'),
 			allowNull: false,
 			defaultValue: 'public'
 		},
