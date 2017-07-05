@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-03 18:08:18
+* @Last Modified time: 2017-07-05 02:59:29
 */
 
 'use strict';
@@ -81,7 +81,7 @@ class DataModelHandler {
 				Promise.all([countQuery, realQuery]).then(results => {
 
 					var responseObj = {
-						count: results[0][0].count,
+						count: Number(results[0][0].count),
 						rows: results[1]
 					};
 					resolve(responseObj);
