@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-22 00:22:47
+* @Last Modified time: 2017-07-06 09:33:58
 */
 
 'use strict';
@@ -158,12 +158,37 @@ module.exports = {
                     userRelationshipsHandler.createEntryForModel({
                         follower: req.params.id,
                         followee: followeeId
+                    }).then(creationResult => {
+                        return userRelationshipsHandler.countEntriesFromModelForFilter({
+                            followee: followeeId
+                        }).then(countResult => {
+                            return usersHandler.updateEntryByIdForModel(followeeId, {
+                                follower_number: countResult
+                            })
+                        }).catch(error => {
+                            throw error;
+                        });
+                    }).catch(error => {
+                        throw error;
                     })
                 );
             });
 
             return Promise.all(dataReqs).then(results => {
-                res.status(httpStatus.CREATED).send(results);
+                // TODO: should add logic to update the follower number / following number of corresponding users
+                return userRelationshipsHandler.countEntriesFromModelForFilter({
+                            follower: req.params.id
+                        }).then(countResult => {
+                            return usersHandler.updateEntryByIdForModel(req.params.id, {
+                                followee_number: countResult
+                            }).then(result => {
+                                res.status(httpStatus.CREATED).send(results);
+                            }).catch(error => {
+                                next(error);
+                            })
+                        }).catch(error => {
+                            next(error);
+                        });
             }).catch(error => {
                 next(error);
             });
@@ -178,6 +203,25 @@ module.exports = {
 
             return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
                                                                 req.params.followee_id).then(result => {
+                // TODO: should add logic to update the follower number / following number of corresponding users
+                userRelationshipsHandler.countEntriesFromModelForFilter({
+                        followee: req.params.followee_id
+                    }).then(countResult => {
+                        return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
+                            follower_number: countResult
+                        });
+                    }).catch(error => {
+                        throw error;
+                    });
+                userRelationshipsHandler.countEntriesFromModelForFilter({
+                        follower: req.params.id
+                    }).then(countResult => {
+                        return usersHandler.updateEntryByIdForModel(req.params.id, {
+                            followee_number: countResult
+                        });
+                    }).catch(error => {
+                        next(error);
+                    });
                 res.status(httpStatus.OK).send(result);
             }).catch(error => {
                 next(error);
