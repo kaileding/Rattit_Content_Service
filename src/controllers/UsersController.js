@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-06 09:33:58
+* @Last Modified time: 2017-07-09 17:12:38
 */
 
 'use strict';
@@ -137,6 +137,22 @@ module.exports = {
         userRequestValidator.validateGetRelationshipsOfUserRequest(req).then(result => {
 
             return userRelationshipsHandler.findFolloweesByUserId(req.params.id, 
+                                                                    req.query.limit, 
+                                                                    req.query.offset).then(results => {
+                    res.status(httpStatus.OK).send(results);
+                }).catch(error => {
+                    next(error);
+                });
+
+        }).catch(error => {
+            next(error);
+        });
+    },
+
+    getFriendsOfAUser: function(req, res, next) {
+        userRequestValidator.validateGetRelationshipsOfUserRequest(req).then(result => {
+
+            return userRelationshipsHandler.findFriendsByUserId(req.params.id, 
                                                                     req.query.limit, 
                                                                     req.query.offset).then(results => {
                     res.status(httpStatus.OK).send(results);

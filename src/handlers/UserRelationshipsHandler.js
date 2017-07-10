@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-11 16:49:39
+* @Last Modified time: 2017-07-09 17:12:09
 */
 
 'use strict';
@@ -23,7 +23,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 		super(models.UserRelationships);
 	}
 
-	findRelationshipsFAndExpandUsers(options, limit, offset) {
+	findRelationshipsAndExpandUsers(options, limit, offset) {
 		limit = (limit != null) ? Number(limit) : 20;
 		offset = (offset != null) ? Number(offset) : 0;
 
@@ -53,7 +53,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 			expandCol: 'follower'
 		};
 
-		return this.findRelationshipsFAndExpandUsers(options, limit, offset);
+		return this.findRelationshipsAndExpandUsers(options, limit, offset);
 	}
 
 	findFolloweesByUserId(id, limit, offset) {
@@ -64,7 +64,35 @@ class UserRelationshipsHandler extends DataModelHandler {
 			expandCol: 'followee'
 		};
 
-		return this.findRelationshipsFAndExpandUsers(options, limit, offset);
+		return this.findRelationshipsAndExpandUsers(options, limit, offset);
+	}
+
+	findFriendsByUserId(id, limit, offset) {
+
+		limit = (limit != null) ? Number(limit) : 20;
+		offset = (offset != null) ? Number(offset) : 0;
+
+		let countQueryStatement = 'select count(r1.*) ' 
+								+ 'from user_relation u1, rattit_user r1, user_relation u2 '
+								+ 'WHERE u1.follower = u2.followee '
+								+ 'AND u1.followee = u2.follower '
+								+ 'AND u1.followee = r1.id '
+								+ 'AND u1.follower = ' + "'" + id + "'" 
+								+ 'LIMIT ' + limit + ' ' 
+								+ 'OFFSET ' + offset + ';';
+
+		let queryStatement = 'SELECT r1.* '
+							+ 'from user_relation u1, rattit_user r1, user_relation u2 '
+							+ 'WHERE u1.follower = u2.followee '
+							+ 'AND u1.followee = u2.follower '
+							+ 'AND u1.followee = r1.id '
+							+ 'AND u1.follower = ' + "'" + id + "'" 
+							+ 'LIMIT ' + limit + ' ' 
+							+ 'OFFSET ' + offset + ';';
+
+		return this.findEntriesFromModelWithSQL(countQueryStatement, queryStatement);
+
+
 	}
 
 	deleteFolloweeByItsID(id, followeeId) {

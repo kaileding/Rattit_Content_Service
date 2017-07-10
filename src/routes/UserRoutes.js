@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:00:55
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 23:37:02
+* @Last Modified time: 2017-07-09 17:13:03
 */
 
 'use strict';
@@ -26,6 +26,8 @@ router.delete('/:id', usersController.deleteUser);
 router.get('/:id/followers', usersController.getFollowersOfAUser);
 
 router.get('/:id/followees', usersController.getFolloweesOfAUser);
+
+router.get('/:id/friends', usersController.getFriendsOfAUser);
 
 router.post('/:id/followees', usersController.followUsers);
 
