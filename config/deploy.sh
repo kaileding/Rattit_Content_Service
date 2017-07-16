@@ -1,7 +1,7 @@
 # @Author: KaileDing
 # @Date:   2017-06-16 00:37:40
 # @Last Modified by:   kaileding
-# @Last Modified time: 2017-06-19 22:30:48
+# @Last Modified time: 2017-07-16 02:10:46
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -15,7 +15,7 @@ configure_aws_cli(){
 make_task_def(){
 	task_template='[
 		{
-			"name": "rattit-content-service-dev",
+			"name": "rattit-content-service-dev-t2micro",
 			"image": "%s.dkr.ecr.us-west-2.amazonaws.com/rattit_content_service:%s",
 			"essential": true,
 			"memory": 300,
@@ -113,7 +113,7 @@ deploy_cluster() {
 
     make_task_def
     register_definition
-    if [[ $(aws ecs update-service --cluster rattit-content-service-dev --service rattit_content_service_dev --task-definition $revision | \
+    if [[ $(aws ecs update-service --cluster rattit-content-service-dev-t2micro --service rattit_content_service_dev --task-definition $revision | \
                    $JQ '.service.taskDefinition') != $revision ]]; then
         echo "Error updating service."
         return 1
@@ -122,7 +122,7 @@ deploy_cluster() {
     # wait for older revisions to disappear
     # not really necessary, but nice for demos
     # for attempt in {1..30}; do
-    #     if stale=$(aws ecs describe-services --cluster rattit-content-service-dev --services rattit_content_service_dev | \
+    #     if stale=$(aws ecs describe-services --cluster rattit-content-service-dev-t2micro --services rattit_content_service_dev | \
     #                    $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
     #         echo "Waiting for stale deployments:"
     #         echo "$stale"
