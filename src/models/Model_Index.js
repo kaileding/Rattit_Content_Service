@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-20 00:07:38
+* @Last Modified time: 2017-07-23 21:58:59
 */
 
 'use strict';
@@ -58,6 +58,11 @@ Locations.belongsTo(Users, {
 
 Questions.belongsTo(Users, {
 	foreignKey: 'createdBy',
+	targetKey: 'id'
+});
+
+Answers.belongsTo(Questions, {
+	foreignKey: 'for_question',
 	targetKey: 'id'
 });
 

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 00:12:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 23:33:44
+* @Last Modified time: 2017-07-23 22:08:27
 */
 
 'use strict';
@@ -55,6 +55,9 @@ class AnswersHandler extends DataModelHandler {
 
 			let includeObj = [{
 				model: models.Users
+			}, {
+				model: models.Questions,
+				attributes: ['title']
 			}];
 
 			let queryQuestionId = queryObj.for_question ? {
