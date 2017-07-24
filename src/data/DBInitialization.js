@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-04 00:55:47
+* @Last Modified time: 2017-07-24 01:15:56
 */
 
 'use strict';
@@ -150,7 +150,7 @@ let getInsertCollectionsTask = function() {
 			id: "2a3f193e-5051-11e7-b114-b2f933d5fe66",
 			title: "Food fest",
 			description: "Get your stomach prepared, start an amazing trip.",
-			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
+			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/sorrowful_rice.jpg",
 			tags: ["food", "warming"],
 			access_level: "self",
 			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
@@ -159,7 +159,7 @@ let getInsertCollectionsTask = function() {
 			id: "a4b1462e-5051-11e7-b114-b2f933d5fe66",
 			title: "5-star fitness",
 			description: "Keep updating. The few fitness centers that were received as clean, professional and well located choices by a group of captious people.",
-			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/cross-hammers.png",
+			cover_image: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/art_vivalavida.jpg",
 			tags: ["gym", "rating"],
 			access_level: "public",
 			createdBy: "e5b89946-4db4-11e7-b114-b2f933d5fe66"
@@ -235,9 +235,9 @@ let getInsertQuestionsTask = function() {
 		models.Questions.create({
 			id: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
 			title: "Can Google be beaten?",
-			words: "\nLike the title states.\n\n",
+			words: "Like the title states.",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/google_backto_china.jpg",
 				height: 680,
 				width: 1024
 			}],
@@ -254,9 +254,9 @@ let getInsertQuestionsTask = function() {
 		models.Questions.create({
 			id: "9e1ea1be-4f37-11e7-b114-b2f933d5fe66",
 			title: "How do they make actors/actresses look so good?",
-			words: "Often times I see actors or actresses before they were famous and they don’t look at all like they do when they’re on screen or out in public. What kind of techniques do they use to make them look so good?\n\n",
+			words: "Often times I see actors or actresses before they were famous and they don’t look at all like they do when they’re on screen or out in public. What kind of techniques do they use to make them look so good?\n",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/yangmi.jpg",
 				height: 680,
 				width: 1024
 			}],
@@ -279,7 +279,7 @@ let getInsertAnswersTask = function() {
 			for_question: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
 			words: "Google can easily be beaten. It doesn’t take much for someone like Apple, Mozilla, or Microsoft to shut out Google and replace it with Bing. That’s why Google constantly has to throw massive resources at preventing it. That’s (one of the many reasons) why Google had to develop Chrome, to prevent the other browsers from blocking Google. That’s why Google had to go through the trouble of developing a major phone OS, Android, to prevent being shut out of that market. That’s why Google spends a lot of time with open standards committees, to prevent more proprietary solutions from gumming up the market. At any point, the Trump government could do great damage to Google, or any other company that appears ungrateful to him.\n\nSo, yeah, it’s a constant battle just to stay alive.",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/micro-chip.jpg",
 				height: 680,
 				width: 1024
 			}],
@@ -295,7 +295,7 @@ let getInsertAnswersTask = function() {
 			for_question: "94f3c042-4f37-11e7-b114-b2f933d5fe66",
 			words: "Not in coming Two to Three Decades. Because Google keeping up on its momentum of R & D for newer and better products also buying new and innovative ventures. They are heavily investing on startup’s and trying to build a start up ecosystem which will feed them with result in future. But, if we see the quantum of investment they lost in few of their major almost dead products, few still live like Google Plus and few more (Check the Google Graveyard) these affected a lot on income generation strength of many Google Products.\n\nDue to heavy pressure on google to deliver from its platform it need to spend monumental amount running its almost unthinkable infrastructure. Still for years it has delivered quite well and i would say they now rule in 3 segments, they are:\n\n1. Search\n2. Mobile\n3. Browser\n\n",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/wangzherongyao_newhero.jpg",
 				height: 680,
 				width: 1024
 			}],
@@ -318,7 +318,7 @@ let getInsertCommentsTask_1 = function() {
 			for_comment: null,
 			words: "Wen ru gou.",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/dodge_with_sunglasses.jpeg",
 				height: 680,
 				width: 1024
 			}],
@@ -347,7 +347,7 @@ let getInsertCommentsTask_2 = function() {
 			for_comment: "d5afd0b0-4fb1-11e7-b114-b2f933d5fe66",
 			words: "Are you kidding?",
 			photos: [{
-				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/house.jpg",
+				image_url: "https://s3-us-west-1.amazonaws.com/kaile-bucket-1/nicky_question.jpg",
 				height: 680,
 				width: 1024
 			}],
