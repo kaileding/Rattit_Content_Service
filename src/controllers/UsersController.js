@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-09 17:12:38
+* @Last Modified time: 2017-07-25 22:14:11
 */
 
 'use strict';
@@ -238,7 +238,9 @@ module.exports = {
                     }).catch(error => {
                         next(error);
                     });
-                res.status(httpStatus.OK).send(result);
+                res.status(httpStatus.OK).send({
+                    success: result
+                });
             }).catch(error => {
                 next(error);
             });
