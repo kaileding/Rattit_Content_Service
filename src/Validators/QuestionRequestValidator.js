@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:50:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-04 00:13:30
+* @Last Modified time: 2017-07-30 02:05:13
 */
 
 'use strict';
@@ -53,11 +53,14 @@ module.exports = {
 			},
 			'location_id': {
 				optional: true,
-				notEmpty: false,
 				isUUIDFormat: {
 					errorMessage: 'Attachment should be an ID and in UUIDV1 format'
 				},
 				errorMessage: 'Invalid location_id'
+			},
+			'google_place': {
+				optional: true,
+				errorMessage: 'Invalid google_place'
 			},
 			'access_level': {
 				optional: true,
