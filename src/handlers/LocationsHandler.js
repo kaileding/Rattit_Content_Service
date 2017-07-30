@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 23:34:37
+* @Last Modified time: 2017-07-30 02:41:49
 */
 
 'use strict';
@@ -97,6 +97,45 @@ class LocationsHandler extends DataModelHandler {
 
 
 		return this.findEntriesFromModel(selectObj, includeObj, filterObj, orderObj, limit, offset);
+	}
+
+	createIfNotExistForGooglePlace(googlePlace, userId) {
+
+		return new Promise((resolve, reject) => {
+				this.findEntriesFromModel(null, null, {
+					google_place_id: googlePlace.google_place_id
+				}, null).then(results => {
+					if (results.count == 0) {
+						this.createEntryForModel({
+		                    loc_point: {
+		                        type: 'Point',
+		                        coordinates: [googlePlace.coordinates.latitude, googlePlace.coordinates.longitude],
+		                        crs: { type: 'name', properties: { name: 'EPSG:4326'} }
+		                    },
+		                    name: googlePlace.name,
+		                    icon: googlePlace.icon_url,
+		                    types: googlePlace.types,
+		                    google_place_id: googlePlace.google_place_id,
+		                    createdBy: userId,
+		                    updatedBy: userId
+		                }).then(result => {
+							cLogger.say(cLogger.TESTING_TYPE, 'created new entry for location, ID is '+result.id+'.');
+		                	resolve(result.id);
+
+		                }).catch(error => {
+		                	reject(error);
+		                });
+					} else {
+						cLogger.say(cLogger.TESTING_TYPE, 'found entry for location, ID is '+results.rows[0].id+'.');
+						resolve(results.rows[0].id);
+
+					}
+
+				}).catch(error => {
+					reject(error);
+				});
+			})
+		
 	}
 
 }

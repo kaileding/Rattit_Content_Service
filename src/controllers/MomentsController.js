@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-03 23:51:15
+* @Last Modified time: 2017-07-30 02:47:53
 */
 
 'use strict';
@@ -70,44 +70,15 @@ module.exports = {
 				};
 
 			if (req.body.location_id == null && req.body.google_place) {
-				return locationsHandler.findEntriesFromModel(null, null, {
-					google_place_id: req.body.google_place.google_place_id
-				}, null).then(results => {
-					if (results.count == 0) {
-						return locationsHandler.createEntryForModel({
-		                    loc_point: {
-		                        type: 'Point',
-		                        coordinates: [req.body.google_place.coordinates.latitude, req.body.google_place.coordinates.longitude],
-		                        crs: { type: 'name', properties: { name: 'EPSG:4326'} }
-		                    },
-		                    name: req.body.google_place.name,
-		                    icon: req.body.google_place.icon_url,
-		                    types: req.body.google_place.types,
-		                    google_place_id: req.body.google_place.google_place_id,
-		                    createdBy: req.user_id,
-		                    updatedBy: req.user_id
-		                }).then(result => {
-							newMomentObj.location_id = result.id;
-							return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-				                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-				                res.status(httpStatus.CREATED).send(result);
-							}).catch(error => {
-								next(error);
-							});
+				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 
-		                }).catch(error => {
-		                	next(error);
-		                });
-					} else {
-						let locationId = results.rows[0].id
-						newMomentObj.location_id = locationId;
-						return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-			                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-			                res.status(httpStatus.CREATED).send(result);
-						}).catch(error => {
-							next(error);
-						});
-					}
+					newMomentObj.location_id = location_id;
+					return momentsHandler.createEntryForModel(newMomentObj).then(result => {
+		                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+		                res.status(httpStatus.CREATED).send(result);
+					}).catch(error => {
+						next(error);
+					});
 
 				}).catch(error => {
 					next(error);

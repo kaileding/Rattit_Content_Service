@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:28:24
+* @Last Modified time: 2017-07-30 02:42:03
 */
 
 'use strict';
@@ -11,11 +11,13 @@ import Promise from 'bluebird'
 import questionRequestValidator from '../Validators/QuestionRequestValidator'
 import QuestionsHandler from '../handlers/QuestionsHandler'
 import VotesForQuestionsHandler from '../handlers/VotesForQuestionsHandler'
+import LocationsHandler from '../handlers/LocationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let questionsHandler = new QuestionsHandler();
 let votesForQuestionsHandler = new VotesForQuestionsHandler();
+let locationsHandler = new LocationsHandler();
 
 let updateVotesNumberOfQuestion = function(vote_type, question_id) {
 	return new Promise((resolve, reject) => {
@@ -54,21 +56,40 @@ module.exports = {
 	postQuestion: function(req, res, next) {
 		questionRequestValidator.validateCreateQuestionRequest(req).then(result => {
 
-			return questionsHandler.createEntryForModel({
+			var newQuestionObj = {
 					title: req.body.title,
 					words: req.body.words,
 					photos: req.body.photos,
-					hash_tags: req.body.hash_tags,
+					hash_tags: (req.body.hash_tags || []),
 					attachment: req.body.attachment,
 					location_id: req.body.location_id,
 					access_level: req.body.access_level,
 					createdBy: req.user_id
-				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
+				};
+
+			if (req.body.location_id == null && req.body.google_place) {
+				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
+
+					newQuestionObj.location_id = location_id;
+					return questionsHandler.createEntryForModel(newQuestionObj).then(result => {
+			                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+			                res.status(httpStatus.CREATED).send(result);
+						}).catch(error => {
+							next(error);
+						});
+
 				}).catch(error => {
 					next(error);
 				});
+
+			} else {
+				return questionsHandler.createEntryForModel(newQuestionObj).then(result => {
+		                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+		                res.status(httpStatus.CREATED).send(result);
+					}).catch(error => {
+						next(error);
+					});
+			}
 
 		}).catch(error => {
 			next(error);
