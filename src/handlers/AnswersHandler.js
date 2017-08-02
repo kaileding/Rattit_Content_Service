@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 00:12:47
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-23 22:08:27
+* @Last Modified time: 2017-08-01 00:36:52
 */
 
 'use strict';
@@ -24,7 +24,7 @@ class AnswersHandler extends DataModelHandler {
 	}
 
 	findAnswersJoinWithVotes(options, limit, offset) {
-		limit = (limit != null) ? Number(limit) : 20;
+		limit = (limit != null) ? Number(limit) : consts.DB_QUERY_DEFAULT_LIMIT;
 		offset = (offset != null) ? Number(offset) : 0;
 
 		let statementMainPart = 'FROM "votes_for_answer" LEFT JOIN "answer" '

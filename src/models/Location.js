@@ -24,7 +24,8 @@ module.exports = function(sequelize, DataTypes) {
 		name: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			defaultValue: 'unknown point'
+			defaultValue: 'unknown point',
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('name')
 		},
 		icon: {
 			type: DataTypes.TEXT(), // image URL

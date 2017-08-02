@@ -35,7 +35,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		words: {
 			type: DataTypes.TEXT(),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('words')
 		},
 		likedBy: {
 			type: DataTypes.ARRAY(DataTypes.UUID), // array of rattit_user ids

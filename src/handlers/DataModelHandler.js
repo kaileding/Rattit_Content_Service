@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-05 02:59:29
+* @Last Modified time: 2017-08-01 00:38:31
 */
 
 'use strict';
@@ -40,7 +40,7 @@ class DataModelHandler {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
 				selectObj = selectObj || { exclude: [] };
-				entryQuantity = entryQuantity || 20;
+				entryQuantity = entryQuantity || consts.DB_QUERY_DEFAULT_LIMIT;
 				entryQuantity = Number(entryQuantity);
 				offsetNumber = offsetNumber || 0;
 				offsetNumber = Number(offsetNumber);
