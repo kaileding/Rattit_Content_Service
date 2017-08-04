@@ -16,6 +16,7 @@ import _ from 'lodash'
 import httpStatus from 'http-status'
 import APIError from '../helpers/APIError'
 import CLogger from '../helpers/CustomLogger'
+import commentUtils from '../helpers/CommentsUtils'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
@@ -110,31 +111,7 @@ class CommentForMomentsHandler extends DataModelHandler {
 			let totalCount = results.count;
 			if (queryObj.dialog_format) {
 				// track back to root of dialogs, fold them
-				var commentDic = {};
-				results.rows.forEach(oneCm => {
-					commentDic[oneCm.id] = oneCm;
-				});
-				var visited = [];
-				var dialog_format_res = {};
-				results.rows.forEach(oneCm => {
-					var group = [];
-					if (visited.indexOf(oneCm.id) == -1) {
-						var cmPointer = oneCm;
-						while (cmPointer.for_comment) {
-							if (visited.indexOf(cmPointer.id) ==  -1) {
-								group.unshift(cmPointer.id);
-								visited.push(cmPointer.id);
-							}
-							cmPointer = commentDic[cmPointer.for_comment];
-						};
-						if (dialog_format_res[cmPointer.id]) {
-							dialog_format_res[cmPointer.id] = group.concat(dialog_format_res[cmPointer.id]);
-						} else {
-							dialog_format_res[cmPointer.id] = group;
-						}
-					}
-				});
-				results.dialog_format_ids = dialog_format_res;
+				results.dialog_format_ids = commentUtils.groupCommentsIntoTwoLevelDialogs(results.rows, 'for_comment');
 			}
 			return results;
 		}).catch(error => {
