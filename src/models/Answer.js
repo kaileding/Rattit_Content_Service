@@ -27,7 +27,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		words: {
 			type: DataTypes.TEXT(),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('words')
 		},
 		photos: {
 			type: DataTypes.JSON,

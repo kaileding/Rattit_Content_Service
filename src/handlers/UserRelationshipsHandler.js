@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-09 17:12:09
+* @Last Modified time: 2017-08-01 00:41:02
 */
 
 'use strict';
@@ -24,7 +24,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 	}
 
 	findRelationshipsAndExpandUsers(options, limit, offset) {
-		limit = (limit != null) ? Number(limit) : 20;
+		limit = (limit != null) ? Number(limit) : consts.DB_QUERY_DEFAULT_LIMIT;
 		offset = (offset != null) ? Number(offset) : 0;
 
 		let countQueryStatement = 'SELECT count(*) '
@@ -69,7 +69,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 
 	findFriendsByUserId(id, limit, offset) {
 
-		limit = (limit != null) ? Number(limit) : 20;
+		limit = (limit != null) ? Number(limit) : consts.DB_QUERY_DEFAULT_LIMIT;
 		offset = (offset != null) ? Number(offset) : 0;
 
 		let countQueryStatement = 'select count(r1.*) ' 

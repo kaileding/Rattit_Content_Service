@@ -51,6 +51,12 @@ module.exports = {
 
 	validateGetCommentsByQueryRequest: function(req) {
 		req.checkQuery({
+			'dialog_format': {
+				optional: true,
+				isBoolean: {
+					errorMessage: 'dialog_format should be a boolean'
+				}
+			},
 			'limit': {
 				optional: true,
 				isInt: {

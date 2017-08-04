@@ -19,11 +19,13 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		title: {
 			type: DataTypes.STRING,
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('title')
 		},
 		words: {
 			type: DataTypes.TEXT(),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('words')
 		},
 		photos: {
 			type: DataTypes.JSON,

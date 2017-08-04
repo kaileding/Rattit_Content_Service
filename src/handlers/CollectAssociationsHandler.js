@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 23:53:20
 * @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-13 01:10:52
+* @Last Modified time: 2017-08-01 00:37:38
 */
 
 'use strict';
@@ -26,7 +26,7 @@ class CollectAssociationsHandler extends DataModelHandler {
 	}
 
 	findContentsByCollectionId(id, limit, offset) {
-		limit = (limit != null) ? Number(limit) : 20;
+		limit = (limit != null) ? Number(limit) : consts.DB_QUERY_DEFAULT_LIMIT;
 		offset = (offset != null) ? Number(offset) : 0;
 		let assoc_name = this.model.name;
 
@@ -49,7 +49,7 @@ class CollectAssociationsHandler extends DataModelHandler {
 	}
 
 	findCollectionsByContentId(id, limit, offset) {
-		limit = (limit != null) ? Number(limit) : 20;
+		limit = (limit != null) ? Number(limit) : consts.DB_QUERY_DEFAULT_LIMIT;
 		offset = (offset != null) ? Number(offset) : 0;
 		let assoc_name = this.model.name;
 

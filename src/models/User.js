@@ -19,7 +19,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		username: {
 			type: DataTypes.STRING(32),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('username')
 		},
 		email: {
 			type: DataTypes.STRING(64),
@@ -27,11 +28,13 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		first_name: {
 			type: DataTypes.STRING(32),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('first_name')
 		},
 		last_name: {
 			type: DataTypes.STRING(32),
-			allowNull: false
+			allowNull: false,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('last_name')
 		},
 		gender: {
 			type: DataTypes.ENUM('male', 'female', 'untold'),
@@ -39,7 +42,8 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		manifesto: {
 			type: DataTypes.TEXT(),
-			allowNull: true
+			allowNull: true,
+			set: SequelizeModelHelpers.trimTextToAvoidEndingSpaceAndLineBreak('manifesto')
 		},
 		organization: {
 			type: DataTypes.ARRAY(DataTypes.STRING),

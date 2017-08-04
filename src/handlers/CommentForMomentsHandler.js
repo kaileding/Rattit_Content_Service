@@ -12,9 +12,11 @@ import dbConnectionPool from '../data/DBConnection'
 import models from '../models/Model_Index'
 import DataModelHandler from './DataModelHandler'
 import rp from 'request-promise'
+import _ from 'lodash'
 import httpStatus from 'http-status'
 import APIError from '../helpers/APIError'
 import CLogger from '../helpers/CustomLogger'
+import commentUtils from '../helpers/CommentsUtils'
 import consts from '../config/Constants'
 let cLogger = new CLogger();
 
@@ -105,7 +107,16 @@ class CommentForMomentsHandler extends DataModelHandler {
 			queryDate
 			);
 
-		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset);
+		return this.findEntriesFromModel(null, includeObj, filterObj, null, queryObj.limit, queryObj.offset).then(results => {
+			let totalCount = results.count;
+			if (queryObj.dialog_format) {
+				// track back to root of dialogs, fold them
+				results.dialog_format_ids = commentUtils.groupCommentsIntoTwoLevelDialogs(results.rows, 'for_comment');
+			}
+			return results;
+		}).catch(error => {
+			throw error;
+		});
 
 	}
 
