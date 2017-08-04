@@ -56,6 +56,7 @@ module.exports = {
 		commentForMomentRequestValidator.validateGetCommentsByQueryRequest(req).then(result => {
 
             var queryObj = {
+				dialog_format: req.query.dialog_format,
             	for_moment: req.query.for_moment,
             	for_comment: req.query.for_comment,
                 text: req.query.text,
