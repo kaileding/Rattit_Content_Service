@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-11 18:54:38
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-20 00:20:04
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 16:30:02
 */
 
 'use strict';
@@ -23,7 +23,7 @@ class VotesForMomentsHandler extends DataModelHandler {
 		super(models.VotesForMoments);
 	}
 
-	findVotesByMomentIdAndQuery(queryObj) {
+	findVotesForMomentsByQuery(queryObj) {
 
 		let includeObj = queryObj.voter_id ? null : [{
 			model: models.Users

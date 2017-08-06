@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-30 02:47:53
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 16:30:30
 */
 
 'use strict';
@@ -253,7 +253,7 @@ module.exports = {
 				offset: req.query.offset
 			};
 
-			return votesForMomentsHandler.findVotesByMomentIdAndQuery(queryObj).then(results => {
+			return votesForMomentsHandler.findVotesForMomentsByQuery(queryObj).then(results => {
 				res.status(httpStatus.OK).send(results);
 			}).catch(error => {
 				next(error);

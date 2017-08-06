@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-12 00:22:18
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-20 00:17:57
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 16:33:05
 */
 
 'use strict';
@@ -23,7 +23,7 @@ class VotesForAnswersHandler extends DataModelHandler {
 		super(models.VotesForAnswers);
 	}
 
-	findVotesByAnswerIdAndQuery(queryObj) {
+	findVotesForAnswersByQuery(queryObj) {
 
 		let includeObj = queryObj.voter_id ? null : [{
 			model: models.Users

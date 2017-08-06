@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-30 02:42:03
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 16:29:23
 */
 
 'use strict';
@@ -250,7 +250,7 @@ module.exports = {
 				offset: req.query.offset
 			};
 
-			return votesForQuestionsHandler.findVotesByQuestionIdAndQuery(queryObj).then(results => {
+			return votesForQuestionsHandler.findVotesForQuestionByQuery(queryObj).then(results => {
 				res.status(httpStatus.OK).send(results);
 			}).catch(error => {
 				next(error);
