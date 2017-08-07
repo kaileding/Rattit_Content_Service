@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-25 22:14:11
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-07 01:23:43
 */
 
 'use strict';
@@ -11,11 +11,13 @@ import Promise from 'bluebird'
 import userRequestValidator from '../Validators/UserRequestValidator'
 import UsersHandler from '../handlers/UsersHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import ActivitiesHandler from '../handlers/ActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let usersHandler = new UsersHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
+let activitiesHandler = new ActivitiesHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
@@ -175,12 +177,14 @@ module.exports = {
                         follower: req.params.id,
                         followee: followeeId
                     }).then(creationResult => {
-                        return userRelationshipsHandler.countEntriesFromModelForFilter({
-                            followee: followeeId
-                        }).then(countResult => {
-                            return usersHandler.updateEntryByIdForModel(followeeId, {
-                                follower_number: countResult
-                            })
+                        return userRelationshipsHandler.findFollowerIdsByUserId(followeeId).then(result => {
+                            return activitiesHandler.updateRecipientOfAUser(followeeId, result.followerIds).then(updateResults => {
+                                return usersHandler.updateEntryByIdForModel(followeeId, {
+                                    follower_number: result.count
+                                });
+                            }).catch(error => {
+                                throw error;
+                            });
                         }).catch(error => {
                             throw error;
                         });
@@ -218,29 +222,38 @@ module.exports = {
         userRequestValidator.validateUnfollowUserRequest(req).then(result => {
 
             return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
-                                                                req.params.followee_id).then(result => {
+                                                                req.params.followee_id).then(deleteResult => {
                 // TODO: should add logic to update the follower number / following number of corresponding users
-                userRelationshipsHandler.countEntriesFromModelForFilter({
-                        followee: req.params.followee_id
-                    }).then(countResult => {
-                        return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
-                            follower_number: countResult
-                        });
-                    }).catch(error => {
-                        throw error;
-                    });
-                userRelationshipsHandler.countEntriesFromModelForFilter({
-                        follower: req.params.id
-                    }).then(countResult => {
-                        return usersHandler.updateEntryByIdForModel(req.params.id, {
-                            followee_number: countResult
+                return userRelationshipsHandler.findFollowerIdsByUserId(req.params.followee_id).then(result => {
+                        return activitiesHandler.updateRecipientOfAUser(req.params.followee_id, result.followerIds).then(updateResults => {
+                            return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
+                                follower_number: result.count
+                            }).then(updateRes1 => {
+                                return userRelationshipsHandler.countEntriesFromModelForFilter({
+                                        follower: req.params.id
+                                    }).then(countResult => {
+                                        return usersHandler.updateEntryByIdForModel(req.params.id, {
+                                            followee_number: countResult
+                                        }).then(updateRes2 => {
+
+                                            res.status(httpStatus.OK).send({
+                                                success: deleteResult
+                                            });
+                                        }).catch(error => {
+                                            next(error);
+                                        });
+                                    }).catch(error => {
+                                        next(error);
+                                    });
+                            }).catch(error => {
+                                next(error);
+                            })
+                        }).catch(error => {
+                            next(error);
                         });
                     }).catch(error => {
                         next(error);
                     });
-                res.status(httpStatus.OK).send({
-                    success: result
-                });
             }).catch(error => {
                 next(error);
             });

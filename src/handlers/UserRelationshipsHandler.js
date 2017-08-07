@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-08-01 00:41:02
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 20:22:27
 */
 
 'use strict';
@@ -54,6 +54,25 @@ class UserRelationshipsHandler extends DataModelHandler {
 		};
 
 		return this.findRelationshipsAndExpandUsers(options, limit, offset);
+	}
+
+	findFollowerIdsByUserId(id) {
+
+		return this.findEntriesFromModel(['follower'], null, {
+			followee: id
+		}, null, 999999, 0).then(results => {
+			console.log('findFollowerIdsByUserId('+id+'), results are ', results);
+			var followerIds = [];
+			results.rows.forEach(row => {
+				followerIds.push(row.follower);
+			})
+			return {
+				count: results.count,
+				followerIds: followerIds
+			};
+		}).catch(error => {
+			throw error;
+		});
 	}
 
 	findFolloweesByUserId(id, limit, offset) {

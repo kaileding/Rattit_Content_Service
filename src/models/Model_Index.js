@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-05 10:58:17
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-23 21:58:59
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-06 19:02:00
 */
 
 'use strict';
@@ -25,6 +25,7 @@ let VotesForQuestions = dbConnectionPool.import(__dirname + "/VotesForQuestion")
 let CollectMoments = dbConnectionPool.import(__dirname + "/CollectMoment");
 let CollectQuestions = dbConnectionPool.import(__dirname + "/CollectQuestion");
 let CollectAnswers = dbConnectionPool.import(__dirname + "/CollectAnswer");
+let Activities = dbConnectionPool.import(__dirname + "/Activity");
 
 Moments.belongsTo(Users, {
 	foreignKey: 'createdBy',
@@ -96,6 +97,11 @@ VotesForQuestions.belongsTo(Questions, {
 	targetKey: 'id'
 });
 
+Activities.belongsTo(Users, {
+	foreignKey: 'actor',
+	targetKey: 'id'
+});
+
 
 module.exports = {
 	Users,
@@ -112,5 +118,6 @@ module.exports = {
 	VotesForQuestions,
 	CollectMoments,
 	CollectQuestions,
-	CollectAnswers
+	CollectAnswers,
+	Activities
 }
