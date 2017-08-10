@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 16:30:30
+ * @Last Modified time: 2017-08-09 22:54:42
 */
 
 'use strict';
@@ -13,12 +13,16 @@ import consts from '../config/Constants'
 import MomentsHandler from '../handlers/MomentsHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+// import ActivitiesHandler from '../handlers/ActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let momentsHandler = new MomentsHandler();
 let votesForMomentsHandler = new VotesForMomentsHandler();
 let locationsHandler = new LocationsHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
+// let activitiesHandler = new ActivitiesHandler();
 
 let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 	return new Promise((resolve, reject) => {
@@ -69,12 +73,16 @@ module.exports = {
 					createdBy: req.user_id
 				};
 
+			// var queries = [];
+			// queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
+
 			if (req.body.location_id == null && req.body.google_place) {
 				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 
 					newMomentObj.location_id = location_id;
 					return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-		                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+						cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+						
 		                res.status(httpStatus.CREATED).send(result);
 					}).catch(error => {
 						next(error);

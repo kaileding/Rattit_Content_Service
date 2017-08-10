@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 18:51:52 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 18:59:49
+ * @Last Modified time: 2017-08-07 08:53:28
  */
 
 'use strict';
@@ -26,9 +26,9 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         action: {
-			type: DataTypes.ENUM('post', 'vote', 'comment', 'unknown'),
+			type: DataTypes.ENUM('post', 'vote', 'comment', 'none'),
 			allowNull: false,
-			defaultValue: 'unknown'
+			defaultValue: 'none'
         },
         target: {
             type: DataTypes.TEXT(), // tableName:rowKey

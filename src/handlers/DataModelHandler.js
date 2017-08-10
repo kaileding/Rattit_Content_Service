@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-08-01 00:38:31
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-09 17:49:05
 */
 
 'use strict';
@@ -125,6 +125,28 @@ class DataModelHandler {
 			    	reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
 			    })
 			});
+	}
+
+	findEntriesByIdsFromModel(idSet) {
+		return new Promise((resolve, reject) => {
+			if (idSet.length == 0) {
+				reject(new APIError('idSet is empty.', httpStatus.INTERNAL_SERVER_ERROR));
+			} else {
+				let model = this.model;
+				model.findAll({
+					where: {
+						id: {
+							$in: idSet
+						}
+					}
+				}).then(function(results) {
+					cLogger.say(cLogger.TESTING_TYPE, `get entry successfully from ${model.name}.`, results);
+					resolve(results);
+				}).catch(function(error) {
+					reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
+				});
+			}
+		});
 	}
 
 	updateEntryByIdForModel(id, updateObj) {
