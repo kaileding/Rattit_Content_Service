@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-08 14:31:33 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:44:31
+ * @Last Modified time: 2017-08-10 01:08:06
  */
 
 'use strict';
@@ -45,7 +45,7 @@ class DynamoDBHandler {
                 if (error) {
                     reject(error);
                 } else {
-                    cLogger.say(cLogger.GENERAL_TYPE, 'Existing tables: ', data);
+                    cLogger.say('Existing tables: ', data);
                     resolve(data.TableNames);
                 }
             })
@@ -99,7 +99,7 @@ class DynamoDBHandler {
                 if (error) {
                     reject(error);
                 } else {
-                    cLogger.say(cLogger.GENERAL_TYPE, 'Existing tables: ', data);
+                    cLogger.say('Existing tables: ', data);
                     resolve(data.TableNames);
                 }
             })

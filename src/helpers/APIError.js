@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-05-29 10:44:11
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-10 00:29:27
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:10:17
 */
 
 'use strict';
@@ -17,7 +17,7 @@ module.exports = function APIError(message, statusCode = httpStatus.INTERNAL_SER
     this.statusCode = statusCode;
     this.errObj = errObj;
 
-    cLogger.say(cLogger.ESSENTIAL_TYPE, this);
+    cLogger.debug(this);
 
     this.getFormattedJson = function() {
 

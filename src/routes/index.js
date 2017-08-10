@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 20:06:59
+ * @Last Modified time: 2017-08-10 01:13:59
 */
 
 'use strict';
@@ -26,7 +26,7 @@ import voteRoutes from './VoteRoutes'
 import activityRoutes from './ActivityRoutes'
 
 router.use('/', (req, res, next) => {
-	cLogger.say(cLogger.NEWLINE_TYPE, 'Called ['+req.method+'] '+req.url);
+	cLogger.println('Called ['+req.method+'] '+req.url);
 	next();
 });
 

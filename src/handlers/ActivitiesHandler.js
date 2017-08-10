@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 19:03:22 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-07 01:14:01
+ * @Last Modified time: 2017-08-10 01:06:07
  */
 
 'use strict';
@@ -36,10 +36,10 @@ class ActivitiesHandler extends DataModelHandler {
                     validate: true,
                     fields: Object.keys('recipients')
                 }).then((results) => {
-                    cLogger.say(cLogger.GENERAL_TYPE, 'Updated '+results[0]+' entries in Activity table');
+                    cLogger.say('Updated '+results[0]+' entries in Activity table');
                     resolve(results[0]);
                 }).catch(err => {
-					cLogger.say(cLogger.GENERAL_TYPE, `ERROR updating entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+					cLogger.debug(`ERROR updating entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
 					reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
 	        });

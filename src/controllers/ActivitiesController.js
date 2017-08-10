@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 20:04:46 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:08:55
+ * @Last Modified time: 2017-08-10 00:52:54
  */
 
 'use strict';
@@ -24,24 +24,6 @@ module.exports = {
 
     getActivityFeedOfAUser: function(req, res, next) {
         votesRequestValidator.validateGetVotesForAnswersByQueryRequest(req).then(result => {
-
-            // return userRelationshipsHandler.findFollowerIdsByUserId(req.user_id).then(results => {
-            //     res.status(httpStatus.OK).send(results);
-            // }).catch(error => {
-            //     next(error);
-            // });
-
-            // return dynamoDBHandler.initializeDynamoDBTables().then(results => {
-            //     res.status(httpStatus.OK).send(results);
-            // }).catch(error => {
-            //     next(error);
-            // });
-
-            // return dynamoDBHandler.setTTLtoTable('HotPost').then(results => {
-            //     res.status(httpStatus.OK).send(results);
-            // }).catch(error => {
-            //     next(error);
-            // });
 
             // return dynamoDBHandler.insertActivityToFeedsOfFollowers({
             //     actor: 'actor 1',
@@ -93,12 +75,6 @@ module.exports = {
             //     target: 'moment:1007',
             //     actionTime: '2017-08-08T08:22:06.276Z'
             // }).then(results => {
-            //     res.status(httpStatus.OK).send(results);
-            // }).catch(error => {
-            //     next(error);
-            // });
-
-            // return dynamoDBHandler.getLastFewRecordsFromFeed('recipient 2', 2).then(results => {
             //     res.status(httpStatus.OK).send(results);
             // }).catch(error => {
             //     next(error);

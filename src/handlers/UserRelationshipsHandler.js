@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 20:22:27
+ * @Last Modified time: 2017-08-10 01:08:59
 */
 
 'use strict';
@@ -125,16 +125,16 @@ class UserRelationshipsHandler extends DataModelHandler {
                     limit: 1
                 }).then(response => {
                     if (response === 1) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Deleted entry with follower_id '${id}' and followee_id '${followeeId}' from ${model.name}`);
+                    	cLogger.say(`Deleted entry with follower_id '${id}' and followee_id '${followeeId}' from ${model.name}`);
                         resolve("OK");
                     } else if (response === 0) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Unable to delete nonexistent entry with follower_id '${id}' and followee_id '${followeeId}' in ${model.name}`);
+                    	cLogger.debug(`Unable to delete nonexistent entry with follower_id '${id}' and followee_id '${followeeId}' in ${model.name}`);
                         reject(new APIError(`Entry with follower_id '${id}' and followee_id '${followeeId}' Not Found in ${model.name}`, httpStatus.NOT_FOUND));
                     } else { // should never happen
                     	reject(new APIError('Deleted multiple entries, which should never happen', httpStatus.INTERNAL_SERVER_ERROR));
                     }
                 }).catch(err => {
-                	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+                	cLogger.debug(`ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
                     reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
             });

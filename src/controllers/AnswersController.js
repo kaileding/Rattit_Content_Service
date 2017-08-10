@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 23:57:21
+ * @Last Modified time: 2017-08-10 01:01:56
 */
 
 'use strict';
@@ -72,7 +72,7 @@ module.exports = {
 			var queries = [];
 			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
 			queries.push(answersHandler.createEntryForModel(newAnswerObj).then(result => {
-				cLogger.say(cLogger.TESTING_TYPE, 'save one answer successfully.', result);
+				cLogger.debug('save one answer successfully.', result);
 				return result;
 			}));
 
@@ -206,7 +206,7 @@ module.exports = {
 
 			if (req.body.commit) {
 				return votesForAnswersHandler.createEntryForModel(voteForAnswer).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for answer successfully.', result);
+	                cLogger.debug('create a vote for answer successfully.', result);
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
@@ -218,7 +218,7 @@ module.exports = {
 				});
 			} else {
 				return votesForAnswersHandler.deleteVoteForAnswerByContent(voteForAnswer).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for answer successfully.', result);
+	                cLogger.debug('revote a vote for answer successfully.', result);
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {

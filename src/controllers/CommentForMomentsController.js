@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-12 01:51:30
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:38:12
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:02:51
 */
 
 'use strict';
@@ -27,7 +27,7 @@ module.exports = {
 					hash_tags: req.body.hash_tags,
 					createdBy: req.user_id
 				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one comment for moment successfully.', result);
+	                cLogger.debug('save one comment for moment successfully.', result);
 	                res.status(httpStatus.CREATED).send(result);
 				}).catch(error => {
 					next(error);

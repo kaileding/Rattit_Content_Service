@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-07 01:23:43
+ * @Last Modified time: 2017-08-10 01:03:59
 */
 
 'use strict';
@@ -33,7 +33,7 @@ module.exports = {
                     organization: req.body.organization,
                     avatar: req.body.avatar
                 }).then(function(result) {
-                    cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
+                    cLogger.debug('save one user successfully.', result);
                     res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
@@ -60,7 +60,7 @@ module.exports = {
 
 	getUsersByQuery: function(req, res, next) {
         userRequestValidator.validateGetUserByTextRequest(req).then(result => {
-            cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
+            cLogger.debug('req.query.text is ', req.query.text);
 
             return usersHandler.findUserByText(req.query.text, 
                                                 req.query.limit, 

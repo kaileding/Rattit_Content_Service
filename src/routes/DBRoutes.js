@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 14:02:16
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:48:09
+ * @Last Modified time: 2017-08-10 01:11:08
 */
 
 'use strict';
@@ -36,7 +36,7 @@ router.get('/init', (req, res, next) => {
                                 message: 'Database forcely synchronized successfully with testing data.'
                             });
                         }).catch(error => {
-                            cLogger.say(cLogger.ESSENTIAL_TYPE, error);
+                            cLogger.debug(error);
                             next(new APIError('Failed to insert testing data into database.'));
                         });
                     } else {
@@ -47,12 +47,12 @@ router.get('/init', (req, res, next) => {
                     }
                     
             }, function (err) {
-                cLogger.say(cLogger.ESSENTIAL_TYPE, err);
+                cLogger.debug(err);
                 next(err);
             });
 
     }).catch(error => {
-        cLogger.say(cLogger.ESSENTIAL_TYPE, error);
+        cLogger.debug(error);
         next(error);
     });
 	
@@ -83,7 +83,7 @@ router.get('/dynamo', (req, res, next) => {
             next(error);
         });
     }
-       
+    
 });
 
 module.exports = router;

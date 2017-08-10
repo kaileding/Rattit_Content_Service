@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-08 00:37:54
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-30 02:41:49
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:08:38
 */
 
 'use strict';
@@ -119,14 +119,14 @@ class LocationsHandler extends DataModelHandler {
 		                    createdBy: userId,
 		                    updatedBy: userId
 		                }).then(result => {
-							cLogger.say(cLogger.TESTING_TYPE, 'created new entry for location, ID is '+result.id+'.');
+							cLogger.say('created new entry for location, ID is '+result.id+'.');
 		                	resolve(result.id);
 
 		                }).catch(error => {
 		                	reject(error);
 		                });
 					} else {
-						cLogger.say(cLogger.TESTING_TYPE, 'found entry for location, ID is '+results.rows[0].id+'.');
+						cLogger.say('found entry for location, ID is '+results.rows[0].id+'.');
 						resolve(results.rows[0].id);
 
 					}

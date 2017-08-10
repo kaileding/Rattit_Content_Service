@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 23:45:57
+ * @Last Modified time: 2017-08-10 01:03:39
 */
 
 'use strict';
@@ -80,14 +80,14 @@ module.exports = {
 				var postReq = locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 					newQuestionObj.location_id = location_id;
 					return questionsHandler.createEntryForModel(newQuestionObj).then(result => {
-							cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+							cLogger.debug('save one question successfully.', result);
 							return result;
 						});
 				});
 				queries.push(postReq);
 			} else {
 				var postReq = questionsHandler.createEntryForModel(newQuestionObj).then(result => {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+					cLogger.debug('save one question successfully.', result);
 					return result;
 				});
 				queries.push(postReq);
@@ -236,7 +236,7 @@ module.exports = {
 
 			if (req.body.commit) {
 				return votesForQuestionsHandler.createEntryForModel(voteForQuestion).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for question successfully.', result);
+	                cLogger.debug('create a vote for question successfully.', result);
 	                return updateVotesNumberOfQuestion(voteForQuestion.vote_type, voteForQuestion.question_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
@@ -248,7 +248,7 @@ module.exports = {
 				});
 			} else {
 				return votesForQuestionsHandler.deleteVoteForQuestionByContent(voteForQuestion).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for question successfully.', result);
+	                cLogger.debug('revote a vote for question successfully.', result);
 	                return updateVotesNumberOfQuestion(voteForQuestion.vote_type, voteForQuestion.question_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {

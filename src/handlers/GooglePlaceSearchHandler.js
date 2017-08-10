@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-05-30 17:32:08
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-07 01:37:17
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:08:15
 */
 
 'use strict';
@@ -66,7 +66,7 @@ let placeDetailUrlGen = function(searchObj) {
 }
 
 module.exports = function(searchObj) {
-	cLogger.say(cLogger.TESTING_TYPE, 'searchObj is', searchObj);
+	cLogger.say('searchObj is', searchObj);
 
 	return new Promise((resolve, reject)=> {
 
@@ -94,7 +94,7 @@ module.exports = function(searchObj) {
 
 					rp(options)
 	                .then(data => {
-	                	cLogger.say(cLogger.TESTING_TYPE, 'response is', data);
+	                	cLogger.say('response is', data);
 	                    resolve(data);
 	                }).catch(err => {
 	                    reject(err);

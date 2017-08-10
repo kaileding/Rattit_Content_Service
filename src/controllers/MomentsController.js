@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 23:41:55
+ * @Last Modified time: 2017-08-10 01:03:11
 */
 
 'use strict';
@@ -82,14 +82,14 @@ module.exports = {
 				var postReq = locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 					newMomentObj.location_id = location_id;
 					return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-						cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+						cLogger.debug('save one moment successfully.', result);
 						return result;
 					});
 				});
 				queries.push(postReq);
 			} else {
 				var postReq = momentsHandler.createEntryForModel(newMomentObj).then(result => {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+					cLogger.debug('save one moment successfully.', result);
 					return result;
 				});
 				queries.push(postReq);
@@ -239,7 +239,7 @@ module.exports = {
 
 			if (req.body.commit) {
 				return votesForMomentsHandler.createEntryForModel(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for moment successfully.', result);
+	                cLogger.debug('create a vote for moment successfully.', result);
 	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
@@ -251,7 +251,7 @@ module.exports = {
 				});
 			} else {
 				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for moment successfully.', result);
+	                cLogger.debug('revote a vote for moment successfully.', result);
 	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
