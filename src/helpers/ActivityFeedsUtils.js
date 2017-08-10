@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 19:06:59 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 22:44:09
+ * @Last Modified time: 2017-08-10 00:26:13
  */
 
 'use strict';
@@ -36,10 +36,10 @@ module.exports = {
         var answerIds = [];
         var userIds = [];
         feedList.forEach(feedItem => {
-            if (userIds.indexOf(feedItem.actor) === -1) {
-                userIds.push(feedItem.actor);
+            if (userIds.indexOf(feedItem.Actor.S) === -1) {
+                userIds.push(feedItem.Actor.S);
             }
-            let targetSplits = feedItem.target.split(':');
+            let targetSplits = feedItem.Target.S.split(':');
             let contentType = targetSplits[0];
             let contentId = targetSplits[1];
             switch (contentType) {
@@ -63,17 +63,42 @@ module.exports = {
             }
         });
         var queries = [];
+        var queryTypes = [];
         if (momentIds.length > 0) {
             queries.push(momentsHandler.findEntriesByIdsFromModel(momentIds));
+            queryTypes.push('moment');
         }
         if (questionIds.length > 0) {
             queries.push(questionsHandler.findEntriesByIdsFromModel(questionIds));
+            queryTypes.push('question');
         }
         if (answerIds.length > 0) {
             queries.push(answersHandler.findEntriesByIdsFromModel(answerIds));
+            queryTypes.push('answer');
+        }
+        if (userIds.length > 0) {
+            queries.push(usersHandler.findEntriesByIdsFromModel(userIds));
+            queryTypes.push('user');
         }
         return Promise.all(queries).then(results => {
-            return results;
+            var contentDic = {};
+            results.forEach((contentSet, index) => {
+                let contentType = queryTypes[index];
+                contentSet.forEach(content => {
+                    contentDic[contentType+':'+content.id] = content;
+                });
+            });
+            var formattedFeedList = [];
+            feedList.forEach(feedItem => {
+                formattedFeedList.push({
+                    Actor: contentDic['user:'+feedItem.Actor.S],
+                    Action: feedItem.Action.S,
+                    TargetType: feedItem.Target.S.split(':')[0],
+                    Target: contentDic[feedItem.Target.S],
+                    ActionTime: feedItem.ActionTime.S
+                });
+            })
+            return formattedFeedList;
         });
     }
 }

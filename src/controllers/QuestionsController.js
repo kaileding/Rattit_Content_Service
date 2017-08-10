@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 16:29:23
+ * @Last Modified time: 2017-08-09 23:45:57
 */
 
 'use strict';
@@ -12,12 +12,18 @@ import questionRequestValidator from '../Validators/QuestionRequestValidator'
 import QuestionsHandler from '../handlers/QuestionsHandler'
 import VotesForQuestionsHandler from '../handlers/VotesForQuestionsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let questionsHandler = new QuestionsHandler();
 let votesForQuestionsHandler = new VotesForQuestionsHandler();
 let locationsHandler = new LocationsHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
 
 let updateVotesNumberOfQuestion = function(vote_type, question_id) {
 	return new Promise((resolve, reject) => {
@@ -67,29 +73,50 @@ module.exports = {
 					createdBy: req.user_id
 				};
 
+			var queries = [];
+			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
+			
 			if (req.body.location_id == null && req.body.google_place) {
-				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
-
+				var postReq = locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 					newQuestionObj.location_id = location_id;
 					return questionsHandler.createEntryForModel(newQuestionObj).then(result => {
-			                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
-			                res.status(httpStatus.CREATED).send(result);
-						}).catch(error => {
-							next(error);
+							cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+							return result;
 						});
-
-				}).catch(error => {
-					next(error);
 				});
-
+				queries.push(postReq);
 			} else {
-				return questionsHandler.createEntryForModel(newQuestionObj).then(result => {
-		                cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
-		                res.status(httpStatus.CREATED).send(result);
-					}).catch(error => {
-						next(error);
-					});
+				var postReq = questionsHandler.createEntryForModel(newQuestionObj).then(result => {
+					cLogger.say(cLogger.TESTING_TYPE, 'save one question successfully.', result);
+					return result;
+				});
+				queries.push(postReq);
 			}
+
+			return Promise.all(queries).then(results => {
+				let followerIds = results[0].followerIds;
+				let createdQuestion = results[1];
+				let activity = {
+					actor: req.user_id,
+					action: 'post',
+					target: 'question:'+createdQuestion.id,
+					actionTime: createdQuestion.createdAt
+				};
+				var dynamoReqs = [];
+				if (createdQuestion.access_level === 'followers') {
+					dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				}
+				if (followerIds.length > 0) {
+					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				}
+				return Promise.all(dynamoReqs).then(dynamoRes => {
+					res.status(httpStatus.CREATED).send(createdQuestion);
+				}).catch(dynamoError => {
+					next(dynamoError);
+				});
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-06 16:33:52
+ * @Last Modified time: 2017-08-09 23:57:21
 */
 
 'use strict';
@@ -11,11 +11,17 @@ import Promise from 'bluebird'
 import answerRequestValidator from '../Validators/AnswerRequestValidator'
 import AnswersHandler from '../handlers/AnswersHandler'
 import VotesForAnswersHandler from '../handlers/VotesForAnswersHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let answersHandler = new AnswersHandler();
 let votesForAnswersHandler = new VotesForAnswersHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
 
 let updateVotesNumberOfAnswer = function(vote_type, answer_id) {
 	return new Promise((resolve, reject) => {
@@ -53,20 +59,45 @@ let updateVotesNumberOfAnswer = function(vote_type, answer_id) {
 module.exports = {
 	postAnswer: function(req, res, next) {
 		answerRequestValidator.validateCreateAnswerRequest(req).then(result => {
+			
+			var newAnswerObj = {
+				for_question: req.body.for_question,
+				words: req.body.words,
+				photos: req.body.photos,
+				hash_tags: req.body.hash_tags,
+				attachment: req.body.attachment,
+				createdBy: req.user_id
+			};
 
-			return answersHandler.createEntryForModel({
-					for_question: req.body.for_question,
-					words: req.body.words,
-					photos: req.body.photos,
-					hash_tags: req.body.hash_tags,
-					attachment: req.body.attachment,
-					createdBy: req.user_id
-				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one answer successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
-				}).catch(error => {
-					next(error);
+			var queries = [];
+			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
+			queries.push(answersHandler.createEntryForModel(newAnswerObj).then(result => {
+				cLogger.say(cLogger.TESTING_TYPE, 'save one answer successfully.', result);
+				return result;
+			}));
+
+			return Promise.all(queries).then(results => {
+				let followerIds = results[0].followerIds;
+				let createdAnswer = results[1];
+				let activity = {
+					actor: req.user_id,
+					action: 'post',
+					target: 'answer:'+createdAnswer.id,
+					actionTime: createdAnswer.createdAt
+				};
+				var dynamoReqs = [];
+				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				if (followerIds.length > 0) {
+					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				}
+				return Promise.all(dynamoReqs).then(dynamoRes => {
+					res.status(httpStatus.CREATED).send(createdAnswer);
+				}).catch(dynamoError => {
+					next(dynamoError);
 				});
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);

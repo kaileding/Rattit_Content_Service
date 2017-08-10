@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-09 22:30:35 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 22:41:11
+ * @Last Modified time: 2017-08-09 23:27:04
  */
 
 'use strict';
@@ -40,7 +40,7 @@ class DynamoActivitiesHandler {
                     S: activityObj.target
                 },
                 ActionTime: {
-                    S: activityObj.actionTime
+                    S: String(activityObj.actionTime.getTime())
                 }
             }
         };
@@ -73,10 +73,10 @@ class DynamoActivitiesHandler {
                     S: activityObj.target
                 },
                 ActionTime: {
-                    S: activityObj.actionTime
+                    S: String(activityObj.actionTime.getTime())
                 }, 
                 ExpirationTime: {
-                    N: String(Math.ceil(Date.parse(activityObj.actionTime)/1000)+259200) // expires in 3 days
+                    N: String(Math.ceil(activityObj.actionTime.getTime()/1000)+259200) // expires in 3 days
                 }
             }
         };

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 22:54:42
+ * @Last Modified time: 2017-08-09 23:41:55
 */
 
 'use strict';
@@ -14,7 +14,8 @@ import MomentsHandler from '../handlers/MomentsHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
-// import ActivitiesHandler from '../handlers/ActivitiesHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
@@ -22,7 +23,8 @@ let momentsHandler = new MomentsHandler();
 let votesForMomentsHandler = new VotesForMomentsHandler();
 let locationsHandler = new LocationsHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
-// let activitiesHandler = new ActivitiesHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
 
 let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 	return new Promise((resolve, reject) => {
@@ -73,37 +75,54 @@ module.exports = {
 					createdBy: req.user_id
 				};
 
-			// var queries = [];
-			// queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
+			var queries = [];
+			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
 
 			if (req.body.location_id == null && req.body.google_place) {
-				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
-
+				var postReq = locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 					newMomentObj.location_id = location_id;
 					return momentsHandler.createEntryForModel(newMomentObj).then(result => {
 						cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-						
-		                res.status(httpStatus.CREATED).send(result);
-					}).catch(error => {
-						next(error);
+						return result;
 					});
-
-				}).catch(error => {
-					next(error);
 				});
-
+				queries.push(postReq);
 			} else {
-				return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
-				}).catch(error => {
-					next(error);
+				var postReq = momentsHandler.createEntryForModel(newMomentObj).then(result => {
+					cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
+					return result;
 				});
+				queries.push(postReq);
 			}
+
+			return Promise.all(queries).then(results => {
+				let followerIds = results[0].followerIds;
+				let createdMoment = results[1];
+				let activity = {
+					actor: req.user_id,
+					action: 'post',
+					target: 'moment:'+createdMoment.id,
+					actionTime: createdMoment.createdAt
+				};
+				var dynamoReqs = [];
+				if (createdMoment.access_level === 'followers') {
+					dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				}
+				if (followerIds.length > 0) {
+					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				}
+				return Promise.all(dynamoReqs).then(dynamoRes => {
+					res.status(httpStatus.CREATED).send(createdMoment);
+				}).catch(dynamoError => {
+					next(dynamoError);
+				});
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);
-		})
+		});
 	},
 
 	getMomentById: function(req, res, next) {

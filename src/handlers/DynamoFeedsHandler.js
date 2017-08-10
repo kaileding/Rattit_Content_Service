@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-09 22:05:12 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 22:33:09
+ * @Last Modified time: 2017-08-10 00:27:42
  */
 
 'use strict';
@@ -59,7 +59,7 @@ class DynamoFeedsHandler {
                             S: activityObj.target
                         },
                         ActionTime: {
-                            S: activityObj.actionTime
+                            S: String(activityObj.actionTime.getTime())
                         }
                     }
                 }
