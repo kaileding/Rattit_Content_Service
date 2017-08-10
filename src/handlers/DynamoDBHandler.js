@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-08 14:31:33 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 22:28:46
+ * @Last Modified time: 2017-08-10 00:44:31
  */
 
 'use strict';
@@ -25,6 +25,39 @@ var dynamodb = new aws.DynamoDB(dynamoDBConfig.options);
 
 class DynamoDBHandler {
     
+    describeOneTable(tableName) {
+        return new Promise((resolve, reject) => {
+            dynamodb.describeTable({
+                TableName: tableName
+            }, (error, data) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+    describeExistingTables() {
+        return new Promise((resolve, reject) => {
+            dynamodb.listTables({}, (error, data) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    cLogger.say(cLogger.GENERAL_TYPE, 'Existing tables: ', data);
+                    resolve(data.TableNames);
+                }
+            })
+        }).then(tableNames => {
+            var describeReqs = [];
+            tableNames.forEach(tableName => {
+                describeReqs.push(this.describeOneTable(tableName));
+            });
+            return Promise.all(describeReqs);
+        });
+    }
+
     createOneDynamoDBTable(tableOptions) {
         return new Promise((resolve, reject) => {
             dynamodb.createTable(tableOptions, (error, data) => {

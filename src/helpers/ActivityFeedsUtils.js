@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 19:06:59 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:26:13
+ * @Last Modified time: 2017-08-10 00:35:49
  */
 
 'use strict';
@@ -26,10 +26,7 @@ let answersHandler = new AnswersHandler();
 let usersHandler = new UsersHandler();
 
 module.exports = {
-    insertNewActivity: function(actor, action, target) {
-        
-    },
-
+    
     enrichActivityFeed: function(feedList) {
         var momentIds = [];
         var questionIds = [];
