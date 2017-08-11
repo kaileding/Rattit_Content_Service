@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:08:59
+ * @Last Modified time: 2017-08-10 22:09:41
 */
 
 'use strict';
@@ -69,6 +69,25 @@ class UserRelationshipsHandler extends DataModelHandler {
 			return {
 				count: results.count,
 				followerIds: followerIds
+			};
+		}).catch(error => {
+			throw error;
+		});
+	}
+
+	findFollowingIdsByUserId(id) {
+
+		return this.findEntriesFromModel(['followee'], null, {
+			follower: id
+		}, null, 999999, 0).then(results => {
+			console.log('findFollowingIdsByUserId('+id+'), results are ', results);
+			var followingIds = [];
+			results.rows.forEach(row => {
+				followingIds.push(row.followee);
+			})
+			return {
+				count: results.count,
+				followingIds: followingIds
 			};
 		}).catch(error => {
 			throw error;

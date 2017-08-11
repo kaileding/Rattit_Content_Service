@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:03:59
+ * @Last Modified time: 2017-08-10 20:47:25
 */
 
 'use strict';
@@ -11,13 +11,15 @@ import Promise from 'bluebird'
 import userRequestValidator from '../Validators/UserRequestValidator'
 import UsersHandler from '../handlers/UsersHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
-import ActivitiesHandler from '../handlers/ActivitiesHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let usersHandler = new UsersHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
-let activitiesHandler = new ActivitiesHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
@@ -177,13 +179,14 @@ module.exports = {
                         follower: req.params.id,
                         followee: followeeId
                     }).then(creationResult => {
+                        feedsHandler.copyRecordsFromAuthorToRecipient(followeeId, 100, req.params.id).then(copyRes => {
+                            cLogger.say('Successfully Copied Records of An Author into Feed of Recipient.');
+                        }).catch(copyError => {
+                            cLogger.debug('Failed copyRecordsFromAuthorToRecipient()', copyError);
+                        });
                         return userRelationshipsHandler.findFollowerIdsByUserId(followeeId).then(result => {
-                            return activitiesHandler.updateRecipientOfAUser(followeeId, result.followerIds).then(updateResults => {
-                                return usersHandler.updateEntryByIdForModel(followeeId, {
-                                    follower_number: result.count
-                                });
-                            }).catch(error => {
-                                throw error;
+                            return usersHandler.updateEntryByIdForModel(followeeId, {
+                                follower_number: result.count
                             });
                         }).catch(error => {
                             throw error;
@@ -223,37 +226,40 @@ module.exports = {
 
             return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
                                                                 req.params.followee_id).then(deleteResult => {
-                // TODO: should add logic to update the follower number / following number of corresponding users
-                return userRelationshipsHandler.findFollowerIdsByUserId(req.params.followee_id).then(result => {
-                        return activitiesHandler.updateRecipientOfAUser(req.params.followee_id, result.followerIds).then(updateResults => {
-                            return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
-                                follower_number: result.count
-                            }).then(updateRes1 => {
-                                return userRelationshipsHandler.countEntriesFromModelForFilter({
-                                        follower: req.params.id
-                                    }).then(countResult => {
-                                        return usersHandler.updateEntryByIdForModel(req.params.id, {
-                                            followee_number: countResult
-                                        }).then(updateRes2 => {
+                                                                    
+                feedsHandler.removeRecordsOfAuthorFromRecipientFeed(req.params.followee_id, req.params.id).then(removeRes => {
+                    cLogger.say('Successfully Removed Records of An Author from Feed of Recipient.');
+                }).catch(removeError => {
+                    cLogger.debug('Failed removeRecordsOfAuthorFromRecipientFeed()', removeError);
+                });
 
-                                            res.status(httpStatus.OK).send({
-                                                success: deleteResult
-                                            });
-                                        }).catch(error => {
-                                            next(error);
-                                        });
-                                    }).catch(error => {
-                                        next(error);
-                                    });
+                res.status(httpStatus.OK).send({
+                    success: deleteResult
+                });
+
+                return userRelationshipsHandler.findFollowerIdsByUserId(req.params.followee_id).then(result => {
+                    return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
+                        follower_number: result.count
+                    }).then(updateRes1 => {
+                        return userRelationshipsHandler.countEntriesFromModelForFilter({
+                                follower: req.params.id
+                            }).then(countResult => {
+                                return usersHandler.updateEntryByIdForModel(req.params.id, {
+                                    followee_number: countResult
+                                }).then(updateRes2 => {
+                                    cLogger.say('Successfully Updated the Count of Followers/Followings of Users.');
+                                }).catch(error => {
+                                    next(error);
+                                });
                             }).catch(error => {
                                 next(error);
-                            })
-                        }).catch(error => {
-                            next(error);
-                        });
+                            });
                     }).catch(error => {
                         next(error);
                     });
+                }).catch(error => {
+                    next(error);
+                });
             }).catch(error => {
                 next(error);
             });

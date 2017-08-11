@@ -2,12 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:01:56
+ * @Last Modified time: 2017-08-10 21:21:00
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
+import consts from '../config/Constants'
 import answerRequestValidator from '../Validators/AnswerRequestValidator'
 import AnswersHandler from '../handlers/AnswersHandler'
 import VotesForAnswersHandler from '../handlers/VotesForAnswersHandler'
@@ -85,13 +86,19 @@ module.exports = {
 					target: 'answer:'+createdAnswer.id,
 					actionTime: createdAnswer.createdAt
 				};
+
+				res.status(httpStatus.CREATED).send(createdAnswer);
+
 				var dynamoReqs = [];
 				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
-				if (followerIds.length > 0) {
+				if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
+					activity.hotType = 'Popular';
+					dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+				} else if (followerIds.length > 0) {
 					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
 				}
 				return Promise.all(dynamoReqs).then(dynamoRes => {
-					res.status(httpStatus.CREATED).send(createdAnswer);
+					cLogger.say('Successfully Insert This Answer to ActivityTable and FeedTable.');
 				}).catch(dynamoError => {
 					next(dynamoError);
 				});

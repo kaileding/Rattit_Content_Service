@@ -2,14 +2,14 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:03:11
+ * @Last Modified time: 2017-08-10 21:25:42
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
-import momentRequestValidator from '../Validators/MomentRequestValidator'
 import consts from '../config/Constants'
+import momentRequestValidator from '../Validators/MomentRequestValidator'
 import MomentsHandler from '../handlers/MomentsHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
@@ -104,15 +104,24 @@ module.exports = {
 					target: 'moment:'+createdMoment.id,
 					actionTime: createdMoment.createdAt
 				};
+
+				res.status(httpStatus.CREATED).send(createdMoment);
+
 				var dynamoReqs = [];
-				if (createdMoment.access_level === 'followers') {
-					dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
-				}
-				if (followerIds.length > 0) {
-					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				if (createdMoment.access_level === 'public') {
+					activity.hotType = 'Public';
+					dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+				} else if (createdMoment.access_level === 'followers') {
+					if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
+						activity.hotType = 'Popular';
+						dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+					} else if (followerIds.length > 0) {
+						dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+					}
 				}
 				return Promise.all(dynamoReqs).then(dynamoRes => {
-					res.status(httpStatus.CREATED).send(createdMoment);
+					cLogger.say('Successfully Insert This Moment to ActivityTable and FeedTable.');
 				}).catch(dynamoError => {
 					next(dynamoError);
 				});

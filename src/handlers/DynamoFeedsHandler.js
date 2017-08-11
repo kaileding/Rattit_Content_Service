@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-09 22:05:12 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:27:42
+ * @Last Modified time: 2017-08-10 21:36:33
  */
 
 'use strict';
@@ -25,25 +25,65 @@ var dynamodb = new aws.DynamoDB(dynamoDBConfig.options);
 
 class DynamoFeedsHandler {
 
-    insertActivityToFeedsOfFollowers(activityObj, followerIds) {
-        if (followerIds.length == 0) {
+    createBatchWriteRequestToFeedTable(requestList) {
+        var params = {
+            RequestItems: {
+                Feed: requestList
+            },
+            ReturnItemCollectionMetrics: 'SIZE',
+            ReturnConsumedCapacity: 'TOTAL'
+        };
+        return new Promise((resolve, reject) => {
+            dynamodb.batchWriteItem(params, (error, data) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+    createMultipleBatchWriteRequestsToFeedTable(loopArr, requestBuilder) {
+        if (loopArr.length == 0) {
             return new Promise((resolve, reject) => {
                 resolve({
                     UnprocessedItems: {}
                 });
             });
-        } else if (followerIds.length > 25) {
-            return new Promise((resolve, reject) => {
-                let errorMessage = 'BAD_REQUEST, followerIds array has ' 
-                                    + followerIds.length 
-                                    + ' elements, batchWriteItem() func only accecpt up to 25 requests.';
-                reject(new APIError(errorMessage));
-            });
         }
 
+        var batchWriteReqs = [];
         var newItems = [];
-        followerIds.forEach(followerId => {
-            newItems.push({
+        var itemCount = 0;
+        loopArr.forEach(arrElement => {
+            let oneReq = requestBuilder(arrElement);
+            newItems.push(oneReq);
+            itemCount ++;
+            if (itemCount%25 == 0) {
+                batchWriteReqs.push(newItems);
+                newItems = [];
+            }
+        });
+        if (newItems.length > 0) {
+            batchWriteReqs.push(newItems);
+        }
+
+        var batchWriteReqPromises = [];
+        batchWriteReqs.forEach(reqSet => {
+            batchWriteReqPromises.push(this.createBatchWriteRequestToFeedTable(reqSet));
+        });
+
+        return Promise.all(batchWriteReqPromises).then(results => {
+            return results;
+        }).catch(error => {
+            throw new APIError('Unable to perform DynamoDB batchWriteItem calls');
+        });
+    }
+
+    insertActivityToFeedsOfFollowers(activityObj, followerIds) {
+        return this.createMultipleBatchWriteRequestsToFeedTable(followerIds, (followerId) => {
+            return {
                 PutRequest: {
                     Item: {
                         Recipient: {
@@ -63,23 +103,7 @@ class DynamoFeedsHandler {
                         }
                     }
                 }
-            });
-        });
-        var params = {
-            RequestItems: {
-                Feed: newItems
-            },
-            ReturnItemCollectionMetrics: 'SIZE',
-            ReturnConsumedCapacity: 'TOTAL'
-        };
-        return new Promise((resolve, reject) => {
-            dynamodb.batchWriteItem(params, (error, data) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(data);
-                }
-            });
+            };
         });
     }
 
@@ -107,13 +131,54 @@ class DynamoFeedsHandler {
         });
     }
 
-    copyRecordsFromAuthorToRecipient(authorId, recipientId) {
+    copyRecordsFromAuthorToRecipient(authorId, numOfRecords, recipientId) {
         var readParams = {
             TableName: 'Activity',
             ReturnConsumedCapacity: 'TOTAL',
             ScanIndexForward: false,
             KeyConditionExpression: 'Actor = :aId',
             ExpressionAttributeValues: {
+                ':aId': {
+                    S: authorId
+                }
+            },
+            Limit: numOfRecords
+        };
+        return new Promise((resolve, reject) => {
+            dynamodb.query(readParams, (readError, readData) => {
+                if (readError) {
+                    reject(readError);
+                } else {
+                    this.createMultipleBatchWriteRequestsToFeedTable(readData.Items, (activity) => {
+                        activity.Recipient = {
+                            S: recipientId
+                        };
+                        return {
+                            PutRequest: {
+                                Item: activity
+                            }
+                        };
+                    }).then(writeRes => {
+                        resolve(writeRes);
+                    }).catch(writeError => {
+                        reject(writeError);
+                    });
+                }
+            });
+        });
+    }
+
+    removeRecordsOfAuthorFromRecipientFeed(authorId, recipientId) {
+        var readParams = {
+            TableName: 'Feed',
+            IndexName: 'Feed_GSI_on_Actor',
+            ReturnConsumedCapacity: 'TOTAL',
+            ScanIndexForward: false,
+            KeyConditionExpression: 'Recipient = :rId AND Actor = :aId',
+            ExpressionAttributeValues: {
+                ':rId': {
+                    S: recipientId
+                },
                 ':aId': {
                     S: authorId
                 }
@@ -124,34 +189,19 @@ class DynamoFeedsHandler {
                 if (readError) {
                     reject(readError);
                 } else {
-                    var newItems = [];
-                    _.forEach(readData.Items, item => {
-                        if (newItems.length < 25) {
-                            item.Recipient = {
-                                S: recipientId
-                            };
-                            newItems.push({
-                                PutRequest: {
-                                    Item: item
+                    this.createMultipleBatchWriteRequestsToFeedTable(readData.Items, (activity) => {
+                        return {
+                            DeleteRequest: {
+                                Key: {
+                                    Recipient: activity.Recipient,
+                                    ActionTime: activity.ActionTime
                                 }
-                            });
-                        } else {
-                            return false;
-                        }
-                    });
-                    var params = {
-                        RequestItems: {
-                            Feed: newItems
-                        },
-                        ReturnItemCollectionMetrics: 'SIZE',
-                        ReturnConsumedCapacity: 'TOTAL'
-                    };
-                    dynamodb.batchWriteItem(params, (writeError, writeData) => {
-                        if (writeError) {
-                            reject(writeError);
-                        } else {
-                            resolve(writeData);
-                        }
+                            }
+                        };
+                    }).then(writeRes => {
+                        resolve(writeRes);
+                    }).catch(writeError => {
+                        reject(writeError);
                     });
                 }
             });

@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-08 18:55:00 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-09 16:35:59
+ * @Last Modified time: 2017-08-10 20:08:55
  */
 
 'use strict';
@@ -19,10 +19,10 @@ DynamoDBModel.FeedTable = {
             AttributeName: 'Recipient',
             AttributeType: 'S'
         },
-        // {
-        //     AttributeName: 'Actor',
-        //     AttributeType: 'S'
-        // }, 
+        {
+            AttributeName: 'Actor',
+            AttributeType: 'S'
+        }, 
         {
             AttributeName: 'Action',
             AttributeType: 'S'
@@ -47,27 +47,27 @@ DynamoDBModel.FeedTable = {
         }
     ],
     GlobalSecondaryIndexes: [
-        // {
-        //     IndexName: 'Feed_GSI_on_Actor',
-        //     KeySchema: [
-        //         {
-        //             AttributeName: 'Actor',
-        //             KeyType: 'HASH'
-        //         },
-        //         {
-        //             AttributeName: 'ActionTime',
-        //             KeyType: 'RANGE'
-        //         }
-        //     ],
-        //     Projection: {
-        //         NonKeyAttributes: ['Actor', 'Action', 'Target'],
-        //         ProjectionType: 'INCLUDE'
-        //     },
-        //     ProvisionedThroughput: {
-        //         ReadCapacityUnits: 5,
-        //         WriteCapacityUnits: 5
-        //     }
-        // },
+        {
+            IndexName: 'Feed_GSI_on_Actor',
+            KeySchema: [
+                {
+                    AttributeName: 'Recipient',
+                    KeyType: 'HASH'
+                },
+                {
+                    AttributeName: 'Actor',
+                    KeyType: 'RANGE'
+                }
+            ],
+            Projection: {
+                // NonKeyAttributes: ['Actor', 'Recipient', 'ActionTime'],
+                ProjectionType: 'KEYS_ONLY'
+            },
+            ProvisionedThroughput: {
+                ReadCapacityUnits: 5,
+                WriteCapacityUnits: 5
+            }
+        },
         {
             IndexName: 'Feed_GSI_on_Target',
             // AttributeDefinitions: [

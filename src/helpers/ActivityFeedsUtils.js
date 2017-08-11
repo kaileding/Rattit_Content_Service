@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 19:06:59 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 00:35:49
+ * @Last Modified time: 2017-08-10 22:25:39
  */
 
 'use strict';
@@ -25,9 +25,41 @@ let questionsHandler = new QuestionsHandler();
 let answersHandler = new AnswersHandler();
 let usersHandler = new UsersHandler();
 
+
+let filterPopularResults = function(popularResults, followingIds) {
+    return popularResults.filter(activity => {
+        return (followingIds.indexOf(activity.Actor.S) > -1);
+    });
+}
+
 module.exports = {
-    
+
+    sortFetchedItems: function(fetchedResults, followingIds) {
+        if (fetchedResults.feedResults || fetchedResults.popularResults || fetchedResults.publicResults) {
+            var totalActivities = [];
+            if (fetchedResults.feedResults) {
+                totalActivities = totalActivities.concat(fetchedResults.feedResults.Items);
+            }
+            if (fetchedResults.publicResults) {
+                totalActivities = totalActivities.concat(fetchedResults.publicResults.Items);
+            }
+            if (fetchedResults.popularResults) {
+                let narrowedPopularResults = filterPopularResults(fetchedResults.popularResults.Items, followingIds);
+                totalActivities = totalActivities.concat(narrowedPopularResults);
+            }
+            return totalActivities.sort((a1, a2) => {
+                return a1.ActionTime.S < a2.ActionTime.S;
+            });
+        } else {
+            return [];
+        }
+    },
+
     enrichActivityFeed: function(feedList) {
+        if (feedList.length == 0) {
+            return feedList;
+        }
+        
         var momentIds = [];
         var questionIds = [];
         var answerIds = [];

@@ -2,12 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:03:39
+ * @Last Modified time: 2017-08-10 21:27:13
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
+import consts from '../config/Constants'
 import questionRequestValidator from '../Validators/QuestionRequestValidator'
 import QuestionsHandler from '../handlers/QuestionsHandler'
 import VotesForQuestionsHandler from '../handlers/VotesForQuestionsHandler'
@@ -102,15 +103,24 @@ module.exports = {
 					target: 'question:'+createdQuestion.id,
 					actionTime: createdQuestion.createdAt
 				};
+
+				res.status(httpStatus.CREATED).send(createdQuestion);
+
 				var dynamoReqs = [];
-				if (createdQuestion.access_level === 'followers') {
-					dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
-				}
-				if (followerIds.length > 0) {
-					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				if (createdQuestion.access_level === 'public') {
+					activity.hotType = 'Public';
+					dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+				} else if (createdQuestion.access_level === 'followers') {
+					if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
+						activity.hotType = 'Popular';
+						dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+					} else if (followerIds.length > 0) {
+						dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+					}
 				}
 				return Promise.all(dynamoReqs).then(dynamoRes => {
-					res.status(httpStatus.CREATED).send(createdQuestion);
+					cLogger.say('Successfully Insert This Question to ActivityTable and FeedTable.');
 				}).catch(dynamoError => {
 					next(dynamoError);
 				});
