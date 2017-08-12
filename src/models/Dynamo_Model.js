@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-08 18:55:00 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 20:08:55
+ * @Last Modified time: 2017-08-12 00:28:12
  */
 
 'use strict';
@@ -70,16 +70,6 @@ DynamoDBModel.FeedTable = {
         },
         {
             IndexName: 'Feed_GSI_on_Target',
-            // AttributeDefinitions: [
-            //     {
-            //         AttributeName: 'Action',
-            //         AttributeType: 'S'
-            //     },
-            //     {
-            //         AttributeName: 'Target',
-            //         AttributeType: 'S'
-            //     },
-            // ],
             KeySchema: [
                 {
                     AttributeName: 'Target',
@@ -113,14 +103,6 @@ DynamoDBModel.HotPostTable = {
             AttributeName: 'HotType',
             AttributeType: 'S'
         },
-        // {
-        //     AttributeName: 'Actor',
-        //     AttributeType: 'S'
-        // },
-        // {
-        //     AttributeName: 'Target',
-        //     AttributeType: 'S'
-        // },
         {
             AttributeName: 'ActionTime',
             AttributeType: 'S'
@@ -149,14 +131,6 @@ DynamoDBModel.ActivityTable = {
             AttributeName: 'Actor',
             AttributeType: 'S'
         },
-        // {
-        //     AttributeName: 'Action',
-        //     AttributeType: 'S'
-        // },
-        // {
-        //     AttributeName: 'Target',
-        //     AttributeType: 'S'
-        // },
         {
             AttributeName: 'ActionTime',
             AttributeType: 'S'
@@ -179,14 +153,18 @@ DynamoDBModel.ActivityTable = {
     TableName: 'Activity'
 };
 
-DynamoDBModel.PendingMarkTable = {
+DynamoDBModel.NotificationTable = {
     AttributeDefinitions: [
         {
             AttributeName: 'Recipient',
             AttributeType: 'S'
         },
         {
-            AttributeName: 'Actor',
+            AttributeName: 'ActionTime',
+            AttributeType: 'S'
+        },
+        {
+            AttributeName: 'ReadOrNot',
             AttributeType: 'S'
         }
     ],
@@ -196,15 +174,38 @@ DynamoDBModel.PendingMarkTable = {
             KeyType: "HASH"
         },
         {
-            AttributeName: 'Actor',
+            AttributeName: 'ActionTime',
             KeyType: 'RANGE'
+        }
+    ],
+    GlobalSecondaryIndexes: [
+        {
+            IndexName: 'Notification_GSI_on_ReadOrNot',
+            KeySchema: [
+                {
+                    AttributeName: 'Recipient',
+                    KeyType: 'HASH'
+                },
+                {
+                    AttributeName: 'ReadOrNot',
+                    KeyType: 'RANGE'
+                }
+            ],
+            Projection: {
+                // NonKeyAttributes: ['Actor', 'Recipient', 'ActionTime'],
+                ProjectionType: 'ALL'
+            },
+            ProvisionedThroughput: {
+                ReadCapacityUnits: 5,
+                WriteCapacityUnits: 5
+            }
         }
     ],
     ProvisionedThroughput: {
         ReadCapacityUnits: 5,
         WriteCapacityUnits: 5
     },
-    TableName: 'PendingMark'
+    TableName: 'Notification'
 }
 
 module.exports = DynamoDBModel;

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 21:21:00
+ * @Last Modified time: 2017-08-12 03:04:48
 */
 
 'use strict';
@@ -15,6 +15,8 @@ import VotesForAnswersHandler from '../handlers/VotesForAnswersHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
 import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
 import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
+import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
@@ -23,6 +25,8 @@ let votesForAnswersHandler = new VotesForAnswersHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
 let feedsHandler = new DynamoFeedsHandler();
 let activitiesHandler = new DynamoActivitiesHandler();
+let hotPostsHandler = new DynamoHotPostsHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 let updateVotesNumberOfAnswer = function(vote_type, answer_id) {
 	return new Promise((resolve, reject) => {
@@ -73,7 +77,7 @@ module.exports = {
 			var queries = [];
 			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
 			queries.push(answersHandler.createEntryForModel(newAnswerObj).then(result => {
-				cLogger.debug('save one answer successfully.', result);
+				cLogger.say('save one answer successfully.', result);
 				return result;
 			}));
 
@@ -84,7 +88,10 @@ module.exports = {
 					actor: req.user_id,
 					action: 'post',
 					target: 'answer:'+createdAnswer.id,
-					actionTime: createdAnswer.createdAt
+					actionTime: createdAnswer.createdAt,
+					associateInfo: {
+						forQuestionId: { S: 'question:'+createdAnswer.for_question }
+					}
 				};
 
 				res.status(httpStatus.CREATED).send(createdAnswer);
@@ -93,7 +100,7 @@ module.exports = {
 				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
 				if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
 					activity.hotType = 'Popular';
-					dynamoReqs.push(activitiesHandler.insertActivityToHotTable(activity));
+					dynamoReqs.push(hotPostsHandler.insertActivityToHotTable(activity));
 				} else if (followerIds.length > 0) {
 					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
 				}
@@ -203,7 +210,7 @@ module.exports = {
 	},
 
 	castOrChangeVoteForAnswer: function(req, res, next) {
-		answerRequestValidator.validateVoteForAnAnswerRequest(req).then(result => {
+		answerRequestValidator.validateVoteForAnAnswerRequest(req).then(validationRes => {
 
 			let voteForAnswer = {
 				vote_type: req.body.type,
@@ -212,20 +219,43 @@ module.exports = {
 			};
 
 			if (req.body.commit) {
-				return votesForAnswersHandler.createEntryForModel(voteForAnswer).then(result => {
-	                cLogger.debug('create a vote for answer successfully.', result);
+				return Promise.all([
+					votesForAnswersHandler.createEntryForModel(voteForAnswer),
+					answersHandler.findEntryByIdFromModel(voteForAnswer.answer_id)
+				]).then(pgRes => {
+					cLogger.say('create a vote for answer successfully.', pgRes);
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: pgRes[1].createdBy,
+						actor: voteForAnswer.createdBy,
+						action: voteForAnswer.vote_type,
+						target: 'answer:'+voteForAnswer.answer_id,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say('Successfully added into DynamoDB Notification Table.');
+					}).catch(notifyError => {
+						cLogger.debug('Failed to add into DynamoDB Notification Table.');
+					});
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
 	                	next(error);
 	                });
-
-				}).catch(error => {
-					next(error);
+				}).catch(pgError => {
+					next(pgError);
 				});
+				// return votesForAnswersHandler.createEntryForModel(voteForAnswer).then(result => {
+	            //     cLogger.say('create a vote for answer successfully.', result);
+	            //     return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
+	            //     	res.status(httpStatus.OK).send(result);
+	            //     }).catch(error => {
+	            //     	next(error);
+	            //     });
+				// }).catch(error => {
+				// 	next(error);
+				// });
 			} else {
 				return votesForAnswersHandler.deleteVoteForAnswerByContent(voteForAnswer).then(result => {
-	                cLogger.debug('revote a vote for answer successfully.', result);
+	                cLogger.say('revote a vote for answer successfully.', result);
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {

@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 19:06:59 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 22:25:39
+ * @Last Modified time: 2017-08-11 23:41:27
  */
 
 'use strict';
@@ -16,7 +16,6 @@ import AnswersHandler from '../handlers/AnswersHandler'
 import UsersHandler from '../handlers/UsersHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
-import ActivitiesHandler from '../handlers/ActivitiesHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
@@ -34,30 +33,56 @@ let filterPopularResults = function(popularResults, followingIds) {
 
 module.exports = {
 
-    sortFetchedItems: function(fetchedResults, followingIds) {
+    cleanAndSortFetchedItems: function(fetchedResults, followingIds) {
         if (fetchedResults.feedResults || fetchedResults.popularResults || fetchedResults.publicResults) {
             var totalActivities = [];
+            var leftTimeBound = '';
+            var rightTimeBound = '';
             if (fetchedResults.feedResults) {
-                totalActivities = totalActivities.concat(fetchedResults.feedResults.Items);
+                let items = fetchedResults.feedResults;
+                totalActivities = totalActivities.concat(items);
+                leftTimeBound = Math.max(leftTimeBound, items[items.length-1].ActionTime.S);
+                rightTimeBound = Math.max(rightTimeBound, items[0].ActionTime.S);
             }
             if (fetchedResults.publicResults) {
-                totalActivities = totalActivities.concat(fetchedResults.publicResults.Items);
+                // totalActivities = totalActivities.concat(fetchedResults.publicResults);
+                let items = fetchedResults.publicResults;
+                totalActivities = totalActivities.concat(items);
+                leftTimeBound = Math.max(leftTimeBound, items[items.length-1].ActionTime.S);
+                rightTimeBound = Math.max(rightTimeBound, items[0].ActionTime.S);
             }
             if (fetchedResults.popularResults) {
-                let narrowedPopularResults = filterPopularResults(fetchedResults.popularResults.Items, followingIds);
-                totalActivities = totalActivities.concat(narrowedPopularResults);
+                let narrowedPopularResults = filterPopularResults(fetchedResults.popularResults, followingIds);
+                if (narrowedPopularResults.length > 0) {
+                    totalActivities = totalActivities.concat(narrowedPopularResults);
+                    leftTimeBound = Math.max(leftTimeBound, narrowedPopularResults[narrowedPopularResults.length-1].ActionTime.S);
+                    rightTimeBound = Math.max(rightTimeBound, narrowedPopularResults[0].ActionTime.S);
+                }
             }
-            return totalActivities.sort((a1, a2) => {
+            totalActivities = totalActivities.sort((a1, a2) => {
                 return a1.ActionTime.S < a2.ActionTime.S;
             });
+            totalActivities = totalActivities.filter(activity => {
+                return (activity.ActionTime.S >= leftTimeBound);
+            });
+
+            return {
+                ReturnedActivities: totalActivities,
+                LeftTimeBound: ((leftTimeBound==='') ? null : String(leftTimeBound)),
+                RightTimeBound: ((rightTimeBound==='') ? null : String(rightTimeBound))
+            };
         } else {
-            return [];
+            return {
+                ReturnedActivities: [],
+                LeftTimeBound: null,
+                RightTimeBound: null
+            };
         }
     },
 
     enrichActivityFeed: function(feedList) {
         if (feedList.length == 0) {
-            return feedList;
+            return Promise.resolve([]);
         }
         
         var momentIds = [];
@@ -85,6 +110,12 @@ module.exports = {
                 case 'answer':
                     if (answerIds.indexOf(contentId) === -1) {
                         answerIds.push(contentId);
+                    }
+                    if (feedItem.AssociateInfo && feedItem.AssociateInfo.M.forQuestionId) {
+                        let forQuestionId = feedItem.AssociateInfo.M.forQuestionId.S.split(':')[1];
+                        if (questionIds.indexOf(forQuestionId) === -1) {
+                            questionIds.push(forQuestionId);
+                        }
                     }
                     break;
                 default:
@@ -119,13 +150,19 @@ module.exports = {
             });
             var formattedFeedList = [];
             feedList.forEach(feedItem => {
-                formattedFeedList.push({
+                var richItem = {
                     Actor: contentDic['user:'+feedItem.Actor.S],
                     Action: feedItem.Action.S,
                     TargetType: feedItem.Target.S.split(':')[0],
                     Target: contentDic[feedItem.Target.S],
                     ActionTime: feedItem.ActionTime.S
-                });
+                };
+                if (feedItem.AssociateInfo && feedItem.AssociateInfo.M.forQuestionId) {
+                    richItem.AssociateInfo = {
+                        forQuestion: contentDic[feedItem.AssociateInfo.M.forQuestionId.S]
+                    }
+                }
+                formattedFeedList.push(richItem);
             })
             return formattedFeedList;
         });

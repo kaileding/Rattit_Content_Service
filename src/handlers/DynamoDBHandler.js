@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-08 14:31:33 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:08:06
+ * @Last Modified time: 2017-08-11 21:33:34
  */
 
 'use strict';
@@ -89,7 +89,7 @@ class DynamoDBHandler {
         createTableReqs.push(this.createOneDynamoDBTable(dynamoModel.FeedTable));
         createTableReqs.push(this.createOneDynamoDBTable(dynamoModel.HotPostTable));
         createTableReqs.push(this.createOneDynamoDBTable(dynamoModel.ActivityTable));
-        createTableReqs.push(this.createOneDynamoDBTable(dynamoModel.PendingMarkTable));
+        createTableReqs.push(this.createOneDynamoDBTable(dynamoModel.NotificationTable));
         return Promise.all(createTableReqs);
     }
 
@@ -113,7 +113,7 @@ class DynamoDBHandler {
                 })
                 return Promise.all(deleteTableReqs).then(results => {
                     return {
-                        message: 'Successfully deleted tables: '+tableNames.join(', ')
+                        message: 'Successfully deleted tables: '+tableNames.join(', ')+'. Call again to create tables.'
                     };
                 });
             }

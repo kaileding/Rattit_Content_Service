@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 22:09:41
+ * @Last Modified time: 2017-08-11 19:58:40
 */
 
 'use strict';
@@ -61,7 +61,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 		return this.findEntriesFromModel(['follower'], null, {
 			followee: id
 		}, null, 999999, 0).then(results => {
-			console.log('findFollowerIdsByUserId('+id+'), results are ', results);
+			cLogger.say('findFollowerIdsByUserId('+id+'), results are ', results);
 			var followerIds = [];
 			results.rows.forEach(row => {
 				followerIds.push(row.follower);
@@ -80,7 +80,7 @@ class UserRelationshipsHandler extends DataModelHandler {
 		return this.findEntriesFromModel(['followee'], null, {
 			follower: id
 		}, null, 999999, 0).then(results => {
-			console.log('findFollowingIdsByUserId('+id+'), results are ', results);
+			cLogger.say('findFollowingIdsByUserId('+id+'), results are ', results);
 			var followingIds = [];
 			results.rows.forEach(row => {
 				followingIds.push(row.followee);

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-05-29 10:52:48
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:13:59
+ * @Last Modified time: 2017-08-12 03:46:52
 */
 
 'use strict';
@@ -23,7 +23,7 @@ import commentForAnswerRoutes from './CommentForAnswerRoutes'
 import collectionRoutes from './CollectionRoutes'
 import utilityRoutes from './UtilityRoutes'
 import voteRoutes from './VoteRoutes'
-import activityRoutes from './ActivityRoutes'
+import feedRoutes from './FeedRoutes'
 
 router.use('/', (req, res, next) => {
 	cLogger.println('Called ['+req.method+'] '+req.url);
@@ -56,6 +56,6 @@ router.use('/utilities', utilityRoutes);
 
 router.use('/votes', voteRoutes);
 
-router.use('/feeds', activityRoutes);
+router.use('/feeds', feedRoutes);
 
 module.exports = router;

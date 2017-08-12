@@ -1,8 +1,8 @@
 /*
  * @Author: Kaile Ding 
- * @Date: 2017-08-09 22:30:35 
+ * @Date: 2017-08-11 23:27:35 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-11 23:46:02
+ * @Last Modified time: 2017-08-11 23:45:12
  */
 
 'use strict';
@@ -24,16 +24,19 @@ import aws from 'aws-sdk'
 let cLogger = new CLogger();
 var dynamodb = new aws.DynamoDB(dynamoDBConfig.options);
 
-class DynamoActivitiesHandler extends DynamoBaseHandler {
+class DynamoHotPostsHandler extends DynamoBaseHandler {
 	constructor() {
-		super('Activity');
+		super('HotPost');
 	}
 
-    insertActivityToAuthorTable(activityObj) {
+    insertActivityToHotTable(activityObj) {
         var params = {
-            TableName: 'Activity',
+            TableName: 'HotPost',
             ReturnConsumedCapacity: 'TOTAL',
             Item: {
+                HotType: {
+                    S: activityObj.hotType
+                },
                 Actor: {
                     S: activityObj.actor
                 },
@@ -48,6 +51,9 @@ class DynamoActivitiesHandler extends DynamoBaseHandler {
                 },
                 AssociateInfo: {
                     M: (activityObj.associateInfo || {})
+                },
+                ExpirationTime: {
+                    N: String(Math.ceil(activityObj.actionTime.getTime()/1000)+259200) // expires in 3 days
                 }
             }
         };
@@ -62,20 +68,20 @@ class DynamoActivitiesHandler extends DynamoBaseHandler {
         });
     }
 
-    getLastFewRecordsFromAuthorTable(actorId, numOfRecords) {
+    getLastFewRecordsFromHotTable(hotType, numOfRecords) {
 
-        return this.queryRecordsFromTable('Actor = :aId', {
-                ':aId': {
-                    S: actorId
+        return this.queryRecordsFromTable('HotType = :hType', {
+                ':hType': {
+                    S: hotType
                 }
             }, false, numOfRecords);
     }
 
-    getFewMoreRecordsFromAuthorTable(actorId, numOfRecords, upToActionTime) {
+    getFewMoreRecordsFromHotTable(hotType, numOfRecords, upToActionTime) {
 
-        return this.queryRecordsFromTable('Actor = :aId AND ActionTime < :aTime', {
-                ':aId': {
-                    S: actorId
+        return this.queryRecordsFromTable('HotType = :hType AND ActionTime < :aTime', {
+                ':hType': {
+                    S: hotType
                 },
                 ':aTime': {
                     S: upToActionTime
@@ -85,4 +91,4 @@ class DynamoActivitiesHandler extends DynamoBaseHandler {
 
 }
 
-module.exports = DynamoActivitiesHandler;
+module.exports = DynamoHotPostsHandler;

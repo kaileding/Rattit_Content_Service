@@ -2,13 +2,13 @@
 * @Author: KaileDing
 * @Date:   2017-05-31 00:59:12
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:14:55
+ * @Last Modified time: 2017-08-11 19:55:54
 */
 
 'use strict';
 class CustomLogger {
 	constructor() {
-		this.sayTypeAllowed = true;
+		this.sayTypeAllowed = false;
 		this.debugTypeAllowed = true;
 		this.printlnTypeAllowed = true;
 	}

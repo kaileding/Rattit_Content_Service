@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 20:47:25
+ * @Last Modified time: 2017-08-12 03:16:37
 */
 
 'use strict';
@@ -13,6 +13,8 @@ import UsersHandler from '../handlers/UsersHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
 import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
 import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
+import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
@@ -20,6 +22,8 @@ let usersHandler = new UsersHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
 let feedsHandler = new DynamoFeedsHandler();
 let activitiesHandler = new DynamoActivitiesHandler();
+let hotPostsHandler = new DynamoHotPostsHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
@@ -35,7 +39,7 @@ module.exports = {
                     organization: req.body.organization,
                     avatar: req.body.avatar
                 }).then(function(result) {
-                    cLogger.debug('save one user successfully.', result);
+                    cLogger.say('save one user successfully.', result);
                     res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
@@ -62,7 +66,7 @@ module.exports = {
 
 	getUsersByQuery: function(req, res, next) {
         userRequestValidator.validateGetUserByTextRequest(req).then(result => {
-            cLogger.debug('req.query.text is ', req.query.text);
+            cLogger.say('req.query.text is ', req.query.text);
 
             return usersHandler.findUserByText(req.query.text, 
                                                 req.query.limit, 
@@ -170,7 +174,7 @@ module.exports = {
     },
 
     followUsers: function(req, res, next) {
-        userRequestValidator.validateFollowUsersRequest(req).then(result => {
+        userRequestValidator.validateFollowUsersRequest(req).then(validationRes => {
 
             var dataReqs = [];
             req.body.followees.forEach(followeeId => {
@@ -184,6 +188,17 @@ module.exports = {
                         }).catch(copyError => {
                             cLogger.debug('Failed copyRecordsFromAuthorToRecipient()', copyError);
                         });
+                        notificationsHandler.insertActivityToNotificationTable({
+                            recipient: followeeId,
+                            actor: req.params.id,
+                            action: 'follow',
+                            target: 'rattit_user:null',
+                            actionTime: creationResult.createdAt
+                        }).then(notifyRes => {
+                            cLogger.say('Successfully add into DynamoDB Notification Table.')
+                        }).catch(notifyError => {
+                            cLogger.debug('Failed to add into DynamoDB Notification Table.')
+                        })
                         return userRelationshipsHandler.findFollowerIdsByUserId(followeeId).then(result => {
                             return usersHandler.updateEntryByIdForModel(followeeId, {
                                 follower_number: result.count

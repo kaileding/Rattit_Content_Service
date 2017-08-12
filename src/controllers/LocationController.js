@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-07 18:27:01
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-10 01:02:57
+ * @Last Modified time: 2017-08-11 09:16:12
 */
 
 'use strict';
@@ -32,7 +32,7 @@ module.exports = {
                     createdBy: req.user_id,
                     updatedBy: req.user_id
                 }).then(function(result) {
-                    cLogger.debug('save one location successfully.', result);
+                    cLogger.say('save one location successfully.', result);
                     res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
