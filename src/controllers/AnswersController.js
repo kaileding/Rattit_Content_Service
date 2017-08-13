@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:04:48
+ * @Last Modified time: 2017-08-12 17:09:59
 */
 
 'use strict';
@@ -227,7 +227,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[1].createdBy,
 						actor: voteForAnswer.createdBy,
-						action: voteForAnswer.vote_type,
+						action: 'answer:'+voteForAnswer.vote_type,
 						target: 'answer:'+voteForAnswer.answer_id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -243,16 +243,6 @@ module.exports = {
 				}).catch(pgError => {
 					next(pgError);
 				});
-				// return votesForAnswersHandler.createEntryForModel(voteForAnswer).then(result => {
-	            //     cLogger.say('create a vote for answer successfully.', result);
-	            //     return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
-	            //     	res.status(httpStatus.OK).send(result);
-	            //     }).catch(error => {
-	            //     	next(error);
-	            //     });
-				// }).catch(error => {
-				// 	next(error);
-				// });
 			} else {
 				return votesForAnswersHandler.deleteVoteForAnswerByContent(voteForAnswer).then(result => {
 	                cLogger.say('revote a vote for answer successfully.', result);

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:16:37
+ * @Last Modified time: 2017-08-12 15:06:04
 */
 
 'use strict';
@@ -191,8 +191,8 @@ module.exports = {
                         notificationsHandler.insertActivityToNotificationTable({
                             recipient: followeeId,
                             actor: req.params.id,
-                            action: 'follow',
-                            target: 'rattit_user:null',
+                            action: 'rattit_user:follow',
+                            target: 'rattit_user:'+followeeId,
                             actionTime: creationResult.createdAt
                         }).then(notifyRes => {
                             cLogger.say('Successfully add into DynamoDB Notification Table.')

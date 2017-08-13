@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:11:36
+ * @Last Modified time: 2017-08-12 17:12:14
 */
 
 'use strict';
@@ -258,7 +258,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[1].createdBy,
 						actor: voteForMoment.createdBy,
-						action: voteForMoment.vote_type,
+						action: 'moment:'+voteForMoment.vote_type,
 						target: 'moment:'+voteForMoment.moment_id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -275,18 +275,7 @@ module.exports = {
 				}).catch(error => {
 					next(error);
 				});
-
-				// return votesForMomentsHandler.createEntryForModel(voteForMoment).then(result => {
-					// cLogger.say('create a vote for moment successfully.', result);
-	                // return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
-	                // 	res.status(httpStatus.OK).send(result);
-	                // }).catch(error => {
-	                // 	next(error);
-	                // });
-// 
-				// }).catch(error => {
-				// 	next(error);
-				// });
+				
 			} else {
 				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(deleteRes => {
 	                cLogger.say('revote a vote for moment successfully.', deleteRes);

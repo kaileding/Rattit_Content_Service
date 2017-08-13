@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 16:47:56
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:06:29
+ * @Last Modified time: 2017-08-12 17:10:40
 */
 
 'use strict';
@@ -42,7 +42,7 @@ module.exports = {
 				notificationsHandler.insertActivityToNotificationTable({
 					recipient: pgRes[1].createdBy,
 					actor: newComment.createdBy,
-					action: 'comment',
+					action: 'comment_for_answer:post',
 					target: 'answer:'+newComment.for_answer,
 					actionTime: pgRes[0].createdAt
 				}).then(notifyRes => {
@@ -54,7 +54,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[2].createdBy,
 						actor: newComment.createdBy,
-						action: 'reply_comment',
+						action: 'comment_for_answer:reply',
 						target: 'comment_for_answer:'+newComment.for_comment,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -66,18 +66,6 @@ module.exports = {
 			}).catch(pgError => {
 				next(pgError);
 			});
-
-			// return commentForAnswersHandler.createEntryForModel({
-			// 		for_answer: req.body.for_answer,
-			// 		for_comment: req.body.for_comment,
-			// 		words: req.body.words,
-			// 		createdBy: req.user_id
-			// 	}).then(result => {
-	        //         cLogger.say('save one comment for moment successfully.', result);
-	        //         res.status(httpStatus.CREATED).send(result);
-			// 	}).catch(error => {
-			// 		next(error);
-			// 	});
 
 		}).catch(error => {
 			next(error);
@@ -161,7 +149,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: answerRes.createdBy,
 						actor: voteForComment.voted_by,
-						action: voteForComment.vote_type,
+						action: 'comment_for_answer:'+voteForComment.vote_type,
 						target: 'comment_for_answer:'+req.params.id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -172,7 +160,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[1].createdBy,
 						actor: voteForComment.voted_by,
-						action: voteForComment.vote_type,
+						action: 'comment_for_answer:'+voteForComment.vote_type,
 						target: 'comment_for_answer:'+req.params.id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -186,11 +174,6 @@ module.exports = {
 			}).catch(pgError => {
 				next(pgError);
 			});
-			// return commentForAnswersHandler.updateVoteOfCommentForMoment(req.params.id, voteForComment).then(result => {
-			// 	res.status(httpStatus.OK).send(result);
-			// }).catch(error => {
-			// 	next(error);
-			// });
 
 		}).catch(error => {
 			next(error);

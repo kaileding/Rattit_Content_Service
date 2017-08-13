@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-06 20:04:46 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:57:45
+ * @Last Modified time: 2017-08-12 18:05:46
  */
 
 'use strict';
@@ -17,6 +17,7 @@ import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
 import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import ActivityFeedsUtils from '../helpers/ActivityFeedsUtils'
+import NotificationFeedsUtils from '../helpers/NotificationFeedsUtils'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let userRelationshipsHandler = new UserRelationshipsHandler();
@@ -29,7 +30,7 @@ let notificationsHandler = new DynamoNotificationsHandler();
 module.exports = {
 
     getActivityFeedOfAUser: function(req, res, next) {
-        feedsRequestValidator.validateGetContentFeedRequest(req).then(validationRes => {
+        feedsRequestValidator.validateGetActivityFeedRequest(req).then(validationRes => {
 
             var asyncReqs = [];
             asyncReqs.push(userRelationshipsHandler.findFollowingIdsByUserId(req.user_id));
@@ -79,28 +80,30 @@ module.exports = {
     },
 
     getNotificationFeedOfAUser: function(req, res, next) {
-        feedsRequestValidator.validateGetContentFeedRequest(req).then(validationRes => {
+        feedsRequestValidator.validateGetNotificationFeedRequest(req).then(validationRes => {
 
             var asyncReq = null;
             if (req.query.upto_time) {
                 asyncReq = notificationsHandler.getFewMoreRecordsFromNotificationTable(req.user_id, 2, req.query.upto_time);
-            } else if (req.query.all_unread) {
+            } else if (req.query.all_unread && req.query.all_unread==='true') {
                 asyncReq = notificationsHandler.getAllUnreadItemsFromNotificationTable(req.user_id);
             } else {
                 asyncReq = notificationsHandler.getLastFewRecordsFromNotificationTable(req.user_id, 2);
             }
             return asyncReq.then(fetchRes => {
-                res.status(httpStatus.OK).send(fetchRes);
+                // res.status(httpStatus.OK).send(fetchRes);
+                let sortedResults = NotificationFeedsUtils.cleanAndSortFetchedItems(fetchRes.Items);
+                // res.status(httpStatus.OK).send(sortedResults);
 
-                // return ActivityFeedsUtils.enrichActivityFeed(sortedResults.ReturnedActivities).then(enrichRes => {
-                //     res.status(httpStatus.OK).send({
-                //         Items: enrichRes,
-                //         LeftTimeBound: sortedResults.LeftTimeBound,
-                //         RightTimeBound: sortedResults.RightTimeBound
-                //     });
-                // }).catch(error => {
-                //     next(error);
-                // });
+                return NotificationFeedsUtils.enrichNotificationFeed(sortedResults.ReturnedNotifications).then(enrichRes => {
+                    res.status(httpStatus.OK).send({
+                        Items: enrichRes,
+                        LeftTimeBound: sortedResults.LeftTimeBound,
+                        RightTimeBound: sortedResults.RightTimeBound
+                    });
+                }).catch(error => {
+                    next(error);
+                });
             }).catch(reqsError => {
                 next(reqsError);
             });
@@ -108,6 +111,36 @@ module.exports = {
         }).catch(error => {
 			next(error);
 		});
+    },
+
+    markNotificationAsRead: function(req, res, next) {
+        feedsRequestValidator.validateMarkNotificationAsReadRequest(req).then(validationRes => {
+            
+            if (req.query.action_time) {
+                return notificationsHandler.markOneItemAsRead(req.user_id, req.query.action_time).then(writeRes => {
+                    res.status(httpStatus.OK).send({
+                        success: true
+                    });
+                }).catch(writeError => {
+                    next(writeError);
+                });
+            } else if (req.query.all_unread && req.query.all_unread==='true') {
+                return notificationsHandler.markAllItemsAsRead(req.user_id).then(writeRes => {
+                    res.status(httpStatus.OK).send({
+                        success: true
+                    });
+                }).catch(writeError => {
+                    next(writeError);
+                });
+            } else {
+                res.status(httpStatus.NOT_MODIFIED).send({
+                    success: false,
+                    message: 'No notification item specified.'
+                });
+            }
+        }).catch(error => {
+            next(error);
+        });
     }
 
 }

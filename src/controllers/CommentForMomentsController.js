@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-12 01:51:30
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:08:20
+ * @Last Modified time: 2017-08-12 17:11:37
 */
 
 'use strict';
@@ -44,7 +44,7 @@ module.exports = {
 				notificationsHandler.insertActivityToNotificationTable({
 					recipient: pgRes[1].createdBy,
 					actor: newComment.createdBy,
-					action: 'comment',
+					action: 'comment_for_moment:post',
 					target: 'moment:'+newComment.for_moment,
 					actionTime: pgRes[0].createdAt
 				}).then(notifyRes => {
@@ -56,7 +56,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[2].createdBy,
 						actor: newComment.createdBy,
-						action: 'reply_comment',
+						action: 'comment_for_moment:reply',
 						target: 'comment_for_moment:'+newComment.for_comment,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -68,12 +68,6 @@ module.exports = {
 			}).catch(error => {
 				next(error);
 			});
-			// return commentForMomentsHandler.createEntryForModel(newComment).then(result => {
-	        //         cLogger.say('save one comment for moment successfully.', result);
-			// 		res.status(httpStatus.CREATED).send(result);
-			// 	}).catch(error => {
-			// 		next(error);
-			// 	});
 
 		}).catch(error => {
 			next(error);
@@ -157,7 +151,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: momentRes.createdBy,
 						actor: voteForComment.voted_by,
-						action: voteForComment.vote_type,
+						action: 'comment_for_moment:'+voteForComment.vote_type,
 						target: 'comment_for_moment:'+req.params.id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -168,7 +162,7 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[1].createdBy,
 						actor: voteForComment.voted_by,
-						action: voteForComment.vote_type,
+						action: 'comment_for_moment:'+voteForComment.vote_type,
 						target: 'comment_for_moment:'+req.params.id,
 						actionTime: pgRes[0].createdAt
 					}).then(notifyRes => {
@@ -182,11 +176,6 @@ module.exports = {
 			}).catch(pgError => {
 				next(pgError);
 			});
-			// return commentForMomentsHandler.updateVoteOfCommentForMoment(req.params.id, voteForComment).then(result => {
-			// 	res.status(httpStatus.OK).send(result);
-			// }).catch(error => {
-			// 	next(error);
-			// });
 
 		}).catch(error => {
 			next(error);

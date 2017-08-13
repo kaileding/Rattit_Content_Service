@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-05-29 10:47:08
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-04 00:02:29
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-12 17:23:00
 */
 
 'use strict';
@@ -98,6 +98,13 @@ module.exports = {
             },
             isUTCTimeStamp: function(value) {
                 return (Date.parse(value) != NaN);
+            },
+            isBoolean: function(value) {
+                if (typeof value === 'string' && value.length > 0) {
+                    return (['true', 'false'].indexOf(value) > -1);
+                } else {
+                    return false;
+                }
             }
         }
     },

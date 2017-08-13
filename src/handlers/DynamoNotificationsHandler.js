@@ -2,7 +2,7 @@
  * @Author: Kaile Ding 
  * @Date: 2017-08-11 21:46:42 
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 04:01:36
+ * @Last Modified time: 2017-08-12 18:06:14
  */
 
 'use strict';
@@ -143,48 +143,9 @@ class DynamoNotificationsHandler extends DynamoBaseHandler {
                 };
             });
         });
-
-        // var readParams = {
-        //     TableName: 'Notification',
-        //     IndexName: 'Notification_GSI_on_ReadOrNot',
-        //     ReturnConsumedCapacity: 'TOTAL',
-        //     ScanIndexForward: true,
-        //     KeyConditionExpression: 'Recipient = :rId AND ReadOrNot = :readOrNot',
-        //     ExpressionAttributeValues: {
-        //         ':rId': {
-        //             S: recipientId
-        //         },
-        //         ':readOrNot': {
-        //             S: 'false'
-        //         }
-        //     }
-        // };
-        // return new Promise((resolve, reject) => {
-        //     dynamodb.query(readParams, (readError, readData) => {
-        //         if (readError) {
-        //             reject(readError);
-        //         } else {
-
-        //             this.createMultipleBatchWriteRequestsToTable(readData.Items, (activity) => {
-        //                 activity.ReadOrNot.S = 'true';
-        //                 return {
-        //                     PutRequest: {
-        //                         Item: activity
-        //                     }
-        //                 };
-        //             }).then(writeRes => {
-        //                 resolve(writeRes);
-        //             }).catch(writeError => {
-        //                 reject(writeError);
-        //             });
-        //         }
-        //     });
-        // });
     }
 
     getLastFewRecordsFromNotificationTable(recipientId, numOfRecords) {
-
-        // cLogger.debug('getLastFewRecordsFromNotificationTable() func. ', recipientId, numOfRecords);
         
         return this.queryRecordsFromTable('Recipient = :rId', {
                 ':rId': {

@@ -2,7 +2,7 @@
 * @Author: KaileDing
 * @Date:   2017-06-11 21:48:57
  * @Last Modified by: Kaile Ding
- * @Last Modified time: 2017-08-12 03:12:46
+ * @Last Modified time: 2017-08-12 17:12:38
 */
 
 'use strict';
@@ -257,11 +257,11 @@ module.exports = {
 					notificationsHandler.insertActivityToNotificationTable({
 						recipient: pgRes[1].createdBy,
 						actor: voteForQuestion.createdBy,
-						action: voteForQuestion.vote_type,
+						action: 'question:'+voteForQuestion.vote_type,
 						target: 'question:'+voteForQuestion.question_id,
 						actionTime: pgRes[0].createdAt,
 						associateInfo: {
-							invitedUserId: { S: 'user:'+voteForQuestion.subject_id }
+							invitedUserId: { S: 'rattit_user:'+voteForQuestion.subject_id }
 						}
 					}).then(notifyRes => {
 						cLogger.say('Successfully added into DynamoDB Notification Table.');
@@ -272,11 +272,11 @@ module.exports = {
 						notificationsHandler.insertActivityToNotificationTable({
 							recipient: voteForQuestion.subject_id,
 							actor: voteForQuestion.createdBy,
-							action: voteForQuestion.vote_type,
+							action: 'question:'+voteForQuestion.vote_type,
 							target: 'question:'+voteForQuestion.question_id,
 							actionTime: pgRes[0].createdAt,
 							associateInfo: {
-								invitedUserId: { S: 'user:'+voteForQuestion.subject_id }
+								invitedUserId: { S: 'rattit_user:'+voteForQuestion.subject_id }
 							}
 						}).then(notifyRes => {
 							cLogger.say('Successfully added into DynamoDB Notification Table.');
@@ -293,17 +293,7 @@ module.exports = {
 				}).catch(error => {
 					next(error);
 				});
-				// return votesForQuestionsHandler.createEntryForModel(voteForQuestion).then(result => {
-				// 	cLogger.say('create a vote for question successfully.', result);
-	            //     return updateVotesNumberOfQuestion(voteForQuestion.vote_type, voteForQuestion.question_id).then(result => {
-	            //     	res.status(httpStatus.OK).send(result);
-	            //     }).catch(error => {
-	            //     	next(error);
-	            //     });
-
-				// }).catch(error => {
-				// 	next(error);
-				// });
+				
 			} else {
 				return votesForQuestionsHandler.deleteVoteForQuestionByContent(voteForQuestion).then(deleteRes => {
 	                cLogger.say('revote a vote for question successfully.', deleteRes);
