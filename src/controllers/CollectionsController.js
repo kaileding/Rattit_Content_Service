@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-13 00:57:47
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:32:32
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-11 09:16:35
 */
 
 'use strict';
@@ -31,7 +31,7 @@ module.exports = {
 					access_level: req.body.access_level,
 					createdBy: req.user_id
                 }).then(function(result) {
-                    cLogger.say(cLogger.TESTING_TYPE, 'save one collection successfully.', result);
+                    cLogger.say('save one collection successfully.', result);
                     res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
@@ -58,7 +58,7 @@ module.exports = {
 
 	getCollectionsByQuery: function(req, res, next) {
         collectionRequestValidator.validateGetCollectionsByQueryRequest(req).then(result => {
-            cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
+            cLogger.say('req.query.text is ', req.query.text);
 
             if (req.query.question_id) {
             	return collectQuestionsHandler.findCollectionsByContentId(req.query.question_id, req.query.limit, req.query.offset).then(results => {

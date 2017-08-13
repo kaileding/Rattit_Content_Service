@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-12 23:53:20
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-08-01 00:37:38
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:06:19
 */
 
 'use strict';
@@ -78,16 +78,16 @@ class CollectAssociationsHandler extends DataModelHandler {
 					where: id_Pair
 				}).then(response => {
                     if (response === 1) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Deleted one entry from ${model.name}`);
+                    	cLogger.say(`Deleted one entry from ${model.name}`);
                         resolve("OK");
                     } else if (response === 0) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Unable to delete nonexistent entry from ${model.name}`);
+                    	cLogger.debug(`Unable to delete nonexistent entry from ${model.name}`);
                         reject(new APIError(`Entry Not Found in ${model.name}`, httpStatus.NOT_FOUND));
                     } else { // should never happen
                     	reject(new APIError('Deleted multiple entries, which should never happen', httpStatus.INTERNAL_SERVER_ERROR));
                     }
 				}).catch(error => {
-	            	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting entries : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+	            	cLogger.debug(`ERROR deleting entries : SQL ${err.message} ${JSON.stringify(err.errors)}`);
 	                reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
 				})
 			});
@@ -101,10 +101,10 @@ class CollectAssociationsHandler extends DataModelHandler {
                     	collection_id: id
                     }
                 }).then(response => {
-                	cLogger.say(cLogger.GENERAL_TYPE, `Deleted ${response} entries with collection_id '${id}' from ${model.name}`);
+                	cLogger.say(`Deleted ${response} entries with collection_id '${id}' from ${model.name}`);
                     resolve(response);
                 }).catch(err => {
-                	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting entries : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+                	cLogger.debug(`ERROR deleting entries : SQL ${err.message} ${JSON.stringify(err.errors)}`);
                     reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
             });

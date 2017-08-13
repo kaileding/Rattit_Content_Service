@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-11 16:05:34
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-03 23:43:14
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-11 19:59:08
 */
 
 'use strict';
@@ -14,7 +14,6 @@ module.exports = {
 		if (typeof fieldName === 'string') {
 			setterFunc = function(vals) {
 	            var newVals = [];
-	            // console.log('in makeStringsInArrayToLowerCase(), vals is ', vals);
                 vals.forEach(val => {
                     newVals.push(val.toLowerCase());
                 });
@@ -28,7 +27,6 @@ module.exports = {
 		var setterFunc = function(val) {};
 		if (typeof fieldName === 'string') {
 			setterFunc = function(val) {
-	            // console.log('in trimTextToAvoidEndingSpaceAndLineBreak(), val is ', val);
 	            var newVal = _.trim(val, ' \n');
                 this.setDataValue(fieldName, newVal);
 			};

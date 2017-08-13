@@ -1,21 +1,32 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-11 23:51:27
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:29:39
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-12 17:09:59
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
+import consts from '../config/Constants'
 import answerRequestValidator from '../Validators/AnswerRequestValidator'
 import AnswersHandler from '../handlers/AnswersHandler'
 import VotesForAnswersHandler from '../handlers/VotesForAnswersHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
+import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let answersHandler = new AnswersHandler();
 let votesForAnswersHandler = new VotesForAnswersHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
+let hotPostsHandler = new DynamoHotPostsHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 let updateVotesNumberOfAnswer = function(vote_type, answer_id) {
 	return new Promise((resolve, reject) => {
@@ -53,20 +64,54 @@ let updateVotesNumberOfAnswer = function(vote_type, answer_id) {
 module.exports = {
 	postAnswer: function(req, res, next) {
 		answerRequestValidator.validateCreateAnswerRequest(req).then(result => {
+			
+			var newAnswerObj = {
+				for_question: req.body.for_question,
+				words: req.body.words,
+				photos: req.body.photos,
+				hash_tags: req.body.hash_tags,
+				attachment: req.body.attachment,
+				createdBy: req.user_id
+			};
 
-			return answersHandler.createEntryForModel({
-					for_question: req.body.for_question,
-					words: req.body.words,
-					photos: req.body.photos,
-					hash_tags: req.body.hash_tags,
-					attachment: req.body.attachment,
-					createdBy: req.user_id
-				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one answer successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
-				}).catch(error => {
-					next(error);
+			var queries = [];
+			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
+			queries.push(answersHandler.createEntryForModel(newAnswerObj).then(result => {
+				cLogger.say('save one answer successfully.', result);
+				return result;
+			}));
+
+			return Promise.all(queries).then(results => {
+				let followerIds = results[0].followerIds;
+				let createdAnswer = results[1];
+				let activity = {
+					actor: req.user_id,
+					action: 'post',
+					target: 'answer:'+createdAnswer.id,
+					actionTime: createdAnswer.createdAt,
+					associateInfo: {
+						forQuestionId: { S: 'question:'+createdAnswer.for_question }
+					}
+				};
+
+				res.status(httpStatus.CREATED).send(createdAnswer);
+
+				var dynamoReqs = [];
+				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
+					activity.hotType = 'Popular';
+					dynamoReqs.push(hotPostsHandler.insertActivityToHotTable(activity));
+				} else if (followerIds.length > 0) {
+					dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+				}
+				return Promise.all(dynamoReqs).then(dynamoRes => {
+					cLogger.say('Successfully Insert This Answer to ActivityTable and FeedTable.');
+				}).catch(dynamoError => {
+					next(dynamoError);
 				});
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);
@@ -165,7 +210,7 @@ module.exports = {
 	},
 
 	castOrChangeVoteForAnswer: function(req, res, next) {
-		answerRequestValidator.validateVoteForAnAnswerRequest(req).then(result => {
+		answerRequestValidator.validateVoteForAnAnswerRequest(req).then(validationRes => {
 
 			let voteForAnswer = {
 				vote_type: req.body.type,
@@ -174,20 +219,33 @@ module.exports = {
 			};
 
 			if (req.body.commit) {
-				return votesForAnswersHandler.createEntryForModel(voteForAnswer).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for answer successfully.', result);
+				return Promise.all([
+					votesForAnswersHandler.createEntryForModel(voteForAnswer),
+					answersHandler.findEntryByIdFromModel(voteForAnswer.answer_id)
+				]).then(pgRes => {
+					cLogger.say('create a vote for answer successfully.', pgRes);
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: pgRes[1].createdBy,
+						actor: voteForAnswer.createdBy,
+						action: 'answer:'+voteForAnswer.vote_type,
+						target: 'answer:'+voteForAnswer.answer_id,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say('Successfully added into DynamoDB Notification Table.');
+					}).catch(notifyError => {
+						cLogger.debug('Failed to add into DynamoDB Notification Table.');
+					});
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
 	                	next(error);
 	                });
-
-				}).catch(error => {
-					next(error);
+				}).catch(pgError => {
+					next(pgError);
 				});
 			} else {
 				return votesForAnswersHandler.deleteVoteForAnswerByContent(voteForAnswer).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for answer successfully.', result);
+	                cLogger.say('revote a vote for answer successfully.', result);
 	                return updateVotesNumberOfAnswer(voteForAnswer.vote_type, voteForAnswer.answer_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
@@ -216,7 +274,7 @@ module.exports = {
 				offset: req.query.offset
 			};
 
-			return votesForAnswersHandler.findVotesByAnswerIdAndQuery(queryObj).then(results => {
+			return votesForAnswersHandler.findVotesForAnswersByQuery(queryObj).then(results => {
 				res.status(httpStatus.OK).send(results);
 			}).catch(error => {
 				next(error);

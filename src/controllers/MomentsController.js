@@ -1,24 +1,34 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-10 23:03:06
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-30 02:47:53
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-12 17:12:14
 */
 
 'use strict';
 import httpStatus from 'http-status'
 import Promise from 'bluebird'
-import momentRequestValidator from '../Validators/MomentRequestValidator'
 import consts from '../config/Constants'
+import momentRequestValidator from '../Validators/MomentRequestValidator'
 import MomentsHandler from '../handlers/MomentsHandler'
 import VotesForMomentsHandler from '../handlers/VotesForMomentsHandler'
 import LocationsHandler from '../handlers/LocationsHandler'
+import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
+import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let momentsHandler = new MomentsHandler();
 let votesForMomentsHandler = new VotesForMomentsHandler();
 let locationsHandler = new LocationsHandler();
+let userRelationshipsHandler = new UserRelationshipsHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
+let hotPostsHandler = new DynamoHotPostsHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 let updateVotesNumberOfMoment = function(vote_type, moment_id) {
 	return new Promise((resolve, reject) => {
@@ -69,33 +79,63 @@ module.exports = {
 					createdBy: req.user_id
 				};
 
-			if (req.body.location_id == null && req.body.google_place) {
-				return locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
+			var queries = [];
+			queries.push(userRelationshipsHandler.findFollowerIdsByUserId(req.user_id));
 
+			if (req.body.location_id == null && req.body.google_place) {
+				var postReq = locationsHandler.createIfNotExistForGooglePlace(req.body.google_place, req.user_id).then(location_id => {
 					newMomentObj.location_id = location_id;
 					return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-		                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-		                res.status(httpStatus.CREATED).send(result);
-					}).catch(error => {
-						next(error);
+						cLogger.say('save one moment successfully.', result);
+						return result;
 					});
-
-				}).catch(error => {
-					next(error);
 				});
-
+				queries.push(postReq);
 			} else {
-				return momentsHandler.createEntryForModel(newMomentObj).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one moment successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
-				}).catch(error => {
-					next(error);
+				var postReq = momentsHandler.createEntryForModel(newMomentObj).then(result => {
+					cLogger.say('save one moment successfully.', result);
+					return result;
 				});
+				queries.push(postReq);
 			}
+
+			return Promise.all(queries).then(results => {
+				let followerIds = results[0].followerIds;
+				let createdMoment = results[1];
+				let activity = {
+					actor: req.user_id,
+					action: 'post',
+					target: 'moment:'+createdMoment.id,
+					actionTime: createdMoment.createdAt
+				};
+
+				res.status(httpStatus.CREATED).send(createdMoment);
+
+				var dynamoReqs = [];
+				dynamoReqs.push(activitiesHandler.insertActivityToAuthorTable(activity));
+				if (createdMoment.access_level === 'public') {
+					activity.hotType = 'Public';
+					dynamoReqs.push(hotPostsHandler.insertActivityToHotTable(activity));
+				} else if (createdMoment.access_level === 'followers') {
+					if (followerIds.length > consts.DYNAMO_THRESHOLD_OF_FOLLOWERNUM) {
+						activity.hotType = 'Popular';
+						dynamoReqs.push(hotPostsHandler.insertActivityToHotTable(activity));
+					} else if (followerIds.length > 0) {
+						dynamoReqs.push(feedsHandler.insertActivityToFeedsOfFollowers(activity, followerIds));
+					}
+				}
+				return Promise.all(dynamoReqs).then(dynamoRes => {
+					cLogger.say('Successfully Insert This Moment to ActivityTable and FeedTable.');
+				}).catch(dynamoError => {
+					next(dynamoError);
+				});
+			}).catch(error => {
+				next(error);
+			});
 
 		}).catch(error => {
 			next(error);
-		})
+		});
 	},
 
 	getMomentById: function(req, res, next) {
@@ -202,7 +242,7 @@ module.exports = {
 	},
 
 	castOrChangeVoteForMoment: function(req, res, next) {
-		momentRequestValidator.validateVoteForAMomentRequest(req).then(result => {
+		momentRequestValidator.validateVoteForAMomentRequest(req).then(validationRes => {
 
 			let voteForMoment = {
 				vote_type: req.body.type,
@@ -211,20 +251,34 @@ module.exports = {
 			};
 
 			if (req.body.commit) {
-				return votesForMomentsHandler.createEntryForModel(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'create a vote for moment successfully.', result);
+				return Promise.all([
+					votesForMomentsHandler.createEntryForModel(voteForMoment),
+					momentsHandler.findEntryByIdFromModel(voteForMoment.moment_id)
+				]).then(pgRes => {
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: pgRes[1].createdBy,
+						actor: voteForMoment.createdBy,
+						action: 'moment:'+voteForMoment.vote_type,
+						target: 'moment:'+voteForMoment.moment_id,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say('Successfully added into DynamoDB Notification Table.');
+					}).catch(notifyError => {
+						cLogger.debug('Failed to add into DynamoDB Notification Table.');
+					});
+					cLogger.say('create a vote for moment successfully.', pgRes);
 	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
 	                	next(error);
 	                });
-
 				}).catch(error => {
 					next(error);
 				});
+				
 			} else {
-				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'revote a vote for moment successfully.', result);
+				return votesForMomentsHandler.deleteVoteForMomentByContent(voteForMoment).then(deleteRes => {
+	                cLogger.say('revote a vote for moment successfully.', deleteRes);
 	                return updateVotesNumberOfMoment(voteForMoment.vote_type, voteForMoment.moment_id).then(result => {
 	                	res.status(httpStatus.OK).send(result);
 	                }).catch(error => {
@@ -253,7 +307,7 @@ module.exports = {
 				offset: req.query.offset
 			};
 
-			return votesForMomentsHandler.findVotesByMomentIdAndQuery(queryObj).then(results => {
+			return votesForMomentsHandler.findVotesForMomentsByQuery(queryObj).then(results => {
 				res.status(httpStatus.OK).send(results);
 			}).catch(error => {
 				next(error);

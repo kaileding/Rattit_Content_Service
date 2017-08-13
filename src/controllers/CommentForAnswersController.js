@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-12 16:47:56
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-06-21 19:37:17
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-12 17:10:40
 */
 
 'use strict';
@@ -10,26 +10,62 @@ import httpStatus from 'http-status'
 import Promise from 'bluebird'
 import commentForAnswerRequestValidator from '../Validators/CommentForAnswerRequestValidator'
 import CommentForAnswersHandler from '../handlers/CommentForAnswersHandler'
+import AnswersHandler from '../handlers/AnswersHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let commentForAnswersHandler = new CommentForAnswersHandler();
+let answersHandler = new AnswersHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 module.exports = {
 	postCommentForAnAnswer: function(req, res, next) {
-		commentForAnswerRequestValidator.validateCreateCommentRequest(req).then(result => {
+		commentForAnswerRequestValidator.validateCreateCommentRequest(req).then(validationRes => {
 
-			return commentForAnswersHandler.createEntryForModel({
-					for_answer: req.body.for_answer,
-					for_comment: req.body.for_comment,
-					words: req.body.words,
-					createdBy: req.user_id
-				}).then(result => {
-	                cLogger.say(cLogger.TESTING_TYPE, 'save one comment for moment successfully.', result);
-	                res.status(httpStatus.CREATED).send(result);
-				}).catch(error => {
-					next(error);
+			var newComment = {
+				for_answer: req.body.for_answer,
+				for_comment: req.body.for_comment,
+				words: req.body.words,
+				createdBy: req.user_id
+			};
+			var pgReqs = [
+				commentForAnswersHandler.createEntryForModel(newComment),
+				answersHandler.findEntryByIdFromModel(newComment.for_answer)
+			];
+			if (newComment.for_comment) {
+				pgReqs.push(commentForAnswersHandler.findEntryByIdFromModel(newComment.for_comment));
+			}
+			return Promise.all(pgReqs).then(pgRes => {
+				cLogger.say('save one comment for answer successfully.', pgRes);
+				res.status(httpStatus.CREATED).send(pgRes[0]);
+				notificationsHandler.insertActivityToNotificationTable({
+					recipient: pgRes[1].createdBy,
+					actor: newComment.createdBy,
+					action: 'comment_for_answer:post',
+					target: 'answer:'+newComment.for_answer,
+					actionTime: pgRes[0].createdAt
+				}).then(notifyRes => {
+					cLogger.say('Successfully added into DynamoDB Notification Table.');
+				}).catch(notifyError => {
+					cLogger.debug('Failed to add into DynamoDB Notification Table.');
 				});
+				if (newComment.for_comment) {
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: pgRes[2].createdBy,
+						actor: newComment.createdBy,
+						action: 'comment_for_answer:reply',
+						target: 'comment_for_answer:'+newComment.for_comment,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say('Successfully added into DynamoDB Notification Table.');
+					}).catch(notifyError => {
+						cLogger.debug('Failed to add into DynamoDB Notification Table.');
+					});
+				}
+			}).catch(pgError => {
+				next(pgError);
+			});
 
 		}).catch(error => {
 			next(error);
@@ -96,7 +132,7 @@ module.exports = {
 	},
 
 	castOrChangeVoteForCommentForAnswer: function(req, res, next) {
-		commentForAnswerRequestValidator.validateVoteForACommentRequest(req).then(result => {
+		commentForAnswerRequestValidator.validateVoteForACommentRequest(req).then(validationRes => {
 
 			let voteForComment = {
 				vote_type: req.body.type,
@@ -104,10 +140,39 @@ module.exports = {
 				commit: req.body.commit
 			};
 
-			return commentForAnswersHandler.updateVoteOfCommentForMoment(req.params.id, voteForComment).then(result => {
-				res.status(httpStatus.OK).send(result);
-			}).catch(error => {
-				next(error);
+			return Promise.all([
+				ommentForAnswersHandler.updateVoteOfCommentForMoment(req.params.id, voteForComment),
+				ommentForAnswersHandler.findEntryByIdFromModel(req.params.id)
+			]).then(pgRes => {
+				res.status(httpStatus.OK).send(pgRes[0]);
+				return answersHandler.findEntryByIdFromModel(pgRes[1].for_answer).then(answerRes => {
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: answerRes.createdBy,
+						actor: voteForComment.voted_by,
+						action: 'comment_for_answer:'+voteForComment.vote_type,
+						target: 'comment_for_answer:'+req.params.id,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say(notifyRes);
+					}).catch(notifyError => {
+						cLogger.debug(notifyError);
+					});
+					notificationsHandler.insertActivityToNotificationTable({
+						recipient: pgRes[1].createdBy,
+						actor: voteForComment.voted_by,
+						action: 'comment_for_answer:'+voteForComment.vote_type,
+						target: 'comment_for_answer:'+req.params.id,
+						actionTime: pgRes[0].createdAt
+					}).then(notifyRes => {
+						cLogger.say(notifyRes);
+					}).catch(notifyError => {
+						cLogger.debug(notifyError);
+					});
+				}).catch(momentError => {
+					cLogger.debug('Failed to get answer.');
+				});
+			}).catch(pgError => {
+				next(pgError);
 			});
 
 		}).catch(error => {

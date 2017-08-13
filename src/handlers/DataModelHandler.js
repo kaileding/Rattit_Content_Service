@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-09 13:29:03
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-08-01 00:38:31
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-10 01:15:38
 */
 
 'use strict';
@@ -25,9 +25,9 @@ class DataModelHandler {
 	createEntryForModel(newEntryObj) {
 		return new Promise((resolve, reject) => {
 				let model = this.model;
-				cLogger.say(cLogger.TESTING_TYPE, 'the object to be created in database is ', newEntryObj)
+				cLogger.say('the object to be created in database is ', newEntryObj)
 				model.create(newEntryObj).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, 'save one entry successfully for model '+model.name+'.');
+					cLogger.say('save one entry successfully for model '+model.name+'.');
 					resolve(result.toJSON());
 				}).catch(function(error) {
 			    	reject(error);
@@ -53,7 +53,7 @@ class DataModelHandler {
 			            limit: entryQuantity,
 			            offset: offsetNumber
 					}).then(function(results) {
-				        cLogger.say(cLogger.TESTING_TYPE, 'fetched '+results.count+' results');
+				        cLogger.say('fetched '+results.count+' results');
 				        resolve(results);
 					}).catch(function(error) {
 						reject(error);
@@ -99,7 +99,7 @@ class DataModelHandler {
 				model.count({
 					where: filterObj
 				}).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, `get count of entries successfully from ${model.name}.`, result);
+					cLogger.say(`get count of entries successfully from ${model.name}.`, result);
 					resolve(result);
 				}).catch(function(error) {
 					reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
@@ -115,7 +115,7 @@ class DataModelHandler {
             			id: id
             		}
             	}).then(function(result) {
-					cLogger.say(cLogger.TESTING_TYPE, `get entry successfully from ${model.name}.`, result);
+					cLogger.say(`get entry successfully from ${model.name}.`, result);
 					if (result.count === 1) {
 						resolve(result.rows[0]);
 					} else {
@@ -125,6 +125,28 @@ class DataModelHandler {
 			    	reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
 			    })
 			});
+	}
+
+	findEntriesByIdsFromModel(idSet) {
+		return new Promise((resolve, reject) => {
+			if (idSet.length == 0) {
+				reject(new APIError('idSet is empty.', httpStatus.INTERNAL_SERVER_ERROR));
+			} else {
+				let model = this.model;
+				model.findAll({
+					where: {
+						id: {
+							$in: idSet
+						}
+					}
+				}).then(function(results) {
+					cLogger.say(`get entry successfully from ${model.name}.`, results);
+					resolve(results);
+				}).catch(function(error) {
+					reject(new APIError(error.message, httpStatus.INTERNAL_SERVER_ERROR));
+				});
+			}
+		});
 	}
 
 	updateEntryByIdForModel(id, updateObj) {
@@ -146,14 +168,14 @@ class DataModelHandler {
                                 	reject(new APIError('Error retrieving '+model.name+' entity', httpStatus.INTERNAL_SERVER_ERROR));
                                 }
                             }).catch(err => {
-                            	cLogger.say(cLogger.GENERAL_TYPE, `ERROR updating cart item : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+                            	cLogger.debug(`ERROR updating cart item : SQL ${err.message} ${JSON.stringify(err.errors)}`);
                                 reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                             });
                     } else {
 						reject(new APIError('Entry not exist for id: '+id+' in '+model.name, httpStatus.BAD_REQUEST));
                     }
                 }).catch(err => {
-					cLogger.say(cLogger.GENERAL_TYPE, `ERROR updating entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+					cLogger.debug(`ERROR updating entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
 					reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
 	        });
@@ -169,16 +191,16 @@ class DataModelHandler {
                     limit: 1
                 }).then(response => {
                     if (response === 1) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Deleted entry with id '${id}' from ${model.name}`);
+                    	cLogger.say(`Deleted entry with id '${id}' from ${model.name}`);
                         resolve("OK");
                     } else if (response === 0) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Unable to delete nonexistent entry with id '${id}' in ${model.name}`);
+                    	cLogger.debug(`Unable to delete nonexistent entry with id '${id}' in ${model.name}`);
                         reject(new APIError(`Entry with id '${id}' Not Found in ${model.name}`, httpStatus.NOT_FOUND));
                     } else { // should never happen
                     	reject(new APIError('Deleted multiple entries, which should never happen', httpStatus.INTERNAL_SERVER_ERROR));
                     }
                 }).catch(err => {
-                	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+                	cLogger.debug(`ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
                     reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
             });

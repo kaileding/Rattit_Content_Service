@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-05 23:20:58
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-25 22:14:11
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-12 15:06:04
 */
 
 'use strict';
@@ -11,11 +11,19 @@ import Promise from 'bluebird'
 import userRequestValidator from '../Validators/UserRequestValidator'
 import UsersHandler from '../handlers/UsersHandler'
 import UserRelationshipsHandler from '../handlers/UserRelationshipsHandler'
+import DynamoFeedsHandler from '../handlers/DynamoFeedsHandler'
+import DynamoActivitiesHandler from '../handlers/DynamoActivitiesHandler'
+import DynamoHotPostsHandler from '../handlers/DynamoHotPostsHandler'
+import DynamoNotificationsHandler from '../handlers/DynamoNotificationsHandler'
 import models from '../models/Model_Index'
 import CLogger from '../helpers/CustomLogger'
 let cLogger = new CLogger();
 let usersHandler = new UsersHandler();
 let userRelationshipsHandler = new UserRelationshipsHandler();
+let feedsHandler = new DynamoFeedsHandler();
+let activitiesHandler = new DynamoActivitiesHandler();
+let hotPostsHandler = new DynamoHotPostsHandler();
+let notificationsHandler = new DynamoNotificationsHandler();
 
 module.exports = {
 	createUser: function(req, res, next) {
@@ -31,7 +39,7 @@ module.exports = {
                     organization: req.body.organization,
                     avatar: req.body.avatar
                 }).then(function(result) {
-                    cLogger.say(cLogger.TESTING_TYPE, 'save one user successfully.', result);
+                    cLogger.say('save one user successfully.', result);
                     res.status(httpStatus.CREATED).send(result);
                 }).catch(function(error) {
                     next(error);
@@ -58,7 +66,7 @@ module.exports = {
 
 	getUsersByQuery: function(req, res, next) {
         userRequestValidator.validateGetUserByTextRequest(req).then(result => {
-            cLogger.say(cLogger.TESTING_TYPE, 'req.query.text is ', req.query.text);
+            cLogger.say('req.query.text is ', req.query.text);
 
             return usersHandler.findUserByText(req.query.text, 
                                                 req.query.limit, 
@@ -166,7 +174,7 @@ module.exports = {
     },
 
     followUsers: function(req, res, next) {
-        userRequestValidator.validateFollowUsersRequest(req).then(result => {
+        userRequestValidator.validateFollowUsersRequest(req).then(validationRes => {
 
             var dataReqs = [];
             req.body.followees.forEach(followeeId => {
@@ -175,12 +183,26 @@ module.exports = {
                         follower: req.params.id,
                         followee: followeeId
                     }).then(creationResult => {
-                        return userRelationshipsHandler.countEntriesFromModelForFilter({
-                            followee: followeeId
-                        }).then(countResult => {
+                        feedsHandler.copyRecordsFromAuthorToRecipient(followeeId, 100, req.params.id).then(copyRes => {
+                            cLogger.say('Successfully Copied Records of An Author into Feed of Recipient.');
+                        }).catch(copyError => {
+                            cLogger.debug('Failed copyRecordsFromAuthorToRecipient()', copyError);
+                        });
+                        notificationsHandler.insertActivityToNotificationTable({
+                            recipient: followeeId,
+                            actor: req.params.id,
+                            action: 'rattit_user:follow',
+                            target: 'rattit_user:'+followeeId,
+                            actionTime: creationResult.createdAt
+                        }).then(notifyRes => {
+                            cLogger.say('Successfully add into DynamoDB Notification Table.')
+                        }).catch(notifyError => {
+                            cLogger.debug('Failed to add into DynamoDB Notification Table.')
+                        })
+                        return userRelationshipsHandler.findFollowerIdsByUserId(followeeId).then(result => {
                             return usersHandler.updateEntryByIdForModel(followeeId, {
-                                follower_number: countResult
-                            })
+                                follower_number: result.count
+                            });
                         }).catch(error => {
                             throw error;
                         });
@@ -218,28 +240,40 @@ module.exports = {
         userRequestValidator.validateUnfollowUserRequest(req).then(result => {
 
             return userRelationshipsHandler.deleteFolloweeByItsID(req.params.id, 
-                                                                req.params.followee_id).then(result => {
-                // TODO: should add logic to update the follower number / following number of corresponding users
-                userRelationshipsHandler.countEntriesFromModelForFilter({
-                        followee: req.params.followee_id
-                    }).then(countResult => {
-                        return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
-                            follower_number: countResult
-                        });
-                    }).catch(error => {
-                        throw error;
-                    });
-                userRelationshipsHandler.countEntriesFromModelForFilter({
-                        follower: req.params.id
-                    }).then(countResult => {
-                        return usersHandler.updateEntryByIdForModel(req.params.id, {
-                            followee_number: countResult
-                        });
+                                                                req.params.followee_id).then(deleteResult => {
+                                                                    
+                feedsHandler.removeRecordsOfAuthorFromRecipientFeed(req.params.followee_id, req.params.id).then(removeRes => {
+                    cLogger.say('Successfully Removed Records of An Author from Feed of Recipient.');
+                }).catch(removeError => {
+                    cLogger.debug('Failed removeRecordsOfAuthorFromRecipientFeed()', removeError);
+                });
+
+                res.status(httpStatus.OK).send({
+                    success: deleteResult
+                });
+
+                return userRelationshipsHandler.findFollowerIdsByUserId(req.params.followee_id).then(result => {
+                    return usersHandler.updateEntryByIdForModel(req.params.followee_id, {
+                        follower_number: result.count
+                    }).then(updateRes1 => {
+                        return userRelationshipsHandler.countEntriesFromModelForFilter({
+                                follower: req.params.id
+                            }).then(countResult => {
+                                return usersHandler.updateEntryByIdForModel(req.params.id, {
+                                    followee_number: countResult
+                                }).then(updateRes2 => {
+                                    cLogger.say('Successfully Updated the Count of Followers/Followings of Users.');
+                                }).catch(error => {
+                                    next(error);
+                                });
+                            }).catch(error => {
+                                next(error);
+                            });
                     }).catch(error => {
                         next(error);
                     });
-                res.status(httpStatus.OK).send({
-                    success: result
+                }).catch(error => {
+                    next(error);
                 });
             }).catch(error => {
                 next(error);

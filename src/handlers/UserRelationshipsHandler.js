@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-10 22:28:48
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-08-01 00:41:02
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-11 19:58:40
 */
 
 'use strict';
@@ -56,6 +56,44 @@ class UserRelationshipsHandler extends DataModelHandler {
 		return this.findRelationshipsAndExpandUsers(options, limit, offset);
 	}
 
+	findFollowerIdsByUserId(id) {
+
+		return this.findEntriesFromModel(['follower'], null, {
+			followee: id
+		}, null, 999999, 0).then(results => {
+			cLogger.say('findFollowerIdsByUserId('+id+'), results are ', results);
+			var followerIds = [];
+			results.rows.forEach(row => {
+				followerIds.push(row.follower);
+			})
+			return {
+				count: results.count,
+				followerIds: followerIds
+			};
+		}).catch(error => {
+			throw error;
+		});
+	}
+
+	findFollowingIdsByUserId(id) {
+
+		return this.findEntriesFromModel(['followee'], null, {
+			follower: id
+		}, null, 999999, 0).then(results => {
+			cLogger.say('findFollowingIdsByUserId('+id+'), results are ', results);
+			var followingIds = [];
+			results.rows.forEach(row => {
+				followingIds.push(row.followee);
+			})
+			return {
+				count: results.count,
+				followingIds: followingIds
+			};
+		}).catch(error => {
+			throw error;
+		});
+	}
+
 	findFolloweesByUserId(id, limit, offset) {
 
 		let options = {
@@ -106,16 +144,16 @@ class UserRelationshipsHandler extends DataModelHandler {
                     limit: 1
                 }).then(response => {
                     if (response === 1) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Deleted entry with follower_id '${id}' and followee_id '${followeeId}' from ${model.name}`);
+                    	cLogger.say(`Deleted entry with follower_id '${id}' and followee_id '${followeeId}' from ${model.name}`);
                         resolve("OK");
                     } else if (response === 0) {
-                    	cLogger.say(cLogger.GENERAL_TYPE, `Unable to delete nonexistent entry with follower_id '${id}' and followee_id '${followeeId}' in ${model.name}`);
+                    	cLogger.debug(`Unable to delete nonexistent entry with follower_id '${id}' and followee_id '${followeeId}' in ${model.name}`);
                         reject(new APIError(`Entry with follower_id '${id}' and followee_id '${followeeId}' Not Found in ${model.name}`, httpStatus.NOT_FOUND));
                     } else { // should never happen
                     	reject(new APIError('Deleted multiple entries, which should never happen', httpStatus.INTERNAL_SERVER_ERROR));
                     }
                 }).catch(err => {
-                	cLogger.say(cLogger.GENERAL_TYPE, `ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
+                	cLogger.debug(`ERROR deleting entry : SQL ${err.message} ${JSON.stringify(err.errors)}`);
                     reject(new APIError(err.message, httpStatus.INTERNAL_SERVER_ERROR));
                 });
             });

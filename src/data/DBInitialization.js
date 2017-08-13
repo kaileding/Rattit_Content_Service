@@ -1,8 +1,8 @@
 /*
 * @Author: KaileDing
 * @Date:   2017-06-09 22:11:13
-* @Last Modified by:   kaileding
-* @Last Modified time: 2017-07-24 01:15:56
+ * @Last Modified by: Kaile Ding
+ * @Last Modified time: 2017-08-11 19:57:55
 */
 
 'use strict';
@@ -378,7 +378,7 @@ module.exports = function() {
 						return dbConnectionPool.Promise.all(getInsertAnswersTask()).then(function(results) {
 							return dbConnectionPool.Promise.all(getInsertCommentsTask_1()).then(function(results) {
 								return dbConnectionPool.Promise.all(getInsertCommentsTask_2()).then(function(results) {
-									console.log('Load test data successfully!');
+									cLogger.say('Load test data successfully!');
 									return "Success";
 								}).catch(function(error) {
 									throw error;
